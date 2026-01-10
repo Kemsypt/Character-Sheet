@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>D&amp;D 5e Character Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8f5ef;
+      --surface: #ffffff;
+      --text: #1f1f1f;
+      --muted: #5e5e5e;
+      --accent: #7a3e00;
+      --accent-soft: rgba(122, 62, 0, 0.12);
+      --border: #d6cbb8;
+      --chip: #efe6d6;
+      --shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      --radius: 14px;
+      --font-title: "Libre Baskerville", serif;
+      --font-body: "Inter", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+    }
+
+    header {
+      padding: 24px clamp(16px, 4vw, 40px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: linear-gradient(135deg, var(--accent-soft), transparent);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-family: var(--font-title);
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .field label {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    select,
+    input,
+    textarea,
+    button {
+      font-family: var(--font-body);
+    }
+
+    select,
+    input,
+    textarea {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    button.secondary {
+      background: var(--chip);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    main {
+      padding: 0 clamp(16px, 4vw, 40px) 40px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 18px 0 8px;
+    }
+
+    .tab-button {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      box-shadow: none;
+      font-weight: 600;
+    }
+
+    .tab-button.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .panel {
+      display: none;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .panel.active {
+      display: grid;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-family: var(--font-title);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .pill {
+      padding: 4px 10px;
+      background: var(--chip);
+      border-radius: 999px;
+      display: inline-block;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .spell-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .spell-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      background: var(--surface);
+    }
+
+    .spell-card header {
+      padding: 0;
+      border: none;
+      background: transparent;
+      gap: 6px;
+    }
+
+    .spell-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .inline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .note-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .footer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .theme-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .theme-chip {
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px dashed var(--border);
+      text-align: center;
+      background: var(--chip);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .warning {
+      background: #fff4e5;
+      border: 1px solid #ffcc80;
+      color: #7a4b00;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+
+    .tag {
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+    }
+
+    .tab-panel-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .spell-toolbar {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: end;
+    }
+
+    .spell-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .table th,
+    .table td {
+      padding: 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .section-subtitle {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .class-theme {
+      display: none;
+    }
+
+    body[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #121212;
+      --surface: #1c1c1c;
+      --text: #f5f5f5;
+      --muted: #b0b0b0;
+      --accent: #c98c00;
+      --accent-soft: rgba(201, 140, 0, 0.12);
+      --border: #2f2f2f;
+      --chip: #222222;
+      --shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    body[data-theme="parchment"] {
+      --bg: #f4ecd8;
+      --surface: #fffaf0;
+      --text: #2e2414;
+      --muted: #6d5f45;
+      --accent: #8b5a2b;
+      --accent-soft: rgba(139, 90, 43, 0.16);
+      --border: #dbc7a5;
+      --chip: #f6e8cc;
+    }
+
+    body[data-theme="fighter"] {
+      --accent: #7d1a1a;
+      --accent-soft: rgba(125, 26, 26, 0.12);
+      --chip: #f7e6e6;
+    }
+
+    body[data-theme="wizard"] {
+      --accent: #2f3a7a;
+      --accent-soft: rgba(47, 58, 122, 0.12);
+      --chip: #e6eaf7;
+    }
+
+    body[data-theme="rogue"] {
+      --accent: #2f2f2f;
+      --accent-soft: rgba(47, 47, 47, 0.2);
+      --chip: #e6e6e6;
+    }
+
+    body[data-theme="cleric"] {
+      --accent: #b78b00;
+      --accent-soft: rgba(183, 139, 0, 0.12);
+      --chip: #fff0c5;
+    }
+
+    body[data-theme="ranger"] {
+      --accent: #246b3c;
+      --accent-soft: rgba(36, 107, 60, 0.12);
+      --chip: #e3f2ea;
+    }
+
+    body[data-theme="bard"] {
+      --accent: #7a2f72;
+      --accent-soft: rgba(122, 47, 114, 0.12);
+      --chip: #f3e4f2;
+    }
+
+    body[data-theme="barbarian"] {
+      --accent: #9b2c2c;
+      --accent-soft: rgba(155, 44, 44, 0.12);
+      --chip: #f7e0e0;
+    }
+
+    body[data-theme="paladin"] {
+      --accent: #b88a1f;
+      --accent-soft: rgba(184, 138, 31, 0.12);
+      --chip: #fff1cf;
+    }
+
+    body[data-theme="druid"] {
+      --accent: #386b1f;
+      --accent-soft: rgba(56, 107, 31, 0.12);
+      --chip: #e7f1db;
+    }
+
+    body[data-theme="monk"] {
+      --accent: #6f4a2b;
+      --accent-soft: rgba(111, 74, 43, 0.12);
+      --chip: #f3e7dd;
+    }
+
+    body[data-theme="warlock"] {
+      --accent: #4b1d6d;
+      --accent-soft: rgba(75, 29, 109, 0.12);
+      --chip: #efe4f5;
+    }
+
+    body[data-theme="sorcerer"] {
+      --accent: #6a2c7a;
+      --accent-soft: rgba(106, 44, 122, 0.12);
+      --chip: #f1e2f6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>D&amp;D 5e Character Sheet</h1>
+      <p>Fill in your character details, track combat, and manage spells in one place.</p>
+    </div>
+    <div class="toolbar">
+      <div class="field">
+        <label for="theme-select">Theme</label>
+        <select id="theme-select">
+          <option value="default">Default</option>
+          <option value="parchment">Parchment</option>
+          <option value="dark">Dark</option>
+          <optgroup label="Class Themes">
+            <option value="fighter">Fighter</option>
+            <option value="wizard">Wizard</option>
+            <option value="rogue">Rogue</option>
+            <option value="cleric">Cleric</option>
+            <option value="ranger">Ranger</option>
+            <option value="bard">Bard</option>
+            <option value="barbarian">Barbarian</option>
+            <option value="paladin">Paladin</option>
+            <option value="druid">Druid</option>
+            <option value="monk">Monk</option>
+            <option value="warlock">Warlock</option>
+            <option value="sorcerer">Sorcerer</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>Custom Theme</label>
+        <div class="inline-actions">
+          <input type="color" id="custom-accent" value="#7a3e00" aria-label="Accent color" />
+          <input type="color" id="custom-bg" value="#f8f5ef" aria-label="Background color" />
+          <button class="secondary" id="apply-custom-theme" type="button">Apply Custom</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Save &amp; Export</label>
+        <div class="inline-actions">
+          <button class="secondary" id="save-local" type="button">Save Locally</button>
+          <button class="secondary" id="export-json" type="button">Export JSON</button>
+          <label class="secondary" style="padding:10px 16px;border-radius:999px;border:1px solid var(--border);cursor:pointer;">
+            Import JSON
+            <input type="file" id="import-json" accept="application/json" hidden />
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="theme-preview">
+      <div class="theme-chip">Pick a theme or create your own palette.</div>
+      <div class="theme-chip">Class themes shift accent colors automatically.</div>
+    </div>
+  </header>
+
+  <main>
+    <nav class="tabs" aria-label="Character sheet tabs">
+      <button class="tab-button active" data-tab="character" type="button">Character</button>
+      <button class="tab-button" data-tab="stats" type="button">Stats</button>
+      <button class="tab-button" data-tab="combat" type="button">Combat</button>
+      <button class="tab-button" data-tab="features" type="button">Features</button>
+      <button class="tab-button" data-tab="inventory" type="button">Inventory</button>
+      <button class="tab-button" data-tab="spells" type="button">Spells</button>
+      <button class="tab-button" data-tab="notes" type="button">Notes</button>
+    </nav>
+
+    <section id="tab-character" class="panel active">
+      <div class="card tab-panel-grid">
+        <h3>Core Identity</h3>
+        <div class="grid-3">
+          <div class="field">
+            <label for="character-name">Character Name</label>
+            <input id="character-name" type="text" placeholder="Aelar Stormwind" />
+          </div>
+          <div class="field">
+            <label for="class">Class</label>
+            <input id="class" type="text" placeholder="Ranger" />
+          </div>
+          <div class="field">
+            <label for="level">Level</label>
+            <input id="level" type="number" min="1" value="1" />
+          </div>
+          <div class="field">
+            <label for="background">Background</label>
+            <input id="background" type="text" placeholder="Outlander" />
+          </div>
+          <div class="field">
+            <label for="race">Race</label>
+            <input id="race" type="text" placeholder="Elf" />
+          </div>
+          <div class="field">
+            <label for="alignment">Alignment</label>
+            <input id="alignment" type="text" placeholder="Neutral Good" />
+          </div>
+        </div>
+      </div>
+      <div class="card tab-panel-grid">
+        <h3>Player Details</h3>
+        <div class="grid-2">
+          <div class="field">
+            <label for="player-name">Player Name</label>
+            <input id="player-name" type="text" placeholder="Your Name" />
+          </div>
+          <div class="field">
+            <label for="xp">XP</label>
+            <input id="xp" type="number" min="0" />
+          </div>
+        </div>
+      </div>
+      <div class="card tab-panel-grid">
+        <h3>Inspiration &amp; Proficiency</h3>
+        <div class="grid-2">
+          <div class="field">
+            <label for="inspiration">Inspiration</label>
+            <input id="inspiration" type="text" placeholder="Describe" />
+          </div>
+          <div class="field">
+            <label for="proficiency">Proficiency Bonus</label>
+            <input id="proficiency" type="text" placeholder="+2" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-stats" class="panel">
+      <div class="card tab-panel-grid">
+        <h3>Ability Scores</h3>
+        <div class="grid-3">
+          <div class="field">
+            <label>Strength</label>
+            <input data-store="str-score" type="number" placeholder="10" />
+            <div class="inline-actions">
+              <input data-store="str-mod" type="text" placeholder="+0 mod" />
+              <label><input data-store="str-save" type="checkbox" /> Save Prof</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Dexterity</label>
+            <input data-store="dex-score" type="number" placeholder="10" />
+            <div class="inline-actions">
+              <input data-store="dex-mod" type="text" placeholder="+0 mod" />
+              <label><input data-store="dex-save" type="checkbox" /> Save Prof</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Constitution</label>
+            <input data-store="con-score" type="number" placeholder="10" />
+            <div class="inline-actions">
+              <input data-store="con-mod" type="text" placeholder="+0 mod" />
+              <label><input data-store="con-save" type="checkbox" /> Save Prof</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Intelligence</label>
+            <input data-store="int-score" type="number" placeholder="10" />
+            <div class="inline-actions">
+              <input data-store="int-mod" type="text" placeholder="+0 mod" />
+              <label><input data-store="int-save" type="checkbox" /> Save Prof</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Wisdom</label>
+            <input data-store="wis-score" type="number" placeholder="10" />
+            <div class="inline-actions">
+              <input data-store="wis-mod" type="text" placeholder="+0 mod" />
+              <label><input data-store="wis-save" type="checkbox" /> Save Prof</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Charisma</label>
+            <input data-store="cha-score" type="number" placeholder="10" />
+            <div class="inline-actions">
+              <input data-store="cha-mod" type="text" placeholder="+0 mod" />
+              <label><input data-store="cha-save" type="checkbox" /> Save Prof</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Skills</h3>
+        <p class="section-subtitle">Track proficiency, expertise, and modifiers.</p>
+        <div class="grid-3">
+          <div class="field">
+            <label><input type="checkbox" data-store="acrobatics-prof" /> Acrobatics (Dex)</label>
+            <input data-store="acrobatics-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="animal-prof" /> Animal Handling (Wis)</label>
+            <input data-store="animal-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="arcana-prof" /> Arcana (Int)</label>
+            <input data-store="arcana-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="athletics-prof" /> Athletics (Str)</label>
+            <input data-store="athletics-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="deception-prof" /> Deception (Cha)</label>
+            <input data-store="deception-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="history-prof" /> History (Int)</label>
+            <input data-store="history-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="insight-prof" /> Insight (Wis)</label>
+            <input data-store="insight-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="intimidation-prof" /> Intimidation (Cha)</label>
+            <input data-store="intimidation-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="investigation-prof" /> Investigation (Int)</label>
+            <input data-store="investigation-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="medicine-prof" /> Medicine (Wis)</label>
+            <input data-store="medicine-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="nature-prof" /> Nature (Int)</label>
+            <input data-store="nature-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="perception-prof" /> Perception (Wis)</label>
+            <input data-store="perception-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="performance-prof" /> Performance (Cha)</label>
+            <input data-store="performance-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="persuasion-prof" /> Persuasion (Cha)</label>
+            <input data-store="persuasion-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="religion-prof" /> Religion (Int)</label>
+            <input data-store="religion-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="sleight-prof" /> Sleight of Hand (Dex)</label>
+            <input data-store="sleight-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="stealth-prof" /> Stealth (Dex)</label>
+            <input data-store="stealth-mod" type="text" placeholder="+0" />
+          </div>
+          <div class="field">
+            <label><input type="checkbox" data-store="survival-prof" /> Survival (Wis)</label>
+            <input data-store="survival-mod" type="text" placeholder="+0" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-combat" class="panel">
+      <div class="card tab-panel-grid">
+        <h3>Combat Basics</h3>
+        <div class="grid-3">
+          <div class="field">
+            <label for="ac">Armor Class</label>
+            <input id="ac" type="number" min="0" />
+          </div>
+          <div class="field">
+            <label for="initiative">Initiative</label>
+            <input id="initiative" type="text" placeholder="+2" />
+          </div>
+          <div class="field">
+            <label for="speed">Speed</label>
+            <input id="speed" type="text" placeholder="30 ft" />
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="field">
+            <label for="hp-current">Current HP</label>
+            <input id="hp-current" type="number" min="0" />
+          </div>
+          <div class="field">
+            <label for="hp-max">Max HP</label>
+            <input id="hp-max" type="number" min="0" />
+          </div>
+          <div class="field">
+            <label for="hp-temp">Temp HP</label>
+            <input id="hp-temp" type="number" min="0" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Death Saves</h3>
+        <div class="grid-3">
+          <div class="field">
+            <label>Successes</label>
+            <div class="inline-actions">
+              <label><input type="checkbox" data-store="death-success-1" /> 1</label>
+              <label><input type="checkbox" data-store="death-success-2" /> 2</label>
+              <label><input type="checkbox" data-store="death-success-3" /> 3</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Failures</label>
+            <div class="inline-actions">
+              <label><input type="checkbox" data-store="death-fail-1" /> 1</label>
+              <label><input type="checkbox" data-store="death-fail-2" /> 2</label>
+              <label><input type="checkbox" data-store="death-fail-3" /> 3</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Attacks &amp; Spellcasting</h3>
+        <table class="table" aria-label="Attacks table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Attack Bonus</th>
+              <th>Damage/Type</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input data-store="attack-1-name" type="text" placeholder="Longbow" /></td>
+              <td><input data-store="attack-1-bonus" type="text" placeholder="+5" /></td>
+              <td><input data-store="attack-1-damage" type="text" placeholder="1d8+3 piercing" /></td>
+              <td><input data-store="attack-1-notes" type="text" placeholder="Range 150/600" /></td>
+            </tr>
+            <tr>
+              <td><input data-store="attack-2-name" type="text" placeholder="Shortsword" /></td>
+              <td><input data-store="attack-2-bonus" type="text" placeholder="+4" /></td>
+              <td><input data-store="attack-2-damage" type="text" placeholder="1d6+2 piercing" /></td>
+              <td><input data-store="attack-2-notes" type="text" placeholder="Light" /></td>
+            </tr>
+            <tr>
+              <td><input data-store="attack-3-name" type="text" placeholder="" /></td>
+              <td><input data-store="attack-3-bonus" type="text" placeholder="" /></td>
+              <td><input data-store="attack-3-damage" type="text" placeholder="" /></td>
+              <td><input data-store="attack-3-notes" type="text" placeholder="" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Conditions Tracker</h3>
+        <div class="grid-3">
+          <label><input type="checkbox" data-store="condition-blinded" /> Blinded</label>
+          <label><input type="checkbox" data-store="condition-charmed" /> Charmed</label>
+          <label><input type="checkbox" data-store="condition-deafened" /> Deafened</label>
+          <label><input type="checkbox" data-store="condition-frightened" /> Frightened</label>
+          <label><input type="checkbox" data-store="condition-grappled" /> Grappled</label>
+          <label><input type="checkbox" data-store="condition-incapacitated" /> Incapacitated</label>
+          <label><input type="checkbox" data-store="condition-invisible" /> Invisible</label>
+          <label><input type="checkbox" data-store="condition-paralyzed" /> Paralyzed</label>
+          <label><input type="checkbox" data-store="condition-poisoned" /> Poisoned</label>
+          <label><input type="checkbox" data-store="condition-prone" /> Prone</label>
+          <label><input type="checkbox" data-store="condition-restrained" /> Restrained</label>
+          <label><input type="checkbox" data-store="condition-stunned" /> Stunned</label>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-features" class="panel">
+      <div class="card tab-panel-grid">
+        <h3>Features &amp; Traits</h3>
+        <p class="section-subtitle">Add class, race, feat, or custom features.</p>
+        <textarea data-store="features-text" placeholder="List your class features, feats, racial traits, and special abilities here."></textarea>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Organized Features</h3>
+        <div class="grid-2">
+          <div class="field">
+            <label>Class Features</label>
+            <textarea data-store="features-class"></textarea>
+          </div>
+          <div class="field">
+            <label>Racial Features</label>
+            <textarea data-store="features-race"></textarea>
+          </div>
+          <div class="field">
+            <label>Feats</label>
+            <textarea data-store="features-feats"></textarea>
+          </div>
+          <div class="field">
+            <label>Other Features</label>
+            <textarea data-store="features-other"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Collapsible Feature Blocks</h3>
+        <details>
+          <summary>Feature Group 1</summary>
+          <textarea data-store="features-group-1"></textarea>
+        </details>
+        <details>
+          <summary>Feature Group 2</summary>
+          <textarea data-store="features-group-2"></textarea>
+        </details>
+      </div>
+    </section>
+
+    <section id="tab-inventory" class="panel">
+      <div class="card tab-panel-grid">
+        <h3>Inventory</h3>
+        <table class="table" aria-label="Inventory items">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Weight</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input data-store="item-1-name" type="text" placeholder="Backpack" /></td>
+              <td><input data-store="item-1-qty" type="number" min="0" value="1" /></td>
+              <td><input data-store="item-1-weight" type="text" placeholder="5 lb" /></td>
+              <td><input data-store="item-1-notes" type="text" placeholder="" /></td>
+            </tr>
+            <tr>
+              <td><input data-store="item-2-name" type="text" placeholder="Rations" /></td>
+              <td><input data-store="item-2-qty" type="number" min="0" value="0" /></td>
+              <td><input data-store="item-2-weight" type="text" placeholder="" /></td>
+              <td><input data-store="item-2-notes" type="text" placeholder="" /></td>
+            </tr>
+            <tr>
+              <td><input data-store="item-3-name" type="text" placeholder="" /></td>
+              <td><input data-store="item-3-qty" type="number" min="0" value="0" /></td>
+              <td><input data-store="item-3-weight" type="text" placeholder="" /></td>
+              <td><input data-store="item-3-notes" type="text" placeholder="" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Currency</h3>
+        <div class="grid-3">
+          <div class="field">
+            <label>CP</label>
+            <input data-store="currency-cp" type="number" min="0" />
+          </div>
+          <div class="field">
+            <label>SP</label>
+            <input data-store="currency-sp" type="number" min="0" />
+          </div>
+          <div class="field">
+            <label>EP</label>
+            <input data-store="currency-ep" type="number" min="0" />
+          </div>
+          <div class="field">
+            <label>GP</label>
+            <input data-store="currency-gp" type="number" min="0" />
+          </div>
+          <div class="field">
+            <label>PP</label>
+            <input data-store="currency-pp" type="number" min="0" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-spells" class="panel">
+      <div class="card tab-panel-grid">
+        <h3>Spell Slots</h3>
+        <div class="grid-3">
+          <div class="field">
+            <label>Level 1</label>
+            <input data-store="slots-1" type="text" placeholder="2/4" />
+          </div>
+          <div class="field">
+            <label>Level 2</label>
+            <input data-store="slots-2" type="text" placeholder="0/2" />
+          </div>
+          <div class="field">
+            <label>Level 3</label>
+            <input data-store="slots-3" type="text" placeholder="0/2" />
+          </div>
+          <div class="field">
+            <label>Level 4</label>
+            <input data-store="slots-4" type="text" placeholder="" />
+          </div>
+          <div class="field">
+            <label>Level 5</label>
+            <input data-store="slots-5" type="text" placeholder="" />
+          </div>
+          <div class="field">
+            <label>Level 6</label>
+            <input data-store="slots-6" type="text" placeholder="" />
+          </div>
+          <div class="field">
+            <label>Level 7</label>
+            <input data-store="slots-7" type="text" placeholder="" />
+          </div>
+          <div class="field">
+            <label>Level 8</label>
+            <input data-store="slots-8" type="text" placeholder="" />
+          </div>
+          <div class="field">
+            <label>Level 9</label>
+            <input data-store="slots-9" type="text" placeholder="" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Spell Import &amp; Search</h3>
+        <p class="section-subtitle">Load spells from the provided GitHub JSON, then filter and add to your list.</p>
+        <div class="spell-toolbar">
+          <div class="field">
+            <label for="spell-search">Search</label>
+            <input id="spell-search" type="text" placeholder="Search by name or text" />
+          </div>
+          <div class="field">
+            <label for="spell-level">Level</label>
+            <select id="spell-level">
+              <option value="">All</option>
+              <option value="0">Cantrip</option>
+              <option value="1">1st</option>
+              <option value="2">2nd</option>
+              <option value="3">3rd</option>
+              <option value="4">4th</option>
+              <option value="5">5th</option>
+              <option value="6">6th</option>
+              <option value="7">7th</option>
+              <option value="8">8th</option>
+              <option value="9">9th</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="spell-school">School</label>
+            <select id="spell-school">
+              <option value="">All</option>
+              <option value="Abjuration">Abjuration</option>
+              <option value="Conjuration">Conjuration</option>
+              <option value="Divination">Divination</option>
+              <option value="Enchantment">Enchantment</option>
+              <option value="Evocation">Evocation</option>
+              <option value="Illusion">Illusion</option>
+              <option value="Necromancy">Necromancy</option>
+              <option value="Transmutation">Transmutation</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="spell-class">Class</label>
+            <select id="spell-class">
+              <option value="">All</option>
+              <option value="Bard">Bard</option>
+              <option value="Cleric">Cleric</option>
+              <option value="Druid">Druid</option>
+              <option value="Paladin">Paladin</option>
+              <option value="Ranger">Ranger</option>
+              <option value="Sorcerer">Sorcerer</option>
+              <option value="Warlock">Warlock</option>
+              <option value="Wizard">Wizard</option>
+            </select>
+          </div>
+          <div class="spell-actions">
+            <button type="button" id="load-spells">Load Spells</button>
+            <button type="button" class="secondary" id="clear-spells">Clear Filters</button>
+          </div>
+        </div>
+        <div id="spell-status" class="warning hidden"></div>
+        <div class="spell-list" id="spell-results"></div>
+      </div>
+
+      <div class="card tab-panel-grid">
+        <h3>Your Spell List</h3>
+        <div id="selected-spells" class="spell-list"></div>
+      </div>
+    </section>
+
+    <section id="tab-notes" class="panel">
+      <div class="card tab-panel-grid">
+        <h3>Notes</h3>
+        <div class="note-grid">
+          <div class="field">
+            <label>Campaign Notes</label>
+            <textarea data-store="notes-campaign"></textarea>
+          </div>
+          <div class="field">
+            <label>NPCs &amp; Locations</label>
+            <textarea data-store="notes-npcs"></textarea>
+          </div>
+          <div class="field">
+            <label>Quest Log</label>
+            <textarea data-store="notes-quests"></textarea>
+          </div>
+          <div class="field">
+            <label>Loot &amp; Reminders</label>
+            <textarea data-store="notes-loot"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "dnd-character-sheet";
+    const SPELLS_URL = "https://raw.githubusercontent.com/Kemsypt/Character-Sheet/main/Data/Spell%20List.json";
+
+    const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
+    const panels = Array.from(document.querySelectorAll(".panel"));
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        tabButtons.forEach((btn) => btn.classList.remove("active"));
+        panels.forEach((panel) => panel.classList.remove("active"));
+        button.classList.add("active");
+        document.getElementById(`tab-${button.dataset.tab}`).classList.add("active");
+      });
+    });
+
+    const themeSelect = document.getElementById("theme-select");
+    const customAccent = document.getElementById("custom-accent");
+    const customBg = document.getElementById("custom-bg");
+    const applyCustomTheme = document.getElementById("apply-custom-theme");
+
+    themeSelect.addEventListener("change", () => {
+      document.body.dataset.theme = themeSelect.value === "default" ? "" : themeSelect.value;
+      saveState();
+    });
+
+    applyCustomTheme.addEventListener("click", () => {
+      document.body.style.setProperty("--accent", customAccent.value);
+      document.body.style.setProperty("--accent-soft", `${customAccent.value}22`);
+      document.body.style.setProperty("--bg", customBg.value);
+      saveState();
+    });
+
+    const storageInputs = Array.from(document.querySelectorAll("[data-store], input[type='text'], input[type='number'], textarea"));
+
+    function collectState() {
+      const data = {};
+      storageInputs.forEach((input) => {
+        if (!input.id && !input.dataset.store) {
+          return;
+        }
+        const key = input.dataset.store || input.id;
+        if (input.type === "checkbox") {
+          data[key] = input.checked;
+        } else {
+          data[key] = input.value;
+        }
+      });
+      data.theme = themeSelect.value;
+      data.customAccent = customAccent.value;
+      data.customBg = customBg.value;
+      data.selectedSpells = selectedSpells;
+      return data;
+    }
+
+    function applyState(data = {}) {
+      storageInputs.forEach((input) => {
+        const key = input.dataset.store || input.id;
+        if (!key || !(key in data)) {
+          return;
+        }
+        if (input.type === "checkbox") {
+          input.checked = Boolean(data[key]);
+        } else {
+          input.value = data[key];
+        }
+      });
+      if (data.theme) {
+        themeSelect.value = data.theme;
+        document.body.dataset.theme = data.theme === "default" ? "" : data.theme;
+      }
+      if (data.customAccent) {
+        customAccent.value = data.customAccent;
+        document.body.style.setProperty("--accent", data.customAccent);
+        document.body.style.setProperty("--accent-soft", `${data.customAccent}22`);
+      }
+      if (data.customBg) {
+        customBg.value = data.customBg;
+        document.body.style.setProperty("--bg", data.customBg);
+      }
+      if (Array.isArray(data.selectedSpells)) {
+        selectedSpells = data.selectedSpells;
+      }
+      renderSelectedSpells();
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState()));
+    }
+
+    storageInputs.forEach((input) => {
+      input.addEventListener("input", saveState);
+      input.addEventListener("change", saveState);
+    });
+
+    document.getElementById("save-local").addEventListener("click", saveState);
+
+    document.getElementById("export-json").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(collectState(), null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "character-sheet.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("import-json").addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          applyState(data);
+          saveState();
+        } catch (error) {
+          alert("Invalid JSON file.");
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    let allSpells = [];
+    let selectedSpells = [];
+
+    const spellResults = document.getElementById("spell-results");
+    const selectedSpellsContainer = document.getElementById("selected-spells");
+    const spellStatus = document.getElementById("spell-status");
+    const spellSearch = document.getElementById("spell-search");
+    const spellLevel = document.getElementById("spell-level");
+    const spellSchool = document.getElementById("spell-school");
+    const spellClass = document.getElementById("spell-class");
+
+    function showSpellStatus(message) {
+      spellStatus.textContent = message;
+      spellStatus.classList.remove("hidden");
+    }
+
+    function hideSpellStatus() {
+      spellStatus.classList.add("hidden");
+      spellStatus.textContent = "";
+    }
+
+    async function loadSpells() {
+      showSpellStatus("Loading spells from GitHub...");
+      try {
+        const response = await fetch(SPELLS_URL);
+        if (!response.ok) {
+          throw new Error("Unable to load spells.");
+        }
+        allSpells = await response.json();
+        hideSpellStatus();
+        renderSpellResults();
+      } catch (error) {
+        showSpellStatus("Failed to load spells. Check your connection or try again.");
+      }
+    }
+
+    function renderSpellResults() {
+      const searchTerm = spellSearch.value.trim().toLowerCase();
+      const levelFilter = spellLevel.value;
+      const schoolFilter = spellSchool.value;
+      const classFilter = spellClass.value;
+
+      const results = allSpells.filter((spell) => {
+        const matchesSearch =
+          !searchTerm ||
+          spell.name.toLowerCase().includes(searchTerm) ||
+          spell.description_md.toLowerCase().includes(searchTerm);
+        const matchesLevel = !levelFilter || spell.level.toString() === levelFilter;
+        const matchesSchool = !schoolFilter || spell.school === schoolFilter;
+        const matchesClass = !classFilter || (spell.classes || []).includes(classFilter);
+        return matchesSearch && matchesLevel && matchesSchool && matchesClass;
+      });
+
+      spellResults.innerHTML = "";
+      results.slice(0, 20).forEach((spell) => {
+        const card = document.createElement("div");
+        card.className = "spell-card";
+        const meta = document.createElement("div");
+        meta.className = "spell-meta";
+        meta.innerHTML = `
+          <span class="tag">Level ${spell.level}</span>
+          <span class="tag">${spell.school}</span>
+          <span class="tag">${spell.casting_time}</span>
+        `;
+
+        card.innerHTML = `
+          <header>
+            <strong>${spell.name}</strong>
+            <div class="pill">${(spell.classes || []).join(", ")}</div>
+          </header>
+          <div>${spell.range} • ${spell.duration}</div>
+          <div class="spell-meta"></div>
+          <div class="spell-actions"></div>
+        `;
+        card.querySelector(".spell-meta").replaceWith(meta);
+        const actionWrap = card.querySelector(".spell-actions");
+        const addBtn = document.createElement("button");
+        addBtn.textContent = "Add";
+        addBtn.type = "button";
+        addBtn.addEventListener("click", () => addSpell(spell));
+        actionWrap.appendChild(addBtn);
+        spellResults.appendChild(card);
+      });
+      if (!results.length && allSpells.length) {
+        spellResults.innerHTML = "<p class=\"section-subtitle\">No spells match your filters.</p>";
+      }
+    }
+
+    function addSpell(spell) {
+      if (selectedSpells.some((item) => item.id === spell.id)) {
+        return;
+      }
+      selectedSpells.push(spell);
+      renderSelectedSpells();
+      saveState();
+    }
+
+    function removeSpell(id) {
+      selectedSpells = selectedSpells.filter((spell) => spell.id !== id);
+      renderSelectedSpells();
+      saveState();
+    }
+
+    function renderSelectedSpells() {
+      selectedSpellsContainer.innerHTML = "";
+      if (!selectedSpells.length) {
+        selectedSpellsContainer.innerHTML = "<p class=\"section-subtitle\">No spells selected yet.</p>";
+        return;
+      }
+      selectedSpells.forEach((spell) => {
+        const card = document.createElement("div");
+        card.className = "spell-card";
+        card.innerHTML = `
+          <header>
+            <strong>${spell.name}</strong>
+            <div class="pill">Level ${spell.level} ${spell.school}</div>
+          </header>
+          <div>${spell.range} • ${spell.duration}</div>
+          <p>${spell.description_md}</p>
+        `;
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "secondary";
+        removeBtn.type = "button";
+        removeBtn.textContent = "Remove";
+        removeBtn.addEventListener("click", () => removeSpell(spell.id));
+        card.appendChild(removeBtn);
+        selectedSpellsContainer.appendChild(card);
+      });
+    }
+
+    document.getElementById("load-spells").addEventListener("click", loadSpells);
+
+    document.getElementById("clear-spells").addEventListener("click", () => {
+      spellSearch.value = "";
+      spellLevel.value = "";
+      spellSchool.value = "";
+      spellClass.value = "";
+      renderSpellResults();
+    });
+
+    [spellSearch, spellLevel, spellSchool, spellClass].forEach((input) => {
+      input.addEventListener("input", renderSpellResults);
+      input.addEventListener("change", renderSpellResults);
+    });
+
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+      applyState(JSON.parse(savedData));
+    }
+  </script>
+</body>
+</html>
