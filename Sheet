@@ -157,7 +157,9 @@
       height: 150px;
       border-radius: 16px;
       object-fit: cover;
-      object-position: var(--px, 50%) var(--py, 30%);
+      object-position: center;
+      transform: translate(0%, 0%) scale(1);
+      transform-origin: center;
       border: 1px solid rgba(255,255,255,0.14);
       background: rgba(0,0,0,0.18);
       box-shadow: var(--shadow);
@@ -675,8 +677,8 @@
       height: auto;
       display:block;
       object-fit: cover;
-      object-position: var(--px, 50%) var(--py, 30%);
-      transform: scale(var(--pz, 1));
+      object-position: center;
+      transform: translate(0%, 0%) scale(1);
       transform-origin: center;
       filter: saturate(1.05) contrast(1.03);
       cursor: pointer;
@@ -719,8 +721,8 @@
       height: 100%;
       display: block;
       object-fit: cover;
-      object-position: var(--px, 50%) var(--py, 30%);
-      transform: scale(var(--pz, 1));
+      object-position: center;
+      transform: translate(0%, 0%) scale(1);
       transform-origin: center;
       filter: saturate(1.05) contrast(1.03);
       pointer-events: none;
@@ -2349,6 +2351,11 @@
      **********************************************************************/
     const $ = (sel, root=document) => root.querySelector(sel);
     function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+    function applyPortraitTransform(el, x, y, zoom){
+      const tx = (50 - x) * (zoom - 1);
+      const ty = (50 - y) * (zoom - 1);
+      el.style.transform = `translate(${tx}%, ${ty}%) scale(${zoom})`;
+    }
     function modFromScore(score){ return Math.floor((score - 10) / 2); }
     function formatSigned(n){ return (n>=0? "+" : "") + n; }
     function escapeHTML(s){
@@ -2518,22 +2525,11 @@
     function renderPortrait(){
       const img = $("#portraitImg");
       img.src = state.portrait.url;
-      img.style.setProperty("--pz", String(state.portrait.zoom));
-      img.style.setProperty("--px", `${state.portrait.x}%`);
-      img.style.setProperty("--py", `${state.portrait.y}%`);
-      // applied via CSS vars on element, but we set them on root of img:
-      img.style.setProperty("--pz", state.portrait.zoom);
-      img.style.setProperty("--px", `${state.portrait.x}%`);
-      img.style.setProperty("--py", `${state.portrait.y}%`);
-      // also set on inline style for object-position
-      img.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
-      img.style.transform = `scale(${state.portrait.zoom})`;
+      applyPortraitTransform(img, state.portrait.x, state.portrait.y, state.portrait.zoom);
       const thumb = $("#tb_portrait");
       if (thumb){
         thumb.src = state.portrait.url;
-        thumb.style.setProperty("--px", `${state.portrait.x}%`);
-        thumb.style.setProperty("--py", `${state.portrait.y}%`);
-        thumb.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
+        applyPortraitTransform(thumb, state.portrait.x, state.portrait.y, state.portrait.zoom);
       }
     }
 
@@ -2541,11 +2537,7 @@
       const preview = $("#portraitPreviewImg");
       if (!preview) return;
       preview.src = state.portrait.url;
-      preview.style.setProperty("--pz", state.portrait.zoom);
-      preview.style.setProperty("--px", `${state.portrait.x}%`);
-      preview.style.setProperty("--py", `${state.portrait.y}%`);
-      preview.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
-      preview.style.transform = `scale(${state.portrait.zoom})`;
+      applyPortraitTransform(preview, state.portrait.x, state.portrait.y, state.portrait.zoom);
       $("#portraitPosLabel").textContent = `${state.portrait.x}% / ${state.portrait.y}%`;
     }
 
