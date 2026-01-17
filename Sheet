@@ -3099,38 +3099,39 @@
       $("#pz").value = state.portrait.zoom;
       applyPortraitControls();
     }
-    let portraitDrag = null;
     function startPortraitDrag(e){
       const preview = $("#portraitPreview");
       if (!preview || e.button !== 0) return;
       const rect = preview.getBoundingClientRect();
-      portraitDrag = {
-        startX: e.clientX,
-        startY: e.clientY,
-        originX: state.portrait.x,
-        originY: state.portrait.y,
-        rectW: rect.width || 1,
-        rectH: rect.height || 1
-      };
       preview.classList.add("is-dragging");
-      window.addEventListener("pointermove", movePortraitDrag);
-      window.addEventListener("pointerup", endPortraitDrag, { once: true });
-      movePortraitDrag(e);
+      preview.setPointerCapture(e.pointerId);
+      preview.dataset.dragging = "1";
+      preview.dataset.dragStartX = String(e.clientX);
+      preview.dataset.dragStartY = String(e.clientY);
+      preview.dataset.dragOriginX = String(state.portrait.x);
+      preview.dataset.dragOriginY = String(state.portrait.y);
+      preview.dataset.dragRectW = String(rect.width || 1);
+      preview.dataset.dragRectH = String(rect.height || 1);
     }
     function movePortraitDrag(e){
       const preview = $("#portraitPreview");
-      if (!preview || !portraitDrag) return;
-      e.preventDefault();
-      const dx = (e.clientX - portraitDrag.startX) / portraitDrag.rectW * 100;
-      const dy = (e.clientY - portraitDrag.startY) / portraitDrag.rectH * 100;
-      setPortraitPosition(portraitDrag.originX + dx, portraitDrag.originY + dy);
+      if (!preview || preview.dataset.dragging !== "1") return;
+      const startX = parseFloat(preview.dataset.dragStartX || "0");
+      const startY = parseFloat(preview.dataset.dragStartY || "0");
+      const originX = parseFloat(preview.dataset.dragOriginX || "50");
+      const originY = parseFloat(preview.dataset.dragOriginY || "30");
+      const rectW = parseFloat(preview.dataset.dragRectW || "1");
+      const rectH = parseFloat(preview.dataset.dragRectH || "1");
+      const dx = (e.clientX - startX) / rectW * 100;
+      const dy = (e.clientY - startY) / rectH * 100;
+      setPortraitPosition(originX + dx, originY + dy);
     }
-    function endPortraitDrag(){
+    function endPortraitDrag(e){
       const preview = $("#portraitPreview");
-      if (!preview) return;
+      if (!preview || preview.dataset.dragging !== "1") return;
       preview.classList.remove("is-dragging");
-      portraitDrag = null;
-      window.removeEventListener("pointermove", movePortraitDrag);
+      preview.dataset.dragging = "0";
+      preview.releasePointerCapture(e.pointerId);
     }
 
     /**********************************************************************
@@ -3347,6 +3348,9 @@
       $("#portraitReset").addEventListener("click", resetPortraitCrop);
       $("#pz").addEventListener("input", applyPortraitControls);
       $("#portraitPreview").addEventListener("pointerdown", startPortraitDrag);
+      $("#portraitPreview").addEventListener("pointermove", movePortraitDrag);
+      $("#portraitPreview").addEventListener("pointerup", endPortraitDrag);
+      $("#portraitPreview").addEventListener("pointercancel", endPortraitDrag);
 
       // Editable blur commits to state
       document.addEventListener("focusout", (e)=>{
