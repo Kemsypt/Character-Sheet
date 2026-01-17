@@ -82,13 +82,31 @@
       pointer-events: none;
       z-index: 1;
       opacity: 0;
-      transition: opacity 140ms ease;
+      transition: opacity 180ms ease;
       box-shadow:
-        inset 0 0 0 1px rgba(216,192,138,0.20),
-        inset 0 0 60px rgba(216,192,138,0.18),
-        inset 0 0 120px rgba(216,192,138,0.10);
+        inset 0 0 0 2px rgba(216,192,138,0.35),
+        inset 0 0 80px rgba(216,192,138,0.32),
+        inset 0 0 180px rgba(216,192,138,0.24);
+      animation: inspPulse 2.8s ease-in-out infinite;
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
+    body[data-insp-glow="on"] .topbar::after{
+      opacity: 1;
+    }
+    @keyframes inspPulse{
+      0%,100%{
+        box-shadow:
+          inset 0 0 0 2px rgba(216,192,138,0.35),
+          inset 0 0 80px rgba(216,192,138,0.32),
+          inset 0 0 180px rgba(216,192,138,0.24);
+      }
+      50%{
+        box-shadow:
+          inset 0 0 0 2px rgba(255,225,162,0.55),
+          inset 0 0 110px rgba(255,219,143,0.45),
+          inset 0 0 220px rgba(255,219,143,0.35);
+      }
+    }
 
     /* =======================
       TOP BAR
@@ -100,6 +118,17 @@
       backdrop-filter: blur(18px);
       background: linear-gradient(180deg, rgba(8,10,16,0.92), rgba(8,10,16,0.70));
       border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .topbar::after{
+      content:"";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 180ms ease;
+      box-shadow:
+        inset 0 -1px 0 rgba(255,236,189,0.45),
+        inset 0 -12px 22px rgba(255,217,121,0.22);
     }
 
     .topbar-inner{
@@ -659,6 +688,42 @@
       box-shadow: inset 0 0 80px rgba(0,0,0,0.55);
       opacity: 0.85;
     }
+    .portrait-preview{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 2 / 3;
+      width: min(260px, 100%);
+      margin-top: 10px;
+      position: relative;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+    }
+    .portrait-preview.is-dragging{
+      cursor: grabbing;
+    }
+    .portrait-preview img{
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: var(--px, 50%) var(--py, 30%);
+      transform: scale(var(--pz, 1));
+      transform-origin: center;
+      filter: saturate(1.05) contrast(1.03);
+      pointer-events: none;
+    }
+    .portrait-preview-grid{
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px) 0 0 / 33.33% 100%,
+        linear-gradient(180deg, rgba(255,255,255,0.08) 1px, transparent 1px) 0 0 / 100% 33.33%;
+      opacity: 0.35;
+    }
 
     /* Main "Quick Combat" row under hero */
     .quickstats{
@@ -871,6 +936,45 @@
       align-items:center;
       justify-content: space-between;
       gap: 12px;
+    }
+    .skill-row .dot-btn{
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+    }
+    body[data-edit="on"] .skill-row .dot-btn:focus-visible{
+      outline: 2px solid rgba(216,192,138,0.6);
+      outline-offset: 2px;
+    }
+    .skill-remove{
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .skill-remove:hover{ background: rgba(216,192,138,0.14); }
+
+    .save-pill.is-editable{
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+    body[data-edit="on"] .save-pill.is-editable:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+    }
+    .ability-remove{
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: pointer;
+      align-self: flex-end;
     }
     .skill-left{ display:flex; align-items:center; gap: 10px; min-width: 0; }
     .skill-name{
@@ -1138,7 +1242,13 @@
       place-items:center;
       border: 1px solid rgba(255,255,255,0.14);
       background: rgba(255,255,255,0.06);
-      font-size: 16px;
+      overflow: hidden;
+    }
+    .coin-ic img{
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      display: block;
     }
     .coin-meta{
       display:flex;
@@ -1167,23 +1277,54 @@
     /* Inventory attunement */
     .attune{
       display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
     }
     .attune-row{
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(0,0,0,0.16);
       border-radius: 14px;
-      padding: 10px 12px;
+      padding: 12px;
       display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .attune-row:hover{
+      border-color: rgba(216,192,138,0.45);
+      background: rgba(216,192,138,0.10);
     }
     .attune-row strong{ font-weight: 950; }
     .attune-slot{
       color: var(--muted);
       font-weight: 850;
+    }
+    .attune-notes{
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .note-card{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.16);
+      border-radius: 16px;
+      padding: 12px;
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .note-title{
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    .note-body{
+      min-height: 48px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 8px 10px;
     }
   </style>
 </head>
@@ -1193,8 +1334,8 @@
     <div class="topbar-inner">
       <!-- Name block -->
       <div class="id-block">
-        <h1 class="id-name editable" id="tb_name">Elaria Thornbloom</h1>
-        <div class="id-sub editable" id="tb_sub">Wood Elf • Druid 10</div>
+        <h1 class="id-name" id="tb_name">Elaria Thornbloom</h1>
+        <div class="id-sub" id="tb_sub">Wood Elf • Druid 10</div>
       </div>
 
       <!-- Right side -->
@@ -1203,22 +1344,22 @@
         <div class="top-row" aria-label="Top stats row">
           <div class="cap stat-cap" title="Armor Class">
             <div class="stat-k">AC</div>
-            <div class="stat-v editable" id="tb_ac">16</div>
+            <div class="stat-v" id="tb_ac">16</div>
           </div>
 
           <div class="cap stat-cap" title="Initiative">
             <div class="stat-k">INIT</div>
-            <div class="stat-v editable" id="tb_init">+3</div>
+            <div class="stat-v" id="tb_init">+3</div>
           </div>
 
           <div class="cap stat-cap" title="Speed">
             <div class="stat-k">SPD</div>
-            <div class="stat-v editable" id="tb_speed">35</div>
+            <div class="stat-v" id="tb_speed">35</div>
           </div>
 
           <div class="cap stat-cap" title="Proficiency Bonus">
             <div class="stat-k">PROF</div>
-            <div class="stat-v editable" id="tb_pb">+4</div>
+            <div class="stat-v" id="tb_pb">+4</div>
           </div>
 
           <div class="cap chip-cap chip-money" title="Money">
@@ -1265,7 +1406,7 @@
           <div class="cap hp-cap" title="Health">
             <div class="hp-left">
               <div class="hp-text">
-                <span class="num editable" id="tb_hp_cur">73</span>/<span class="num editable" id="tb_hp_max">73</span>
+                <span class="num" id="tb_hp_cur">73</span>/<span class="num" id="tb_hp_max">73</span>
               </div>
               <div class="hp-mod" id="tb_temp_label">+0</div>
             </div>
@@ -1329,11 +1470,53 @@
 
               <!-- NEW: Quick combat block under hero -->
               <div class="quickstats" aria-label="Main quick stats">
-                <div class="qs"><div class="k">HP</div><div class="v"><span class="num" id="m_hp">73/73</span></div></div>
-                <div class="qs"><div class="k">AC</div><div class="v"><span class="num" id="m_ac">16</span></div></div>
-                <div class="qs"><div class="k">INIT</div><div class="v"><span class="num" id="m_init">+3</span></div></div>
-                <div class="qs"><div class="k">PROF</div><div class="v"><span class="num" id="m_prof">+4</span></div></div>
-                <div class="qs"><div class="k">SPD</div><div class="v"><span class="num" id="m_spd">35</span></div></div>
+                <div class="qs">
+                  <div class="k">HP</div>
+                  <div class="v">
+                    <span class="num editable" id="m_hp_cur">73</span>/<span class="num editable" id="m_hp_max">73</span>
+                    <span class="muted" id="m_hp_temp"></span>
+                  </div>
+                </div>
+                <div class="qs"><div class="k">AC</div><div class="v"><span class="num editable" id="m_ac">16</span></div></div>
+                <div class="qs"><div class="k">INIT</div><div class="v"><span class="num editable" id="m_init">+3</span></div></div>
+                <div class="qs"><div class="k">PROF</div><div class="v"><span class="num editable" id="m_prof">+4</span></div></div>
+                <div class="qs"><div class="k">SPD</div><div class="v"><span class="num editable" id="m_spd">35</span></div></div>
+              </div>
+            </div>
+
+            <div class="card" id="xpCard" style="display:none;">
+              <h4>Progress</h4>
+              <div class="xpbox" id="xpBox">
+                <div class="xpgrid">
+                  <div class="field">
+                    <label>Current XP</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                      <input id="xpCurrent" type="number" min="0" value="0" inputmode="numeric" />
+                      <span class="val">xp</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Next Level</label>
+                    <div class="val"><span id="xpNext">300</span> xp</div>
+                  </div>
+                  <div class="field">
+                    <label>Level</label>
+                    <div class="val">Lv <span id="xpLevel">1</span></div>
+                  </div>
+                  <div class="field">
+                    <label>To Next</label>
+                    <div class="val"><span id="xpToNext">300</span> xp</div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="small">Add XP updates thresholds. Use “Level Up” when ready.</div>
+                  <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+                    <input class="amt" id="xpAddAmt" type="number" min="0" value="0" inputmode="numeric" style="width:86px;" />
+                    <button class="btn primary" id="xpAddBtn" type="button">Add XP</button>
+                    <button class="btn" id="xpLevelUpBtn" type="button" style="display:none;">Level Up</button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1354,50 +1537,36 @@
                 <div class="k">Race / Species</div><div class="v editable" id="mainRace">Wood Elf</div>
                 <div class="k">Background</div><div class="v editable" id="mainBackground">Sage</div>
                 <div class="k">Alignment</div><div class="v editable" id="mainAlignment">Neutral Good</div>
-                <div class="k">Progress</div>
-                <div class="v">
-                  <div class="progress-toggle">
-                    <div class="seg" role="group" aria-label="Progress toggle">
-                      <button id="btnModeMilestone" type="button" aria-pressed="true">Milestone</button>
-                      <button id="btnModeXP" type="button" aria-pressed="false">XP</button>
-                    </div>
-                    <span class="tag" id="progressValue">Milestone</span>
-                  </div>
+              </div>
+            </div>
 
-                  <!-- XP UI (hidden unless XP mode) -->
-                  <div class="xpbox" id="xpBox" style="display:none;">
-                    <div class="xpgrid">
-                      <div class="field">
-                        <label>Current XP</label>
-                        <div style="display:flex; gap:8px; align-items:center;">
-                          <input id="xpCurrent" type="number" min="0" value="0" inputmode="numeric" />
-                          <span class="val">xp</span>
-                        </div>
-                      </div>
-                      <div class="field">
-                        <label>Next Level</label>
-                        <div class="val"><span id="xpNext">300</span> xp</div>
-                      </div>
-                      <div class="field">
-                        <label>Level</label>
-                        <div class="val">Lv <span id="xpLevel">1</span></div>
-                      </div>
-                      <div class="field">
-                        <label>To Next</label>
-                        <div class="val"><span id="xpToNext">300</span> xp</div>
-                      </div>
-                    </div>
+            <div class="card">
+              <h4>Defense</h4>
+              <div class="kv">
+                <div class="k">Hit Dice</div><div class="v editable" id="defHitDice">Druid d8 ×10</div>
+                <div class="k">Healing Surges</div><div class="v editable" id="defSurges">—</div>
+                <div class="k">Death Saves</div><div class="v editable" id="defDeathSaves">0 success / 0 fail</div>
+              </div>
 
-                    <div class="row">
-                      <div class="small">Add XP updates level automatically using standard 5e XP thresholds.</div>
-                      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-                        <input class="amt" id="xpAddAmt" type="number" min="0" value="0" inputmode="numeric" style="width:86px;" />
-                        <button class="btn primary" id="xpAddBtn" type="button">Add XP</button>
-                      </div>
-                    </div>
-                  </div>
+              <div style="height:10px"></div>
 
-                </div>
+              <div class="kv">
+                <div class="k">AC: Armor</div><div class="v editable" id="defArmor">Leather (11)</div>
+                <div class="k">AC: Shield</div><div class="v editable" id="defShield">None</div>
+                <div class="k">AC: Dex Cap</div><div class="v editable" id="defDexCap">+3</div>
+                <div class="k">AC: Magic</div><div class="v editable" id="defMagic">+0</div>
+                <div class="k">AC: Other</div><div class="v editable" id="defOther">—</div>
+              </div>
+
+              <div style="height:10px"></div>
+
+              <div class="kv">
+                <div class="k">Resistances</div><div class="v editable" id="defResist">—</div>
+                <div class="k">Immunities</div><div class="v editable" id="defImmune">—</div>
+                <div class="k">Vulnerabilities</div><div class="v editable" id="defVuln">—</div>
+                <div class="k">Condition Immunities</div><div class="v editable" id="defCondImmune">—</div>
+                <div class="k">Senses</div><div class="v editable" id="defSenses">Darkvision 60 ft.</div>
+                <div class="k">Passive Scores</div><div class="v editable" id="defPassive">Perception 14 • Insight 13 • Investigation 12</div>
               </div>
             </div>
 
@@ -1472,8 +1641,8 @@
       <div class="panel-header">
         <h2 class="panel-title">Combat</h2>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <span class="tag">Spell DC: <span class="num" id="sp_dc">16</span></span>
-          <span class="tag">Spell Atk: <span class="num" id="sp_atk">+8</span></span>
+          <span class="tag">Spell DC: <span class="num editable" id="sp_dc">16</span></span>
+          <span class="tag">Spell Atk: <span class="num editable" id="sp_atk">+8</span></span>
         </div>
       </div>
 
@@ -1546,7 +1715,7 @@
         <h2 class="panel-title">Inventory</h2>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <span class="tag">Encumbrance: <span id="i_enc">Light</span></span>
-          <span class="tag">Currency: <span id="i_money">—</span></span>
+          <button class="tag" id="inventoryCurrencyBtn" type="button">Currency: <span id="i_money">—</span></button>
         </div>
       </div>
 
@@ -1590,7 +1759,10 @@
 
     <!-- NOTES -->
     <section class="panel" id="tab-notes" data-tabpanel data-active="false" role="tabpanel" aria-labelledby="tabbtn-notes">
-      <div class="panel-header"><h2 class="panel-title">Notes</h2></div>
+      <div class="panel-header">
+        <h2 class="panel-title">Notes</h2>
+        <button class="mini" id="addNoteBtn" type="button">＋</button>
+      </div>
       <div class="panel-body" id="n_notes"></div>
     </section>
   </main>
@@ -1614,8 +1786,37 @@
 
       <div style="height:10px"></div>
 
+      <div class="card" id="customCurrencyPanel" style="display:none;">
+        <h4>Custom Currency</h4>
+        <div class="small">Add or remove custom coin types while in edit mode.</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-top:10px;">
+          <input class="select" id="customCoinName" placeholder="Name" />
+          <input class="select" id="customCoinKey" placeholder="Code (e.g. tc)" />
+          <input class="select" id="customCoinValue" type="number" step="0.01" min="0" placeholder="gp value" />
+          <input class="select" id="customCoinIcon" placeholder="Icon URL (optional)" />
+          <button class="btn primary" id="addCustomCoinBtn" type="button">Add</button>
+        </div>
+        <div style="height:10px"></div>
+        <div id="customCoinList"></div>
+      </div>
+
       <div class="small">
         Values: pp=10gp, gp=1gp, ep=0.5gp, sp=0.1gp, cp=0.01gp.
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Attunement detail dialog -->
+  <dialog id="attuneDialog" aria-label="Attunement detail">
+    <div class="dlg-head">
+      <h3 class="dlg-title" id="attuneDialogTitle">Attunement</h3>
+      <button class="icon-btn" id="attuneClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div class="card">
+        <div class="small muted" id="attuneDialogBrief"></div>
+        <div style="height:10px"></div>
+        <div id="attuneDialogDetail"></div>
       </div>
     </div>
   </dialog>
@@ -1739,6 +1940,20 @@
 
       <div style="height:12px"></div>
 
+      <div class="card">
+        <h4>Progress Mode</h4>
+        <div class="small">Choose milestone or XP progression for the main view.</div>
+        <div class="progress-toggle" style="margin-top:10px;">
+          <div class="seg" role="group" aria-label="Progress toggle">
+            <button id="btnModeMilestone" type="button" aria-pressed="true">Milestone</button>
+            <button id="btnModeXP" type="button" aria-pressed="false">XP</button>
+          </div>
+          <span class="tag" id="progressValue">Milestone</span>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
       <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
         <button class="btn" id="resetTheme" type="button">Reset</button>
         <button class="btn primary" id="saveTheme" type="button">Save</button>
@@ -1780,20 +1995,14 @@
             <label>Reset</label>
             <button class="btn" id="portraitReset" type="button">Default crop</button>
           </div>
-          <div class="field">
-            <label>Pos X</label>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input id="px" type="range" min="0" max="100" step="1" style="width:160px;">
-              <span class="val" id="pxVal">50%</span>
-            </div>
-          </div>
-          <div class="field">
-            <label>Pos Y</label>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input id="py" type="range" min="0" max="100" step="1" style="width:160px;">
-              <span class="val" id="pyVal">30%</span>
-            </div>
-          </div>
+        </div>
+
+        <div class="portrait-preview" id="portraitPreview" aria-label="Portrait position preview">
+          <img id="portraitPreviewImg" alt="Portrait preview" />
+          <div class="portrait-preview-grid"></div>
+        </div>
+        <div class="small" style="margin-top:8px;">
+          Drag inside the preview to reposition. Position: <strong id="portraitPosLabel">50% / 30%</strong>
         </div>
       </div>
 
@@ -1921,24 +2130,24 @@
     ];
 
     const baseSkills = [
-      { name:"Acrobatics",       abil:"dex" },
-      { name:"Animal Handling",  abil:"wis" },
-      { name:"Arcana",           abil:"int" },
-      { name:"Athletics",        abil:"str" },
-      { name:"Deception",        abil:"cha" },
-      { name:"History",          abil:"int" },
-      { name:"Insight",          abil:"wis" },
-      { name:"Intimidation",     abil:"cha" },
-      { name:"Investigation",    abil:"int" },
-      { name:"Medicine",         abil:"wis" },
-      { name:"Nature",           abil:"int" },
-      { name:"Perception",       abil:"wis" },
-      { name:"Performance",      abil:"cha" },
-      { name:"Persuasion",       abil:"cha" },
-      { name:"Religion",         abil:"int" },
-      { name:"Sleight of Hand",  abil:"dex" },
-      { name:"Stealth",          abil:"dex" },
-      { name:"Survival",         abil:"wis" }
+      { name:"Acrobatics",       abil:"dex", custom:false },
+      { name:"Animal Handling",  abil:"wis", custom:false },
+      { name:"Arcana",           abil:"int", custom:false },
+      { name:"Athletics",        abil:"str", custom:false },
+      { name:"Deception",        abil:"cha", custom:false },
+      { name:"History",          abil:"int", custom:false },
+      { name:"Insight",          abil:"wis", custom:false },
+      { name:"Intimidation",     abil:"cha", custom:false },
+      { name:"Investigation",    abil:"int", custom:false },
+      { name:"Medicine",         abil:"wis", custom:false },
+      { name:"Nature",           abil:"int", custom:false },
+      { name:"Perception",       abil:"wis", custom:false },
+      { name:"Performance",      abil:"cha", custom:false },
+      { name:"Persuasion",       abil:"cha", custom:false },
+      { name:"Religion",         abil:"int", custom:false },
+      { name:"Sleight of Hand",  abil:"dex", custom:false },
+      { name:"Stealth",          abil:"dex", custom:false },
+      { name:"Survival",         abil:"wis", custom:false }
     ];
 
     const state = {
@@ -1957,17 +2166,18 @@
       status: { conditions: [], exhaustion: 0 },
 
       coins: { pp: 2, gp: 121, ep: 0, sp: 35, cp: 70 },
+      customCurrencies: [],
 
       hitDice: { total: 10, remaining: 7, die: 8, conMod: 2 },
       wildShape: { max: 2, remaining: 1 },
 
       abilities: [
-        { key:"str", label:"STR", score:10, saveProf:false },
-        { key:"dex", label:"DEX", score:16, saveProf:false },
-        { key:"con", label:"CON", score:14, saveProf:false },
-        { key:"int", label:"INT", score:12, saveProf:false },
-        { key:"wis", label:"WIS", score:15, saveProf:true  },
-        { key:"cha", label:"CHA", score:10, saveProf:false }
+        { key:"str", label:"STR", score:10, saveProf:false, custom:false },
+        { key:"dex", label:"DEX", score:16, saveProf:false, custom:false },
+        { key:"con", label:"CON", score:14, saveProf:false, custom:false },
+        { key:"int", label:"INT", score:12, saveProf:false, custom:false },
+        { key:"wis", label:"WIS", score:15, saveProf:true, custom:false },
+        { key:"cha", label:"CHA", score:10, saveProf:false, custom:false }
       ],
 
       skills: [...baseSkills],
@@ -1982,6 +2192,7 @@
 
       xpMode: "milestone", // "milestone" | "xp"
       xp: 0,
+      xpLevel: 1,
 
       spells: {
         dc: 16,
@@ -2022,9 +2233,9 @@
 
       inventory: {
         attunements: [
-          { item: "Moonstone Charm", notes:"Attuned • faint warmth near fey crossings" },
-          { item: "Ring of Warmth", notes:"Attuned • cold resistance (example)" },
-          { item: "", notes:"(empty)" }
+          { item: "Moonstone Charm", notes:"Attuned • faint warmth near fey crossings", detail:"A polished charm that hums softly near fey crossings. Grants a faint lunar glow in moonlight." },
+          { item: "Ring of Warmth", notes:"Attuned • cold resistance (example)", detail:"Grants resistance to cold damage. Keeps the wearer comfortable in frigid climates." },
+          { item: "", notes:"(empty)", detail:"No attunement item slotted." }
         ],
         items: [
           { name:"Quarterstaff", qty: 1, notes:"Focus (wooden staff)" },
@@ -2043,9 +2254,9 @@
       },
 
       notes: [
-        "Keep a slot for Speak with Animals when traveling.",
-        "Mark fey signs near the old stone bridge.",
-        "Owes a favor to the apothecary in Westhollow."
+        { title:"Travel Prep", body:"Keep a slot for Speak with Animals when traveling." },
+        { title:"Fey Signs", body:"Mark fey signs near the old stone bridge." },
+        { title:"Debts", body:"Owes a favor to the apothecary in Westhollow." }
       ],
 
       portrait: {
@@ -2086,10 +2297,19 @@
     }
 
     // currency values in gp
-    const COIN_VALUE = { pp: 10, gp: 1, ep: 0.5, sp: 0.1, cp: 0.01 };
+    const DEFAULT_CURRENCIES = [
+      { k:"pp", name:"Platinum", val: 10, icon:"https://i.imgur.com/ve9Wxm3.png" },
+      { k:"gp", name:"Gold",     val: 1,  icon:"https://i.imgur.com/bbdjD7q.png" },
+      { k:"ep", name:"Electrum", val: 0.5, icon:"https://i.imgur.com/kInHPBm.png" },
+      { k:"sp", name:"Silver",   val: 0.1, icon:"https://i.imgur.com/WsWriqq.png" },
+      { k:"cp", name:"Copper",   val: 0.01, icon:"https://i.imgur.com/szyG7Ec.png" }
+    ];
+    function getCurrencies(){
+      return [...DEFAULT_CURRENCIES, ...(state.customCurrencies || [])];
+    }
     function coinTotalGP(coins){
       let t = 0;
-      for (const k of Object.keys(COIN_VALUE)) t += (coins[k] || 0) * COIN_VALUE[k];
+      for (const c of getCurrencies()) t += (coins[c.k] || 0) * c.val;
       return Math.round(t * 100) / 100;
     }
 
@@ -2107,15 +2327,13 @@
       }
       return lvl;
     }
-    function nextThreshold(xp){
-      const lvl = levelFromXP(xp);
-      const next = XP_THRESHOLDS.find(r => r.lvl === Math.min(20, lvl + 1));
-      return next ? next.xp : XP_THRESHOLDS[XP_THRESHOLDS.length - 1].xp;
-    }
     function renderXPBox(){
       const xp = Math.max(0, state.xp|0);
-      const lvl = levelFromXP(xp);
-      const next = nextThreshold(xp);
+      const maxLvl = levelFromXP(xp);
+      const lvl = Math.min(state.xpLevel || maxLvl, maxLvl);
+      state.xpLevel = lvl;
+      const nextRow = XP_THRESHOLDS.find(r => r.lvl === Math.min(20, lvl + 1));
+      const next = nextRow ? nextRow.xp : XP_THRESHOLDS[XP_THRESHOLDS.length - 1].xp;
       const toNext = Math.max(0, next - xp);
 
       $("#xpCurrent").value = xp;
@@ -2123,8 +2341,15 @@
       $("#xpNext").textContent = next;
       $("#xpToNext").textContent = toNext;
 
-      // reflect into total level (display-only for now)
-      $("#mainTotalLevel").textContent = lvl;
+      $("#xpLevelUpBtn").style.display = nextRow && xp >= nextRow.xp ? "inline-flex" : "none";
+    }
+    function applyXPMode(){
+      const isXP = state.xpMode === "xp";
+      $("#xpCard").style.display = isXP ? "block" : "none";
+      $("#progressValue").textContent = isXP ? "XP" : "Milestone";
+      $("#btnModeMilestone").setAttribute("aria-pressed", isXP ? "false" : "true");
+      $("#btnModeXP").setAttribute("aria-pressed", isXP ? "true" : "false");
+      if (isXP) renderXPBox();
     }
 
     /**********************************************************************
@@ -2175,7 +2400,9 @@
       $("#statusTooltipText").textContent = active.length ? active.join(", ") : "None";
 
       // main quickstats mirror
-      $("#m_hp").textContent = `${state.hp.cur}/${state.hp.max}${state.hp.temp>0 ? ` (+${state.hp.temp})` : ""}`;
+      $("#m_hp_cur").textContent = state.hp.cur;
+      $("#m_hp_max").textContent = state.hp.max;
+      $("#m_hp_temp").textContent = state.hp.temp>0 ? ` (+${state.hp.temp})` : "";
       $("#m_ac").textContent = state.ac;
       $("#m_init").textContent = formatSigned(state.init);
       $("#m_prof").textContent = formatSigned(state.prof);
@@ -2222,16 +2449,30 @@
       img.style.transform = `scale(${state.portrait.zoom})`;
     }
 
+    function updatePortraitPreview(){
+      const preview = $("#portraitPreviewImg");
+      if (!preview) return;
+      preview.src = state.portrait.url;
+      preview.style.setProperty("--pz", state.portrait.zoom);
+      preview.style.setProperty("--px", `${state.portrait.x}%`);
+      preview.style.setProperty("--py", `${state.portrait.y}%`);
+      preview.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
+      preview.style.transform = `scale(${state.portrait.zoom})`;
+      $("#portraitPosLabel").textContent = `${state.portrait.x}% / ${state.portrait.y}%`;
+    }
+
     function renderAbilities(){
       const grid = $("#abilGrid");
       grid.innerHTML = "";
 
+      const isEditable = state.settings.editUnlocked;
       for (const a of state.abilities){
         const mod = modFromScore(a.score);
         const save = mod + (a.saveProf ? state.prof : 0);
 
         grid.insertAdjacentHTML("beforeend", `
           <div class="abil-card">
+            ${a.custom && isEditable ? `<button class="ability-remove" type="button" data-ability="${escapeHTML(a.key)}">Remove</button>` : ""}
             <div class="abil-head">${escapeHTML(a.label)}</div>
             <div class="abil-box">
               <div class="abil-score">${a.score}</div>
@@ -2241,7 +2482,7 @@
               <div class="abil-subv">${formatSigned(mod)}</div>
             </div>
             <div style="display:flex; justify-content:center;">
-              <span class="save-pill ${a.saveProf ? "pro":""}">
+              <span class="save-pill ${a.saveProf ? "pro":""} ${isEditable ? "is-editable":""}" data-ability="${escapeHTML(a.key)}" role="button" aria-pressed="${a.saveProf ? "true" : "false"}">
                 SAVING THROW ${formatSigned(save)}
               </span>
             </div>
@@ -2268,6 +2509,7 @@
       const abil = getAbilityByKey(skill.abil) || getAbilityByKey("int");
       const base = modFromScore(abil.score);
       const level = state.skillProfs[skill.name] ?? 0;
+      const isEditable = state.settings.editUnlocked;
 
       let bonus = base;
       if (level === 1) bonus += Math.floor(state.prof / 2);
@@ -2277,13 +2519,44 @@
       return `
         <div class="skill-row">
           <div class="skill-left">
-            <span class="dot ${level===1?"fill": level>=2?"gold":""}"></span>
+            <button class="dot-btn" type="button" data-skill="${escapeHTML(skill.name)}" aria-label="Toggle proficiency for ${escapeHTML(skill.name)}">
+              <span class="dot ${level===1?"fill": level>=2?"gold":""}" style="${level===3 ? "box-shadow:0 0 0 2px rgba(216,192,138,0.22) inset;" : ""}"></span>
+            </button>
             <span class="skill-name">${escapeHTML(skill.name)}</span>
           </div>
           <div class="skill-mid">${escapeHTML(abil.label)}</div>
           <div class="skill-right">${formatSigned(bonus)}</div>
+          ${skill.custom && isEditable ? `<button class="skill-remove" type="button" data-skill-remove="${escapeHTML(skill.name)}">Remove</button>` : ""}
         </div>
       `;
+    }
+
+    function cycleSkillProficiency(name){
+      if (!state.settings.editUnlocked) return;
+      const current = state.skillProfs[name] ?? 0;
+      state.skillProfs[name] = (current + 1) % 4;
+      renderAbilities();
+    }
+
+    function toggleSaveProficiency(key){
+      if (!state.settings.editUnlocked) return;
+      const ability = state.abilities.find(a => a.key === key);
+      if (!ability) return;
+      ability.saveProf = !ability.saveProf;
+      renderAbilities();
+    }
+
+    function removeCustomSkill(name){
+      if (!state.settings.editUnlocked) return;
+      state.skills = state.skills.filter(s => s.name !== name);
+      delete state.skillProfs[name];
+      renderAbilities();
+    }
+
+    function removeCustomAbility(key){
+      if (!state.settings.editUnlocked) return;
+      state.abilities = state.abilities.filter(a => a.key !== key);
+      renderAbilities();
     }
 
     function renderCombat(){
@@ -2351,47 +2624,93 @@
 
       // attunement list
       $("#attuneList").innerHTML = state.inventory.attunements.map((a, idx) => `
-        <div class="attune-row">
-          <div style="min-width:0;">
-            <strong class="attune-slot">Slot ${idx+1}</strong>
-            <div class="muted" style="margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-              ${escapeHTML(a.item || "(empty)")}
-            </div>
-          </div>
-          <div class="muted" style="text-align:right; max-width: 52%;">
-            ${escapeHTML(a.notes || "")}
-          </div>
+        <div class="attune-row" role="button" tabindex="0" data-attune-index="${idx}">
+          <strong class="attune-slot">Slot ${idx+1}</strong>
+          <div>${escapeHTML(a.item || "(empty)")}</div>
+          <div class="attune-notes">${escapeHTML(a.notes || "")}</div>
         </div>
       `).join("");
     }
 
     function renderNotes(){
-      $("#n_notes").innerHTML = `
-        <ul style="margin:0; padding-left:18px;">
-          ${state.notes.map(n => `<li class="muted">${escapeHTML(n)}</li>`).join("")}
-        </ul>
-      `;
+      $("#n_notes").innerHTML = state.notes.map((n, idx) => `
+        <div class="note-card" data-note="${idx}">
+          <div class="note-title" contenteditable="true" data-note-title="${idx}">${escapeHTML(n.title)}</div>
+          <div class="note-body" contenteditable="true" data-note-body="${idx}">${escapeHTML(n.body)}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderCustomCurrencyPanel(){
+      const panel = $("#customCurrencyPanel");
+      if (!panel) return;
+      const canEdit = !!state.settings.editUnlocked;
+      panel.style.display = canEdit ? "block" : "none";
+      if (!canEdit) return;
+
+      const list = $("#customCoinList");
+      list.innerHTML = state.customCurrencies.map(c => `
+        <div class="row" style="align-items:center; justify-content:space-between; margin-bottom:8px;">
+          <div class="small">${escapeHTML(c.name)} (${escapeHTML(c.k)}) • ${c.val} gp</div>
+          <button class="btn" type="button" data-custom-coin="${escapeHTML(c.k)}">Remove</button>
+        </div>
+      `).join("");
+    }
+
+    function addCustomCurrency(){
+      const name = $("#customCoinName").value.trim();
+      const key = $("#customCoinKey").value.trim().toLowerCase();
+      const val = parseFloat($("#customCoinValue").value);
+      const icon = $("#customCoinIcon").value.trim();
+      if (!name || !key || !Number.isFinite(val)) return;
+      if (getCurrencies().some(c => c.k === key)) return;
+
+      state.customCurrencies.push({ k: key, name, val, icon });
+      state.coins[key] = state.coins[key] || 0;
+      $("#customCoinName").value = "";
+      $("#customCoinKey").value = "";
+      $("#customCoinValue").value = "";
+      $("#customCoinIcon").value = "";
+      renderCoinPurse();
+    }
+
+    function removeCustomCurrency(key){
+      state.customCurrencies = state.customCurrencies.filter(c => c.k !== key);
+      delete state.coins[key];
+      renderCoinPurse();
+    }
+
+    function addNote(){
+      state.notes.push({ title:"New Note", body:"" });
+      renderNotes();
+    }
+
+    function updateNoteFromElement(el){
+      const titleIdx = el.dataset.noteTitle;
+      const bodyIdx = el.dataset.noteBody;
+      if (titleIdx !== undefined){
+        if (!state.notes[titleIdx]) return;
+        state.notes[titleIdx].title = el.textContent.trim() || "Untitled";
+      }
+      if (bodyIdx !== undefined){
+        if (!state.notes[bodyIdx]) return;
+        state.notes[bodyIdx].body = el.textContent.trim();
+      }
     }
 
     function renderCoinPurse(){
       const total = coinTotalGP(state.coins);
       $("#coinTotal").textContent = total.toFixed(2);
 
-      const cards = [
-        { k:"pp", name:"Platinum", icon:"👑", val: COIN_VALUE.pp },
-        { k:"gp", name:"Gold",     icon:"🪙", val: COIN_VALUE.gp },
-        { k:"ep", name:"Electrum", icon:"⬡", val: COIN_VALUE.ep },
-        { k:"sp", name:"Silver",   icon:"🌙", val: COIN_VALUE.sp },
-        { k:"cp", name:"Copper",   icon:"🔥", val: COIN_VALUE.cp }
-      ].map(c => {
+      const cards = getCurrencies().map(c => {
         const amt = state.coins[c.k] || 0;
         const gp = (amt * c.val).toFixed(2);
         return `
           <div class="coin-card" data-coin="${c.k}">
             <div class="coin-left">
-              <div class="coin-ic">${c.icon}</div>
+              <div class="coin-ic">${c.icon ? `<img src="${c.icon}" alt="${escapeHTML(c.name)}" />` : escapeHTML(c.k.toUpperCase())}</div>
               <div class="coin-meta">
-                <div class="coin-name">${c.name} (${c.k})</div>
+                <div class="coin-name">${escapeHTML(c.name)} (${escapeHTML(c.k)})</div>
                 <div class="coin-val">${c.val} gp each • ${gp} gp value</div>
               </div>
             </div>
@@ -2401,6 +2720,7 @@
       }).join("");
 
       $("#coinCards").innerHTML = cards;
+      renderCustomCurrencyPanel();
     }
 
     /**********************************************************************
@@ -2438,6 +2758,14 @@
     function openCoinDialog(){
       renderCoinPurse();
       $("#coinDialog").showModal();
+    }
+    function openAttuneDialog(index){
+      const item = state.inventory.attunements[index];
+      if (!item) return;
+      $("#attuneDialogTitle").textContent = item.item || "Attunement Slot";
+      $("#attuneDialogBrief").textContent = item.notes || "";
+      $("#attuneDialogDetail").textContent = item.detail || "";
+      $("#attuneDialog").showModal();
     }
 
     // HP
@@ -2548,6 +2876,11 @@
             state.settings.inspGlowEnabled = (s.inspGlowEnabled ?? state.settings.inspGlowEnabled);
             state.settings.wide = (s.wide ?? state.settings.wide);
             state.settings.editUnlocked = (s.editUnlocked ?? state.settings.editUnlocked);
+            state.xpMode = s.xpMode ?? state.xpMode;
+            state.xp = s.xp ?? state.xp;
+            state.xpLevel = s.xpLevel ?? state.xpLevel;
+            state.customCurrencies = Array.isArray(s.customCurrencies) ? s.customCurrencies : state.customCurrencies;
+            state.coins = s.coins ?? state.coins;
 
             // portrait persisted
             if (s.portrait){
@@ -2572,7 +2905,12 @@
         inspGlowEnabled: state.settings.inspGlowEnabled,
         wide: state.settings.wide,
         editUnlocked: state.settings.editUnlocked,
-        portrait: { ...state.portrait }
+        portrait: { ...state.portrait },
+        xpMode: state.xpMode,
+        xp: state.xp,
+        xpLevel: state.xpLevel,
+        coins: state.coins,
+        customCurrencies: state.customCurrencies
       }));
     }
 
@@ -2588,6 +2926,10 @@
       applyTheme(state.settings.theme);
       $("#glowToggle").checked = !!state.settings.inspGlowEnabled;
       $("#wideToggle").checked = !!state.settings.wide;
+      const isXP = state.xpMode === "xp";
+      $("#btnModeMilestone").setAttribute("aria-pressed", isXP ? "false" : "true");
+      $("#btnModeXP").setAttribute("aria-pressed", isXP ? "true" : "false");
+      $("#progressValue").textContent = isXP ? "XP" : "Milestone";
       $("#settingsDialog").showModal();
     }
 
@@ -2613,33 +2955,12 @@
       $("#addAbilityBtn").style.display = unlocked ? "grid" : "none";
       $("#addAttuneBtn").style.display = unlocked ? "grid" : "none";
 
+      renderAbilities();
+      renderCoinPurse();
       saveSettings();
     }
 
     function syncEditableToState(){
-      const nm = $("#tb_name").textContent.trim();
-      if (nm) state.name = nm;
-
-      const ac = normalizeNumberText($("#tb_ac").textContent);
-      if (ac !== null) state.ac = ac;
-
-      const init = normalizeNumberText($("#tb_init").textContent);
-      if (init !== null) state.init = init;
-
-      const spd = normalizeNumberText($("#tb_speed").textContent);
-      if (spd !== null) state.speed = spd;
-
-      const pb = normalizeNumberText($("#tb_pb").textContent);
-      if (pb !== null) state.prof = pb;
-
-      const hpMax = normalizeNumberText($("#tb_hp_max").textContent);
-      if (hpMax !== null) {
-        state.hp.max = Math.max(1, hpMax);
-        state.hp.cur = clamp(state.hp.cur, 0, state.hp.max);
-      }
-      const hpCur = normalizeNumberText($("#tb_hp_cur").textContent);
-      if (hpCur !== null) state.hp.cur = clamp(hpCur, 0, state.hp.max);
-
       const mainName = $("#mainName").textContent.trim();
       if (mainName) state.name = mainName;
 
@@ -2652,9 +2973,36 @@
       const race = $("#mainRace").textContent.trim();
       if (race) state.race = race;
 
+      const mAc = normalizeNumberText($("#m_ac").textContent);
+      if (mAc !== null) state.ac = mAc;
+
+      const mInit = normalizeNumberText($("#m_init").textContent);
+      if (mInit !== null) state.init = mInit;
+
+      const mSpd = normalizeNumberText($("#m_spd").textContent);
+      if (mSpd !== null) state.speed = mSpd;
+
+      const mProf = normalizeNumberText($("#m_prof").textContent);
+      if (mProf !== null) state.prof = mProf;
+
+      const mHpMax = normalizeNumberText($("#m_hp_max").textContent);
+      if (mHpMax !== null) {
+        state.hp.max = Math.max(1, mHpMax);
+        state.hp.cur = clamp(state.hp.cur, 0, state.hp.max);
+      }
+      const mHpCur = normalizeNumberText($("#m_hp_cur").textContent);
+      if (mHpCur !== null) state.hp.cur = clamp(mHpCur, 0, state.hp.max);
+
+      const spDc = normalizeNumberText($("#sp_dc").textContent);
+      if (spDc !== null) state.spells.dc = spDc;
+
+      const spAtk = normalizeNumberText($("#sp_atk").textContent);
+      if (spAtk !== null) state.spells.atk = spAtk;
+
       renderTopbar();
       renderHP();
       renderMain();
+      renderCombat();
     }
 
     /**********************************************************************
@@ -2679,6 +3027,7 @@
       if (state.skills.some(s => s.name.toLowerCase() === name.toLowerCase())) return;
 
       state.skills.push({ name, abil });
+      state.skills[state.skills.length - 1].custom = true;
       state.skillProfs[name] = 0;
       $("#addSkillDialog").close();
       renderAbilities();
@@ -2701,7 +3050,7 @@
       const key = makeKeyFromLabel(label);
       if (state.abilities.some(a => a.label === label)) return;
 
-      state.abilities.push({ key, label, score, saveProf:false });
+      state.abilities.push({ key, label, score, saveProf:false, custom:true });
       $("#addAbilityDialog").close();
       renderAbilities();
     }
@@ -2714,12 +3063,8 @@
       $("#portraitUrl").value = state.portrait.url;
 
       $("#pz").value = state.portrait.zoom;
-      $("#px").value = state.portrait.x;
-      $("#py").value = state.portrait.y;
-
       $("#pzVal").textContent = Number(state.portrait.zoom).toFixed(2);
-      $("#pxVal").textContent = `${state.portrait.x}%`;
-      $("#pyVal").textContent = `${state.portrait.y}%`;
+      updatePortraitPreview();
 
       $("#portraitDialog").showModal();
     }
@@ -2728,18 +3073,23 @@
       if (!url) return;
       state.portrait.url = url;
       renderPortrait();
+      updatePortraitPreview();
       saveSettings();
     }
     function applyPortraitControls(){
       state.portrait.zoom = parseFloat($("#pz").value);
-      state.portrait.x = parseInt($("#px").value,10);
-      state.portrait.y = parseInt($("#py").value,10);
 
       $("#pzVal").textContent = Number(state.portrait.zoom).toFixed(2);
-      $("#pxVal").textContent = `${state.portrait.x}%`;
-      $("#pyVal").textContent = `${state.portrait.y}%`;
 
       renderPortrait();
+      updatePortraitPreview();
+      saveSettings();
+    }
+    function setPortraitPosition(x, y){
+      state.portrait.x = clamp(Math.round(x), 0, 100);
+      state.portrait.y = clamp(Math.round(y), 0, 100);
+      renderPortrait();
+      updatePortraitPreview();
       saveSettings();
     }
     function resetPortraitCrop(){
@@ -2747,9 +3097,40 @@
       state.portrait.x = 50;
       state.portrait.y = 30;
       $("#pz").value = state.portrait.zoom;
-      $("#px").value = state.portrait.x;
-      $("#py").value = state.portrait.y;
       applyPortraitControls();
+    }
+    let portraitDrag = null;
+    function startPortraitDrag(e){
+      const preview = $("#portraitPreview");
+      if (!preview || e.button !== 0) return;
+      const rect = preview.getBoundingClientRect();
+      portraitDrag = {
+        startX: e.clientX,
+        startY: e.clientY,
+        originX: state.portrait.x,
+        originY: state.portrait.y,
+        rectW: rect.width || 1,
+        rectH: rect.height || 1
+      };
+      preview.classList.add("is-dragging");
+      window.addEventListener("pointermove", movePortraitDrag);
+      window.addEventListener("pointerup", endPortraitDrag, { once: true });
+      movePortraitDrag(e);
+    }
+    function movePortraitDrag(e){
+      const preview = $("#portraitPreview");
+      if (!preview || !portraitDrag) return;
+      e.preventDefault();
+      const dx = (e.clientX - portraitDrag.startX) / portraitDrag.rectW * 100;
+      const dy = (e.clientY - portraitDrag.startY) / portraitDrag.rectH * 100;
+      setPortraitPosition(portraitDrag.originX + dx, portraitDrag.originY + dy);
+    }
+    function endPortraitDrag(){
+      const preview = $("#portraitPreview");
+      if (!preview) return;
+      preview.classList.remove("is-dragging");
+      portraitDrag = null;
+      window.removeEventListener("pointermove", movePortraitDrag);
     }
 
     /**********************************************************************
@@ -2757,7 +3138,7 @@
      **********************************************************************/
     function addAttunementSlot(){
       if (!state.settings.editUnlocked) return;
-      state.inventory.attunements.push({ item:"", notes:"(empty)" });
+      state.inventory.attunements.push({ item:"", notes:"(empty)", detail:"No attunement item slotted." });
       renderInventory();
     }
 
@@ -2765,6 +3146,7 @@
      * Init
      **********************************************************************/
     function init(){
+      state.xpLevel = levelFromXP(state.xp);
       // portrait
       renderPortrait();
       $("#portraitImg").addEventListener("click", openPortraitEditor);
@@ -2778,7 +3160,9 @@
 
       // money
       $("#moneyBtn").addEventListener("click", openCoinDialog);
+      $("#inventoryCurrencyBtn").addEventListener("click", openCoinDialog);
       $("#coinClose").addEventListener("click", ()=> $("#coinDialog").close());
+      $("#attuneClose").addEventListener("click", ()=> $("#attuneDialog").close());
 
       // inspiration
       $("#inspBtn").addEventListener("click", ()=>{
@@ -2826,18 +3210,11 @@
       // progress toggle (milestone/XP)
       $("#btnModeMilestone").addEventListener("click", ()=>{
         state.xpMode = "milestone";
-        $("#btnModeMilestone").setAttribute("aria-pressed","true");
-        $("#btnModeXP").setAttribute("aria-pressed","false");
-        $("#progressValue").textContent = "Milestone";
-        $("#xpBox").style.display = "none";
+        applyXPMode();
       });
       $("#btnModeXP").addEventListener("click", ()=>{
         state.xpMode = "xp";
-        $("#btnModeMilestone").setAttribute("aria-pressed","false");
-        $("#btnModeXP").setAttribute("aria-pressed","true");
-        $("#progressValue").textContent = "XP";
-        $("#xpBox").style.display = "block";
-        renderXPBox();
+        applyXPMode();
       });
 
       // XP actions
@@ -2849,6 +3226,11 @@
         const add = Math.max(0, parseInt($("#xpAddAmt").value,10) || 0);
         state.xp = Math.max(0, (state.xp|0) + add);
         $("#xpAddAmt").value = 0;
+        renderXPBox();
+      });
+      $("#xpLevelUpBtn").addEventListener("click", ()=>{
+        const target = levelFromXP(state.xp);
+        state.xpLevel = Math.max(state.xpLevel || 1, target);
         renderXPBox();
       });
 
@@ -2902,14 +3284,69 @@
 
       $("#addAttuneBtn").addEventListener("click", addAttunementSlot);
 
+      // skills/abilities toggle
+      $("#skillsGrid").addEventListener("click", (e)=>{
+        const remove = e.target.closest("[data-skill-remove]");
+        if (remove){
+          removeCustomSkill(remove.dataset.skillRemove);
+          return;
+        }
+        const dot = e.target.closest("[data-skill]");
+        if (dot){
+          cycleSkillProficiency(dot.dataset.skill);
+        }
+      });
+      $("#abilGrid").addEventListener("click", (e)=>{
+        const remove = e.target.closest("[data-ability]");
+        if (remove && remove.classList.contains("ability-remove")){
+          removeCustomAbility(remove.dataset.ability);
+          return;
+        }
+        const save = e.target.closest(".save-pill[data-ability]");
+        if (save){
+          toggleSaveProficiency(save.dataset.ability);
+        }
+      });
+
+      // attunement details
+      $("#attuneList").addEventListener("click", (e)=>{
+        const row = e.target.closest("[data-attune-index]");
+        if (!row) return;
+        openAttuneDialog(parseInt(row.dataset.attuneIndex, 10));
+      });
+      $("#attuneList").addEventListener("keydown", (e)=>{
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const row = e.target.closest("[data-attune-index]");
+        if (!row) return;
+        e.preventDefault();
+        openAttuneDialog(parseInt(row.dataset.attuneIndex, 10));
+      });
+
+      // notes
+      $("#addNoteBtn").addEventListener("click", addNote);
+      $("#n_notes").addEventListener("focusout", (e)=>{
+        const el = e.target;
+        if (!(el instanceof HTMLElement)) return;
+        if (el.dataset.noteTitle !== undefined || el.dataset.noteBody !== undefined){
+          updateNoteFromElement(el);
+        }
+      });
+
+      // custom currencies
+      $("#addCustomCoinBtn").addEventListener("click", addCustomCurrency);
+      $("#customCoinList").addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-custom-coin]");
+        if (!btn) return;
+        removeCustomCurrency(btn.dataset.customCoin);
+      });
+
       // portrait dialog
       $("#portraitClose").addEventListener("click", ()=> $("#portraitDialog").close());
       $("#portraitDone").addEventListener("click", ()=> $("#portraitDialog").close());
       $("#portraitApplyUrl").addEventListener("click", applyPortraitUrl);
       $("#portraitReset").addEventListener("click", resetPortraitCrop);
       $("#pz").addEventListener("input", applyPortraitControls);
-      $("#px").addEventListener("input", applyPortraitControls);
-      $("#py").addEventListener("input", applyPortraitControls);
+      $("#portraitPreview").addEventListener("pointerdown", startPortraitDrag);
 
       // Editable blur commits to state
       document.addEventListener("focusout", (e)=>{
@@ -2945,8 +3382,7 @@
       // default combat subtab
       setCombatSubtab("actions");
       // default xp mode view
-      $("#xpBox").style.display = "none";
-      $("#progressValue").textContent = "Milestone";
+      applyXPMode();
     }
 
     init();
