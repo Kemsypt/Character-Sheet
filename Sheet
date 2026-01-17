@@ -90,9 +90,6 @@
       animation: inspPulse 2.8s ease-in-out infinite;
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
-    body[data-insp-glow="on"] .topbar::after{
-      opacity: 1;
-    }
     @keyframes inspPulse{
       0%,100%{
         background:
@@ -119,18 +116,6 @@
       background: linear-gradient(180deg, rgba(8,10,16,0.92), rgba(8,10,16,0.70));
       border-bottom: 1px solid rgba(255,255,255,0.10);
     }
-    .topbar::after{
-      content:"";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 180ms ease;
-      box-shadow:
-        inset 0 -1px 0 rgba(255,236,189,0.45),
-        inset 0 -12px 22px rgba(255,217,121,0.22);
-    }
-
     .topbar-inner{
       max-width: var(--page-max);
       margin: 0 auto;
@@ -145,6 +130,13 @@
     .id-block{
       min-width: 0;
       padding: 6px 2px;
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      align-items: center;
+      gap: 20px;
+    }
+    .id-text{
+      min-width: 0;
       display:flex;
       flex-wrap: wrap;
       align-items: center;
@@ -3170,6 +3162,7 @@
     /**********************************************************************
      * Portrait editing
      **********************************************************************/
+    let portraitDrag = null;
     function openPortraitEditor(){
       if (!state.settings.editUnlocked) return;
       $("#portraitUrl").value = state.portrait.url;
@@ -3217,14 +3210,18 @@
       e.preventDefault();
       const rect = preview.getBoundingClientRect();
       preview.classList.add("is-dragging");
-      preview.setPointerCapture(e.pointerId);
-      preview.dataset.dragging = "1";
-      preview.dataset.dragStartX = String(e.clientX);
-      preview.dataset.dragStartY = String(e.clientY);
-      preview.dataset.dragOriginX = String(state.portrait.x);
-      preview.dataset.dragOriginY = String(state.portrait.y);
-      preview.dataset.dragRectW = String(rect.width || 1);
-      preview.dataset.dragRectH = String(rect.height || 1);
+      portraitDrag = {
+        startX: e.clientX,
+        startY: e.clientY,
+        originX: state.portrait.x,
+        originY: state.portrait.y,
+        rectW: rect.width || 1,
+        rectH: rect.height || 1,
+        pointerId: e.pointerId
+      };
+      window.addEventListener("pointermove", movePortraitDrag, { passive: false });
+      window.addEventListener("pointerup", endPortraitDrag, { passive: false });
+      window.addEventListener("pointercancel", endPortraitDrag, { passive: false });
     }
     function movePortraitDrag(e){
       const preview = $("#portraitPreview");
@@ -3242,10 +3239,13 @@
     }
     function endPortraitDrag(e){
       const preview = $("#portraitPreview");
-      if (!preview || preview.dataset.dragging !== "1") return;
+      if (!portraitDrag) return;
+      if (portraitDrag.pointerId !== undefined && e.pointerId !== portraitDrag.pointerId) return;
       preview.classList.remove("is-dragging");
-      preview.dataset.dragging = "0";
-      preview.releasePointerCapture(e.pointerId);
+      portraitDrag = null;
+      window.removeEventListener("pointermove", movePortraitDrag, { passive: false });
+      window.removeEventListener("pointerup", endPortraitDrag, { passive: false });
+      window.removeEventListener("pointercancel", endPortraitDrag, { passive: false });
     }
 
     /**********************************************************************
