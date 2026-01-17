@@ -83,28 +83,25 @@
       z-index: 1;
       opacity: 0;
       transition: opacity 180ms ease;
-      box-shadow:
-        inset 0 0 0 2px rgba(216,192,138,0.35),
-        inset 0 0 80px rgba(216,192,138,0.32),
-        inset 0 0 180px rgba(216,192,138,0.24);
-      animation: inspPulse 2.8s ease-in-out infinite;
+      background:
+        linear-gradient(90deg, rgba(216,192,138,0.28), transparent 6%),
+        linear-gradient(270deg, rgba(216,192,138,0.28), transparent 6%),
+        linear-gradient(0deg, rgba(216,192,138,0.26), transparent 14%);
+      animation: inspPulse 4.2s ease-in-out infinite;
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
-    body[data-insp-glow="on"] .topbar::after{
-      opacity: 1;
-    }
     @keyframes inspPulse{
       0%,100%{
-        box-shadow:
-          inset 0 0 0 2px rgba(216,192,138,0.35),
-          inset 0 0 80px rgba(216,192,138,0.32),
-          inset 0 0 180px rgba(216,192,138,0.24);
+        background:
+          linear-gradient(90deg, rgba(216,192,138,0.22), transparent 6%),
+          linear-gradient(270deg, rgba(216,192,138,0.22), transparent 6%),
+          linear-gradient(0deg, rgba(216,192,138,0.20), transparent 14%);
       }
       50%{
-        box-shadow:
-          inset 0 0 0 2px rgba(255,225,162,0.55),
-          inset 0 0 110px rgba(255,219,143,0.45),
-          inset 0 0 220px rgba(255,219,143,0.35);
+        background:
+          linear-gradient(90deg, rgba(255,225,162,0.34), transparent 6%),
+          linear-gradient(270deg, rgba(255,225,162,0.34), transparent 6%),
+          linear-gradient(0deg, rgba(255,219,143,0.32), transparent 14%);
       }
     }
 
@@ -119,18 +116,6 @@
       background: linear-gradient(180deg, rgba(8,10,16,0.92), rgba(8,10,16,0.70));
       border-bottom: 1px solid rgba(255,255,255,0.10);
     }
-    .topbar::after{
-      content:"";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 180ms ease;
-      box-shadow:
-        inset 0 -1px 0 rgba(255,236,189,0.45),
-        inset 0 -12px 22px rgba(255,217,121,0.22);
-    }
-
     .topbar-inner{
       max-width: var(--page-max);
       margin: 0 auto;
@@ -145,9 +130,15 @@
     .id-block{
       min-width: 0;
       padding: 6px 2px;
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      align-items: center;
+      gap: 20px;
+    }
+    .id-text{
+      min-width: 0;
       display:flex;
       flex-direction: column;
-      justify-content: center;
     }
     .id-name{
       margin:0;
@@ -161,6 +152,16 @@
       color: var(--muted);
       font-weight: 650;
       font-size: 14px;
+    }
+    .id-portrait{
+      width: 100px;
+      height: 150px;
+      border-radius: 16px;
+      object-fit: cover;
+      object-position: var(--px, 50%) var(--py, 30%);
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      box-shadow: var(--shadow);
     }
 
     .cap{
@@ -187,7 +188,7 @@
       min-width: 0;
     }
 
-    .stat-cap, .chip-cap, .hp-cap{ min-height: 74px; }
+    .stat-cap, .chip-cap{ min-height: 74px; }
 
     .stat-cap{
       width: 72px;
@@ -325,6 +326,7 @@
       flex: 1 1 520px;
       min-width: min(520px, 100%);
       padding: 10px 12px;
+      min-height: 60px;
 
       display: grid;
       grid-template-columns: auto 1fr auto;
@@ -364,6 +366,12 @@
       border-radius: 999px;
       background: linear-gradient(180deg, rgba(124,245,156,0.95), rgba(124,245,156,0.70));
       z-index: 1;
+    }
+    .hp-green.is-warning{
+      background: linear-gradient(180deg, rgba(251,191,36,0.95), rgba(251,191,36,0.70));
+    }
+    .hp-green.is-danger{
+      background: linear-gradient(180deg, rgba(248,113,113,0.98), rgba(248,113,113,0.75));
     }
     .hp-temp{
       position:absolute;
@@ -441,6 +449,9 @@
       background: linear-gradient(180deg, rgba(216,192,138,0.30), rgba(216,192,138,0.16));
       border-color: rgba(216,192,138,0.40);
       color: rgba(255,255,255,0.92);
+    }
+    .tab-spacer{
+      flex: 1 1 auto;
     }
 
     /* Actions sub-tabs */
@@ -1229,6 +1240,11 @@
       align-items:center;
       justify-content: space-between;
       gap: 10px;
+      cursor: pointer;
+    }
+    .coin-card:hover{
+      border-color: rgba(216,192,138,0.35);
+      background: rgba(216,192,138,0.10);
     }
     .coin-left{
       display:flex;
@@ -1268,11 +1284,11 @@
       font-weight: 950;
       font-size: 16px;
     }
-    .coin-card[data-coin="pp"] .coin-ic{ box-shadow: inset 0 0 0 1px rgba(219,234,254,0.25); }
-    .coin-card[data-coin="gp"] .coin-ic{ box-shadow: inset 0 0 0 1px rgba(254,243,199,0.30); }
-    .coin-card[data-coin="ep"] .coin-ic{ box-shadow: inset 0 0 0 1px rgba(226,232,240,0.25); }
-    .coin-card[data-coin="sp"] .coin-ic{ box-shadow: inset 0 0 0 1px rgba(229,231,235,0.28); }
-    .coin-card[data-coin="cp"] .coin-ic{ box-shadow: inset 0 0 0 1px rgba(253,186,116,0.30); }
+    .coin-card.is-standard .coin-ic{
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
 
     /* Inventory attunement */
     .attune{
@@ -1334,8 +1350,11 @@
     <div class="topbar-inner">
       <!-- Name block -->
       <div class="id-block">
-        <h1 class="id-name" id="tb_name">Elaria Thornbloom</h1>
-        <div class="id-sub" id="tb_sub">Wood Elf • Druid 10</div>
+        <img class="id-portrait" id="tb_portrait" alt="Character portrait thumbnail" />
+        <div class="id-text">
+          <h1 class="id-name" id="tb_name">Elaria Thornbloom</h1>
+          <div class="id-sub" id="tb_sub">Wood Elf • Druid 10</div>
+        </div>
       </div>
 
       <!-- Right side -->
@@ -1402,7 +1421,7 @@
         </div>
 
         <!-- SECOND ROW: HP + Rest -->
-        <div class="bottom-row" aria-label="Health and rest row">
+        <div class="bottom-row" aria-label="Health row">
           <div class="cap hp-cap" title="Health">
             <div class="hp-left">
               <div class="hp-text">
@@ -1423,19 +1442,6 @@
               <button class="hp-btn temp" id="btnTemp" type="button" title="Set Temp HP (takes the higher)">⛨</button>
             </div>
           </div>
-
-          <!-- Rest: Short + Long -->
-          <div class="cap chip-cap chip-rest" title="Rest">
-            <div class="chip-k">REST</div>
-            <div class="split" aria-label="Rest buttons">
-              <button class="pill-btn short" id="shortRestOpenBtn" type="button" aria-haspopup="dialog" title="Open short rest tools">
-                <span>⏳</span><span>Short</span>
-              </button>
-              <button class="pill-btn long" id="longRestBtnTop" type="button" title="Apply a long rest">
-                <span>🌙</span><span>Long</span>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -1448,6 +1454,8 @@
       <button class="tab" role="tab" aria-selected="false" aria-controls="tab-spells"    id="tabbtn-spells"    data-tab="spells">Spell Book</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="tab-inventory" id="tabbtn-inventory" data-tab="inventory">Inventory</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="tab-notes"     id="tabbtn-notes"     data-tab="notes">Notes</button>
+      <span class="tab-spacer" aria-hidden="true"></span>
+      <button class="tab rest-tab" id="restTabBtn" type="button" aria-haspopup="dialog" aria-label="Open rest options">🌙 Rest</button>
     </nav>
   </header>
 
@@ -1802,6 +1810,46 @@
 
       <div class="small">
         Values: pp=10gp, gp=1gp, ep=0.5gp, sp=0.1gp, cp=0.01gp.
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Rest dialog -->
+  <dialog id="restDialog" aria-label="Rest options">
+    <div class="dlg-head">
+      <h3 class="dlg-title">Rest</h3>
+      <button class="icon-btn" id="restClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div class="card">
+        <div class="small muted">Choose a rest action.</div>
+        <div style="height:12px"></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="restShortBtn" type="button">Open Short Rest</button>
+          <button class="btn primary" id="restLongBtn" type="button">Apply Long Rest</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Coin adjust dialog -->
+  <dialog id="coinAdjustDialog" aria-label="Adjust coin amount">
+    <div class="dlg-head">
+      <h3 class="dlg-title" id="coinAdjustTitle">Adjust Coin</h3>
+      <button class="icon-btn" id="coinAdjustClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div class="card">
+        <div class="small muted" id="coinAdjustHint">Set the total amount for this coin type.</div>
+        <div style="height:12px"></div>
+        <label class="field" style="display:grid; gap:6px; max-width: 240px;">
+          <span class="small">Total coins</span>
+          <input class="select" id="coinAdjustValue" type="number" min="0" step="1" inputmode="numeric" />
+        </label>
+        <div style="height:12px"></div>
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="btn primary" id="coinAdjustApply" type="button">Set Amount</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -2307,6 +2355,9 @@
     function getCurrencies(){
       return [...DEFAULT_CURRENCIES, ...(state.customCurrencies || [])];
     }
+    function getCurrency(key){
+      return getCurrencies().find(c => c.k === key);
+    }
     function coinTotalGP(coins){
       let t = 0;
       for (const c of getCurrencies()) t += (coins[c.k] || 0) * c.val;
@@ -2423,6 +2474,9 @@
       $("#hpGreen").style.width = `${curW}%`;
       $("#hpTemp").style.left = `${maxW}%`;
       $("#hpTemp").style.width = `${tempW}%`;
+      const hpRatio = state.hp.max > 0 ? state.hp.cur / state.hp.max : 0;
+      $("#hpGreen").classList.toggle("is-danger", hpRatio <= 0.1);
+      $("#hpGreen").classList.toggle("is-warning", hpRatio > 0.1 && hpRatio <= 0.3);
     }
 
     function renderMain(){
@@ -2447,6 +2501,13 @@
       // also set on inline style for object-position
       img.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
       img.style.transform = `scale(${state.portrait.zoom})`;
+      const thumb = $("#tb_portrait");
+      if (thumb){
+        thumb.src = state.portrait.url;
+        thumb.style.setProperty("--px", `${state.portrait.x}%`);
+        thumb.style.setProperty("--py", `${state.portrait.y}%`);
+        thumb.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
+      }
     }
 
     function updatePortraitPreview(){
@@ -2704,14 +2765,13 @@
 
       const cards = getCurrencies().map(c => {
         const amt = state.coins[c.k] || 0;
-        const gp = (amt * c.val).toFixed(2);
+        const isStandard = DEFAULT_CURRENCIES.some(d => d.k === c.k);
         return `
-          <div class="coin-card" data-coin="${c.k}">
+          <div class="coin-card ${isStandard ? "is-standard" : ""}" data-coin="${c.k}" role="button" tabindex="0" aria-label="Adjust ${escapeHTML(c.name)} coins">
             <div class="coin-left">
               <div class="coin-ic">${c.icon ? `<img src="${c.icon}" alt="${escapeHTML(c.name)}" />` : escapeHTML(c.k.toUpperCase())}</div>
               <div class="coin-meta">
                 <div class="coin-name">${escapeHTML(c.name)} (${escapeHTML(c.k)})</div>
-                <div class="coin-val">${c.val} gp each • ${gp} gp value</div>
               </div>
             </div>
             <div class="coin-amt">${amt}</div>
@@ -2758,6 +2818,26 @@
     function openCoinDialog(){
       renderCoinPurse();
       $("#coinDialog").showModal();
+    }
+    function openCoinAdjustDialog(key){
+      const currency = getCurrency(key);
+      if (!currency) return;
+      const dialog = $("#coinAdjustDialog");
+      dialog.dataset.coin = key;
+      $("#coinAdjustTitle").textContent = `${currency.name} (${currency.k.toUpperCase()})`;
+      $("#coinAdjustHint").textContent = `Set the total number of ${currency.name} coins.`;
+      $("#coinAdjustValue").value = String(state.coins[key] ?? 0);
+      dialog.showModal();
+    }
+    function applyCoinAmount(){
+      const dialog = $("#coinAdjustDialog");
+      const key = dialog.dataset.coin;
+      if (!key) return;
+      const next = Math.max(0, parseInt($("#coinAdjustValue").value, 10) || 0);
+      state.coins[key] = next;
+      renderCoinPurse();
+      renderTopbar();
+      dialog.close();
     }
     function openAttuneDialog(index){
       const item = state.inventory.attunements[index];
@@ -3058,6 +3138,7 @@
     /**********************************************************************
      * Portrait editing
      **********************************************************************/
+    let portraitDrag = null;
     function openPortraitEditor(){
       if (!state.settings.editUnlocked) return;
       $("#portraitUrl").value = state.portrait.url;
@@ -3101,37 +3182,40 @@
     }
     function startPortraitDrag(e){
       const preview = $("#portraitPreview");
-      if (!preview || e.button !== 0) return;
+      if (!preview || (e.pointerType === "mouse" && e.button !== 0)) return;
+      e.preventDefault();
       const rect = preview.getBoundingClientRect();
       preview.classList.add("is-dragging");
-      preview.setPointerCapture(e.pointerId);
-      preview.dataset.dragging = "1";
-      preview.dataset.dragStartX = String(e.clientX);
-      preview.dataset.dragStartY = String(e.clientY);
-      preview.dataset.dragOriginX = String(state.portrait.x);
-      preview.dataset.dragOriginY = String(state.portrait.y);
-      preview.dataset.dragRectW = String(rect.width || 1);
-      preview.dataset.dragRectH = String(rect.height || 1);
+      portraitDrag = {
+        startX: e.clientX,
+        startY: e.clientY,
+        originX: state.portrait.x,
+        originY: state.portrait.y,
+        rectW: rect.width || 1,
+        rectH: rect.height || 1,
+        pointerId: e.pointerId
+      };
+      window.addEventListener("pointermove", movePortraitDrag, { passive: false });
+      window.addEventListener("pointerup", endPortraitDrag, { passive: false });
+      window.addEventListener("pointercancel", endPortraitDrag, { passive: false });
     }
     function movePortraitDrag(e){
-      const preview = $("#portraitPreview");
-      if (!preview || preview.dataset.dragging !== "1") return;
-      const startX = parseFloat(preview.dataset.dragStartX || "0");
-      const startY = parseFloat(preview.dataset.dragStartY || "0");
-      const originX = parseFloat(preview.dataset.dragOriginX || "50");
-      const originY = parseFloat(preview.dataset.dragOriginY || "30");
-      const rectW = parseFloat(preview.dataset.dragRectW || "1");
-      const rectH = parseFloat(preview.dataset.dragRectH || "1");
-      const dx = (e.clientX - startX) / rectW * 100;
-      const dy = (e.clientY - startY) / rectH * 100;
-      setPortraitPosition(originX + dx, originY + dy);
+      if (!portraitDrag) return;
+      if (portraitDrag.pointerId !== undefined && e.pointerId !== portraitDrag.pointerId) return;
+      e.preventDefault();
+      const dx = (e.clientX - portraitDrag.startX) / portraitDrag.rectW * 100;
+      const dy = (e.clientY - portraitDrag.startY) / portraitDrag.rectH * 100;
+      setPortraitPosition(portraitDrag.originX + dx, portraitDrag.originY + dy);
     }
     function endPortraitDrag(e){
       const preview = $("#portraitPreview");
-      if (!preview || preview.dataset.dragging !== "1") return;
+      if (!portraitDrag) return;
+      if (portraitDrag.pointerId !== undefined && e.pointerId !== portraitDrag.pointerId) return;
       preview.classList.remove("is-dragging");
-      preview.dataset.dragging = "0";
-      preview.releasePointerCapture(e.pointerId);
+      portraitDrag = null;
+      window.removeEventListener("pointermove", movePortraitDrag, { passive: false });
+      window.removeEventListener("pointerup", endPortraitDrag, { passive: false });
+      window.removeEventListener("pointercancel", endPortraitDrag, { passive: false });
     }
 
     /**********************************************************************
@@ -3163,6 +3247,20 @@
       $("#moneyBtn").addEventListener("click", openCoinDialog);
       $("#inventoryCurrencyBtn").addEventListener("click", openCoinDialog);
       $("#coinClose").addEventListener("click", ()=> $("#coinDialog").close());
+      $("#coinCards").addEventListener("click", (e)=>{
+        const card = e.target.closest(".coin-card");
+        if (!card) return;
+        openCoinAdjustDialog(card.dataset.coin);
+      });
+      $("#coinCards").addEventListener("keydown", (e)=>{
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const card = e.target.closest(".coin-card");
+        if (!card) return;
+        e.preventDefault();
+        openCoinAdjustDialog(card.dataset.coin);
+      });
+      $("#coinAdjustClose").addEventListener("click", ()=> $("#coinAdjustDialog").close());
+      $("#coinAdjustApply").addEventListener("click", applyCoinAmount);
       $("#attuneClose").addEventListener("click", ()=> $("#attuneDialog").close());
 
       // inspiration
@@ -3189,15 +3287,23 @@
       });
 
       // rest
-      $("#shortRestOpenBtn").addEventListener("click", openShortRest);
+      $("#restTabBtn").addEventListener("click", ()=> $("#restDialog").showModal());
+      $("#restClose").addEventListener("click", ()=> $("#restDialog").close());
+      $("#restShortBtn").addEventListener("click", ()=>{
+        $("#restDialog").close();
+        openShortRest();
+      });
+      $("#restLongBtn").addEventListener("click", ()=>{
+        $("#restDialog").close();
+        applyLongRest();
+      });
       $("#shortRestClose").addEventListener("click", ()=> $("#shortRestDialog").close());
       $("#shortRestCancel").addEventListener("click", ()=> $("#shortRestDialog").close());
       $("#rollHdBtn").addEventListener("click", rollHitDice);
       $("#completeShortRestBtn").addEventListener("click", completeShortRest);
-      $("#longRestBtnTop").addEventListener("click", applyLongRest);
 
       // tabs
-      document.querySelectorAll(".tab").forEach(btn=>{
+      document.querySelectorAll(".tab[data-tab]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           setActiveTab(btn.dataset.tab);
         });
