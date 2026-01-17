@@ -84,24 +84,24 @@
       opacity: 0;
       transition: opacity 180ms ease;
       background:
-        linear-gradient(90deg, rgba(216,192,138,0.28), transparent 6%),
-        linear-gradient(270deg, rgba(216,192,138,0.28), transparent 6%),
-        linear-gradient(0deg, rgba(216,192,138,0.26), transparent 14%);
-      animation: inspPulse 4.2s ease-in-out infinite;
+        linear-gradient(90deg, rgba(216,192,138,0.45), transparent 18%),
+        linear-gradient(270deg, rgba(216,192,138,0.45), transparent 18%),
+        linear-gradient(0deg, rgba(216,192,138,0.45), transparent 40%);
+      animation: inspPulse 2.8s ease-in-out infinite;
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
     @keyframes inspPulse{
       0%,100%{
         background:
-          linear-gradient(90deg, rgba(216,192,138,0.22), transparent 6%),
-          linear-gradient(270deg, rgba(216,192,138,0.22), transparent 6%),
-          linear-gradient(0deg, rgba(216,192,138,0.20), transparent 14%);
+          linear-gradient(90deg, rgba(216,192,138,0.40), transparent 18%),
+          linear-gradient(270deg, rgba(216,192,138,0.40), transparent 18%),
+          linear-gradient(0deg, rgba(216,192,138,0.38), transparent 40%);
       }
       50%{
         background:
-          linear-gradient(90deg, rgba(255,225,162,0.34), transparent 6%),
-          linear-gradient(270deg, rgba(255,225,162,0.34), transparent 6%),
-          linear-gradient(0deg, rgba(255,219,143,0.32), transparent 14%);
+          linear-gradient(90deg, rgba(255,225,162,0.55), transparent 18%),
+          linear-gradient(270deg, rgba(255,225,162,0.55), transparent 18%),
+          linear-gradient(0deg, rgba(255,219,143,0.50), transparent 40%);
       }
     }
 
@@ -138,6 +138,14 @@
     .id-text{
       min-width: 0;
       display:flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .id-text{
+      min-width: 0;
+      display:flex;
       flex-direction: column;
     }
     .id-name{
@@ -154,11 +162,13 @@
       font-size: 14px;
     }
     .id-portrait{
-      width: 100px;
-      height: 150px;
-      border-radius: 16px;
+      width: 120px;
+      height: 120px;
+      border-radius: 18px;
       object-fit: cover;
       object-position: var(--px, 50%) var(--py, 30%);
+      transform: scale(var(--pz, 1));
+      transform-origin: center;
       border: 1px solid rgba(255,255,255,0.14);
       background: rgba(0,0,0,0.18);
       box-shadow: var(--shadow);
@@ -1350,11 +1360,11 @@
     <div class="topbar-inner">
       <!-- Name block -->
       <div class="id-block">
-        <img class="id-portrait" id="tb_portrait" alt="Character portrait thumbnail" />
         <div class="id-text">
           <h1 class="id-name" id="tb_name">Elaria Thornbloom</h1>
           <div class="id-sub" id="tb_sub">Wood Elf • Druid 10</div>
         </div>
+        <img class="id-portrait" id="tb_portrait" alt="Character portrait thumbnail" />
       </div>
 
       <!-- Right side -->
@@ -1840,15 +1850,16 @@
     </div>
     <div class="dlg-body">
       <div class="card">
-        <div class="small muted" id="coinAdjustHint">Set the total amount for this coin type.</div>
+        <div class="small muted" id="coinAdjustHint">Update the amount for this coin type.</div>
         <div style="height:12px"></div>
-        <label class="field" style="display:grid; gap:6px; max-width: 240px;">
-          <span class="small">Total coins</span>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="btn" id="coinAdjustDec" type="button">−</button>
           <input class="select" id="coinAdjustValue" type="number" min="0" step="1" inputmode="numeric" />
-        </label>
+          <button class="btn" id="coinAdjustInc" type="button">＋</button>
+        </div>
         <div style="height:12px"></div>
         <div style="display:flex; justify-content:flex-end;">
-          <button class="btn primary" id="coinAdjustApply" type="button">Set Amount</button>
+          <button class="btn primary" id="coinAdjustApply" type="button">Apply</button>
         </div>
       </div>
     </div>
@@ -2504,9 +2515,11 @@
       const thumb = $("#tb_portrait");
       if (thumb){
         thumb.src = state.portrait.url;
+        thumb.style.setProperty("--pz", String(state.portrait.zoom));
         thumb.style.setProperty("--px", `${state.portrait.x}%`);
         thumb.style.setProperty("--py", `${state.portrait.y}%`);
         thumb.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
+        thumb.style.transform = `scale(${state.portrait.zoom})`;
       }
     }
 
@@ -2825,9 +2838,20 @@
       const dialog = $("#coinAdjustDialog");
       dialog.dataset.coin = key;
       $("#coinAdjustTitle").textContent = `${currency.name} (${currency.k.toUpperCase()})`;
-      $("#coinAdjustHint").textContent = `Set the total number of ${currency.name} coins.`;
+      $("#coinAdjustHint").textContent = `Update ${currency.name} coins.`;
       $("#coinAdjustValue").value = String(state.coins[key] ?? 0);
       dialog.showModal();
+    }
+    function updateCoinAmount(delta){
+      const dialog = $("#coinAdjustDialog");
+      const key = dialog.dataset.coin;
+      if (!key) return;
+      const current = state.coins[key] ?? 0;
+      const next = Math.max(0, current + delta);
+      state.coins[key] = next;
+      $("#coinAdjustValue").value = String(next);
+      renderCoinPurse();
+      renderTopbar();
     }
     function applyCoinAmount(){
       const dialog = $("#coinAdjustDialog");
@@ -3200,12 +3224,18 @@
       window.addEventListener("pointercancel", endPortraitDrag, { passive: false });
     }
     function movePortraitDrag(e){
-      if (!portraitDrag) return;
-      if (portraitDrag.pointerId !== undefined && e.pointerId !== portraitDrag.pointerId) return;
+      const preview = $("#portraitPreview");
+      if (!preview || preview.dataset.dragging !== "1") return;
       e.preventDefault();
-      const dx = (e.clientX - portraitDrag.startX) / portraitDrag.rectW * 100;
-      const dy = (e.clientY - portraitDrag.startY) / portraitDrag.rectH * 100;
-      setPortraitPosition(portraitDrag.originX + dx, portraitDrag.originY + dy);
+      const startX = parseFloat(preview.dataset.dragStartX || "0");
+      const startY = parseFloat(preview.dataset.dragStartY || "0");
+      const originX = parseFloat(preview.dataset.dragOriginX || "50");
+      const originY = parseFloat(preview.dataset.dragOriginY || "30");
+      const rectW = parseFloat(preview.dataset.dragRectW || "1");
+      const rectH = parseFloat(preview.dataset.dragRectH || "1");
+      const dx = (e.clientX - startX) / rectW * 100;
+      const dy = (e.clientY - startY) / rectH * 100;
+      setPortraitPosition(originX + dx, originY + dy);
     }
     function endPortraitDrag(e){
       const preview = $("#portraitPreview");
@@ -3260,6 +3290,8 @@
         openCoinAdjustDialog(card.dataset.coin);
       });
       $("#coinAdjustClose").addEventListener("click", ()=> $("#coinAdjustDialog").close());
+      $("#coinAdjustDec").addEventListener("click", ()=> updateCoinAmount(-1));
+      $("#coinAdjustInc").addEventListener("click", ()=> updateCoinAmount(1));
       $("#coinAdjustApply").addEventListener("click", applyCoinAmount);
       $("#attuneClose").addEventListener("click", ()=> $("#attuneDialog").close());
 
