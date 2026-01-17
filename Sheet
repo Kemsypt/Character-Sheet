@@ -659,6 +659,42 @@
       box-shadow: inset 0 0 80px rgba(0,0,0,0.55);
       opacity: 0.85;
     }
+    .portrait-preview{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 2 / 3;
+      width: min(260px, 100%);
+      margin-top: 10px;
+      position: relative;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+    }
+    .portrait-preview.is-dragging{
+      cursor: grabbing;
+    }
+    .portrait-preview img{
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: var(--px, 50%) var(--py, 30%);
+      transform: scale(var(--pz, 1));
+      transform-origin: center;
+      filter: saturate(1.05) contrast(1.03);
+      pointer-events: none;
+    }
+    .portrait-preview-grid{
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px) 0 0 / 33.33% 100%,
+        linear-gradient(180deg, rgba(255,255,255,0.08) 1px, transparent 1px) 0 0 / 100% 33.33%;
+      opacity: 0.35;
+    }
 
     /* Main "Quick Combat" row under hero */
     .quickstats{
@@ -1780,20 +1816,14 @@
             <label>Reset</label>
             <button class="btn" id="portraitReset" type="button">Default crop</button>
           </div>
-          <div class="field">
-            <label>Pos X</label>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input id="px" type="range" min="0" max="100" step="1" style="width:160px;">
-              <span class="val" id="pxVal">50%</span>
-            </div>
-          </div>
-          <div class="field">
-            <label>Pos Y</label>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input id="py" type="range" min="0" max="100" step="1" style="width:160px;">
-              <span class="val" id="pyVal">30%</span>
-            </div>
-          </div>
+        </div>
+
+        <div class="portrait-preview" id="portraitPreview" aria-label="Portrait position preview">
+          <img id="portraitPreviewImg" alt="Portrait preview" />
+          <div class="portrait-preview-grid"></div>
+        </div>
+        <div class="small" style="margin-top:8px;">
+          Drag inside the preview to reposition. Position: <strong id="portraitPosLabel">50% / 30%</strong>
         </div>
       </div>
 
@@ -2220,6 +2250,18 @@
       // also set on inline style for object-position
       img.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
       img.style.transform = `scale(${state.portrait.zoom})`;
+    }
+
+    function updatePortraitPreview(){
+      const preview = $("#portraitPreviewImg");
+      if (!preview) return;
+      preview.src = state.portrait.url;
+      preview.style.setProperty("--pz", state.portrait.zoom);
+      preview.style.setProperty("--px", `${state.portrait.x}%`);
+      preview.style.setProperty("--py", `${state.portrait.y}%`);
+      preview.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
+      preview.style.transform = `scale(${state.portrait.zoom})`;
+      $("#portraitPosLabel").textContent = `${state.portrait.x}% / ${state.portrait.y}%`;
     }
 
     function renderAbilities(){
@@ -2714,12 +2756,8 @@
       $("#portraitUrl").value = state.portrait.url;
 
       $("#pz").value = state.portrait.zoom;
-      $("#px").value = state.portrait.x;
-      $("#py").value = state.portrait.y;
-
       $("#pzVal").textContent = Number(state.portrait.zoom).toFixed(2);
-      $("#pxVal").textContent = `${state.portrait.x}%`;
-      $("#pyVal").textContent = `${state.portrait.y}%`;
+      updatePortraitPreview();
 
       $("#portraitDialog").showModal();
     }
@@ -2728,18 +2766,23 @@
       if (!url) return;
       state.portrait.url = url;
       renderPortrait();
+      updatePortraitPreview();
       saveSettings();
     }
     function applyPortraitControls(){
       state.portrait.zoom = parseFloat($("#pz").value);
-      state.portrait.x = parseInt($("#px").value,10);
-      state.portrait.y = parseInt($("#py").value,10);
 
       $("#pzVal").textContent = Number(state.portrait.zoom).toFixed(2);
-      $("#pxVal").textContent = `${state.portrait.x}%`;
-      $("#pyVal").textContent = `${state.portrait.y}%`;
 
       renderPortrait();
+      updatePortraitPreview();
+      saveSettings();
+    }
+    function setPortraitPosition(x, y){
+      state.portrait.x = clamp(Math.round(x), 0, 100);
+      state.portrait.y = clamp(Math.round(y), 0, 100);
+      renderPortrait();
+      updatePortraitPreview();
       saveSettings();
     }
     function resetPortraitCrop(){
@@ -2747,9 +2790,41 @@
       state.portrait.x = 50;
       state.portrait.y = 30;
       $("#pz").value = state.portrait.zoom;
-      $("#px").value = state.portrait.x;
-      $("#py").value = state.portrait.y;
       applyPortraitControls();
+    }
+    function startPortraitDrag(e){
+      const preview = $("#portraitPreview");
+      if (!preview || e.button !== 0) return;
+      const rect = preview.getBoundingClientRect();
+      preview.classList.add("is-dragging");
+      preview.setPointerCapture(e.pointerId);
+      preview.dataset.dragging = "1";
+      preview.dataset.dragStartX = String(e.clientX);
+      preview.dataset.dragStartY = String(e.clientY);
+      preview.dataset.dragOriginX = String(state.portrait.x);
+      preview.dataset.dragOriginY = String(state.portrait.y);
+      preview.dataset.dragRectW = String(rect.width || 1);
+      preview.dataset.dragRectH = String(rect.height || 1);
+    }
+    function movePortraitDrag(e){
+      const preview = $("#portraitPreview");
+      if (!preview || preview.dataset.dragging !== "1") return;
+      const startX = parseFloat(preview.dataset.dragStartX || "0");
+      const startY = parseFloat(preview.dataset.dragStartY || "0");
+      const originX = parseFloat(preview.dataset.dragOriginX || "50");
+      const originY = parseFloat(preview.dataset.dragOriginY || "30");
+      const rectW = parseFloat(preview.dataset.dragRectW || "1");
+      const rectH = parseFloat(preview.dataset.dragRectH || "1");
+      const dx = (e.clientX - startX) / rectW * 100;
+      const dy = (e.clientY - startY) / rectH * 100;
+      setPortraitPosition(originX + dx, originY + dy);
+    }
+    function endPortraitDrag(e){
+      const preview = $("#portraitPreview");
+      if (!preview || preview.dataset.dragging !== "1") return;
+      preview.classList.remove("is-dragging");
+      preview.dataset.dragging = "0";
+      preview.releasePointerCapture(e.pointerId);
     }
 
     /**********************************************************************
@@ -2908,8 +2983,10 @@
       $("#portraitApplyUrl").addEventListener("click", applyPortraitUrl);
       $("#portraitReset").addEventListener("click", resetPortraitCrop);
       $("#pz").addEventListener("input", applyPortraitControls);
-      $("#px").addEventListener("input", applyPortraitControls);
-      $("#py").addEventListener("input", applyPortraitControls);
+      $("#portraitPreview").addEventListener("pointerdown", startPortraitDrag);
+      $("#portraitPreview").addEventListener("pointermove", movePortraitDrag);
+      $("#portraitPreview").addEventListener("pointerup", endPortraitDrag);
+      $("#portraitPreview").addEventListener("pointercancel", endPortraitDrag);
 
       // Editable blur commits to state
       document.addEventListener("focusout", (e)=>{
