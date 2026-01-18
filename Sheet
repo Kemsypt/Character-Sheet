@@ -80,28 +80,25 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 1;
+      z-index: 200;
       opacity: 0;
-      transition: opacity 180ms ease;
+      transition: opacity 220ms ease;
       background:
-        linear-gradient(90deg, rgba(216,192,138,0.45), transparent 18%),
-        linear-gradient(270deg, rgba(216,192,138,0.45), transparent 18%),
-        linear-gradient(0deg, rgba(216,192,138,0.45), transparent 40%);
-      animation: inspPulse 2.8s ease-in-out infinite;
+        linear-gradient(90deg, rgba(216,192,138,0.20), transparent 6%),
+        linear-gradient(270deg, rgba(216,192,138,0.20), transparent 6%);
+      animation: inspPulse 6.5s ease-in-out infinite;
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
     @keyframes inspPulse{
       0%,100%{
         background:
-          linear-gradient(90deg, rgba(216,192,138,0.40), transparent 18%),
-          linear-gradient(270deg, rgba(216,192,138,0.40), transparent 18%),
-          linear-gradient(0deg, rgba(216,192,138,0.38), transparent 40%);
+          linear-gradient(90deg, rgba(216,192,138,0.16), transparent 6%),
+          linear-gradient(270deg, rgba(216,192,138,0.16), transparent 6%);
       }
       50%{
         background:
-          linear-gradient(90deg, rgba(255,225,162,0.55), transparent 18%),
-          linear-gradient(270deg, rgba(255,225,162,0.55), transparent 18%),
-          linear-gradient(0deg, rgba(255,219,143,0.50), transparent 40%);
+          linear-gradient(90deg, rgba(255,225,162,0.26), transparent 6%),
+          linear-gradient(270deg, rgba(255,225,162,0.26), transparent 6%);
       }
     }
 
@@ -139,7 +136,7 @@
       min-width: 0;
       display:flex;
       flex-wrap: wrap;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
     }
@@ -147,6 +144,8 @@
       min-width: 0;
       display:flex;
       flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
     }
     .id-name{
       margin:0;
@@ -154,21 +153,30 @@
       letter-spacing: 0.02em;
       font-weight: 900;
       line-height: 0.98;
+      max-width: 100%;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
     .id-sub{
       margin-top: 8px;
       color: var(--muted);
       font-weight: 650;
       font-size: 14px;
+      line-height: 1.2;
+      max-width: 100%;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
     .id-portrait{
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 150px;
       border-radius: 18px;
       object-fit: cover;
       object-position: var(--px, 50%) var(--py, 30%);
-      transform: scale(var(--pz, 1));
-      transform-origin: center;
       border: 1px solid rgba(255,255,255,0.14);
       background: rgba(0,0,0,0.18);
       box-shadow: var(--shadow);
@@ -247,7 +255,7 @@
       margin-top: 6px;
     }
 
-    .chip-money{ width: 200px; }
+    .chip-money{ width: 150px; }
     .chip-status{ width: 150px; }
     .chip-insp{ width: 120px; }
     .chip-rest{ width: 190px; }
@@ -1027,6 +1035,9 @@
       width: min(720px, calc(100vw - 28px));
       z-index: 120;
     }
+    #coinAdjustDialog{
+      width: 70px;
+    }
     dialog::backdrop{background: rgba(0,0,0,0.62); backdrop-filter: blur(6px);}
     .dlg-head{
       padding: 14px 16px;
@@ -1054,6 +1065,53 @@
       color: var(--text);
       cursor:pointer;
       font-weight: 900;
+    }
+    .status-layout{
+      display:grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+      gap: 12px;
+    }
+    @media (max-width: 900px){
+      .status-layout{ grid-template-columns: 1fr; }
+    }
+    .cond-list{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .cond-btn{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 850;
+      text-align:left;
+    }
+    .cond-btn:hover{ border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.28); }
+    .status-current{
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .status-item{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.2);
+      padding: 10px 12px;
+      border-radius: 12px;
+      display:flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .status-item .name{
+      font-weight: 900;
+    }
+    .status-item .meta{
+      font-size: 12px;
+      color: var(--muted);
     }
 
     .btn{
@@ -1152,6 +1210,80 @@
     .fab[aria-pressed="true"]{
       border-color: rgba(216,192,138,0.45);
       background: rgba(216,192,138,0.14);
+    }
+
+    .dice-panel{
+      position: fixed;
+      right: 90px;
+      bottom: 90px;
+      width: 320px;
+      max-width: calc(100vw - 40px);
+      background: rgba(10,12,18,0.96);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      z-index: 130;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .dice-panel[data-open="true"]{ display:flex; }
+    .dice-head{
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: grab;
+      background: rgba(255,255,255,0.06);
+    }
+    .dice-head:active{ cursor: grabbing; }
+    .dice-body{
+      padding: 12px;
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .dice-row{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    .dice-btn{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight: 850;
+      font-size: 12px;
+    }
+    .dice-btn[aria-pressed="true"]{
+      border-color: rgba(216,192,138,0.45);
+      background: rgba(216,192,138,0.18);
+    }
+    .dice-results{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 10px;
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .dice-history{
+      max-height: 160px;
+      overflow: auto;
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .dice-history-item{
+      font-size: 12px;
+      color: var(--muted);
     }
 
     .radio-row{
@@ -1360,11 +1492,11 @@
     <div class="topbar-inner">
       <!-- Name block -->
       <div class="id-block">
+        <img class="id-portrait" id="tb_portrait" alt="Character portrait thumbnail" />
         <div class="id-text">
           <h1 class="id-name" id="tb_name">Elaria Thornbloom</h1>
           <div class="id-sub" id="tb_sub">Wood Elf • Druid 10</div>
         </div>
-        <img class="id-portrait" id="tb_portrait" alt="Character portrait thumbnail" />
       </div>
 
       <!-- Right side -->
@@ -1391,8 +1523,8 @@
             <div class="stat-v" id="tb_pb">+4</div>
           </div>
 
-          <div class="cap chip-cap chip-money" title="Money">
-            <div class="chip-k">MONEY</div>
+          <div class="cap chip-cap chip-money" title="Gold">
+            <div class="chip-k">GOLD</div>
             <div class="chip-row">
               <button class="pill-btn" id="moneyBtn" type="button" aria-haspopup="dialog" title="Open coin purse">
                 <span>💰</span>
@@ -1406,7 +1538,6 @@
             <div class="chip-k">STATUS</div>
             <div class="chip-row">
               <button class="pill-btn" id="statusBtn" type="button" aria-haspopup="dialog" title="Select conditions">
-                <span>☰</span>
                 <span id="tb_status">None</span>
                 <span>▾</span>
               </button>
@@ -1852,13 +1983,19 @@
       <div class="card">
         <div class="small muted" id="coinAdjustHint">Update the amount for this coin type.</div>
         <div style="height:12px"></div>
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <button class="btn" id="coinAdjustDec" type="button">−</button>
-          <input class="select" id="coinAdjustValue" type="number" min="0" step="1" inputmode="numeric" />
-          <button class="btn" id="coinAdjustInc" type="button">＋</button>
+        <div class="row">
+          <div class="small">Current</div>
+          <div style="font-weight:900;" id="coinAdjustCurrent">0</div>
         </div>
         <div style="height:12px"></div>
-        <div style="display:flex; justify-content:flex-end;">
+        <div class="seg" id="coinAdjustMode" role="group" aria-label="Coin adjustment mode">
+          <button type="button" data-coin-mode="set" aria-pressed="true">Set</button>
+          <button type="button" data-coin-mode="add" aria-pressed="false">Add</button>
+          <button type="button" data-coin-mode="remove" aria-pressed="false">Remove</button>
+        </div>
+        <div style="height:12px"></div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <input class="select" id="coinAdjustValue" type="number" min="0" step="1" inputmode="numeric" aria-label="Coin amount" />
           <button class="btn primary" id="coinAdjustApply" type="button">Apply</button>
         </div>
       </div>
@@ -1887,23 +2024,33 @@
       <button class="icon-btn" id="statusClose" type="button" aria-label="Close">✕</button>
     </div>
     <div class="dlg-body">
-      <div class="card">
-        <h4>Conditions</h4>
-        <div class="small">Select one or more conditions.</div>
-        <div class="checkgrid" id="condGrid"></div>
-      </div>
+      <div class="status-layout">
+        <div>
+          <div class="card">
+            <h4>Conditions</h4>
+            <div class="small">Click a condition to add it with a duration.</div>
+            <div class="cond-list" id="condList"></div>
+          </div>
 
-      <div style="height:10px"></div>
+          <div style="height:10px"></div>
 
-      <div class="card">
-        <h4>Exhaustion</h4>
-        <div class="small">Set exhaustion level (0–6). Included in Status display.</div>
-        <div style="display:flex; gap:10px; align-items:center; margin-top:8px;">
-          <select class="select" id="exhaustSel" aria-label="Exhaustion level">
-            <option value="0">0 — None</option>
-            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-          </select>
+          <div class="card">
+            <h4>Exhaustion</h4>
+            <div class="small">Set exhaustion level (0–6). Included in Status display.</div>
+            <div style="display:flex; gap:10px; align-items:center; margin-top:8px;">
+              <select class="select" id="exhaustSel" aria-label="Exhaustion level">
+                <option value="0">0 — None</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Active Statuses</h4>
+          <div class="small">Ordered by shortest remaining duration.</div>
+          <div class="status-current" id="currentStatusList"></div>
         </div>
       </div>
 
@@ -1912,8 +2059,37 @@
       <div class="row">
         <button class="btn danger" id="clearStatusBtn" type="button">Clear All</button>
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-          <button class="btn" id="cancelStatusBtn" type="button">Cancel</button>
-          <button class="btn primary" id="applyStatusBtn" type="button">Apply</button>
+          <button class="btn" id="cancelStatusBtn" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="statusAddDialog" aria-label="Add condition duration">
+    <div class="dlg-head">
+      <h3 class="dlg-title" id="statusAddTitle">Add Condition</h3>
+      <button class="icon-btn" id="statusAddClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div class="card">
+        <div class="small muted" id="statusAddDesc"></div>
+        <div style="height:12px"></div>
+        <div class="field" style="justify-content:flex-start;">
+          <label style="min-width:90px;">Duration</label>
+          <input class="amt" id="statusAddValue" type="number" min="1" value="1" inputmode="numeric" style="width:90px;" />
+          <select class="select" id="statusAddUnit" aria-label="Duration unit">
+            <option value="turns">Turns</option>
+            <option value="seconds">Seconds</option>
+            <option value="minutes">Minutes</option>
+            <option value="hours">Hours</option>
+            <option value="days">Days</option>
+            <option value="indefinite">Indefinite</option>
+            <option value="permanent">Permanent</option>
+          </select>
+        </div>
+        <div style="height:12px"></div>
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="btn primary" id="statusAddApply" type="button">Add Status</button>
         </div>
       </div>
     </div>
@@ -2063,6 +2239,12 @@
         <div class="small" style="margin-top:8px;">
           Drag inside the preview to reposition. Position: <strong id="portraitPosLabel">50% / 30%</strong>
         </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+          <button class="btn" id="portraitNudgeUp" type="button">Up</button>
+          <button class="btn" id="portraitNudgeDown" type="button">Down</button>
+          <button class="btn" id="portraitNudgeLeft" type="button">Left</button>
+          <button class="btn" id="portraitNudgeRight" type="button">Right</button>
+        </div>
       </div>
 
       <div style="height:12px"></div>
@@ -2134,6 +2316,12 @@
 
   <!-- FABs: Lock + Settings -->
   <div class="fab-wrap" aria-label="Quick controls">
+    <button class="fab" id="diceFab" type="button" aria-label="Open dice roller" aria-pressed="false" title="Dice Roller">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 8.2 12 3l8 5.2v7.6L12 21l-8-5.2V8.2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M8.5 9.5h.01M12 12h.01M15.5 14.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
     <button class="fab" id="lockFab" type="button" aria-label="Toggle edit lock" aria-pressed="false" title="Unlock to edit">
       <svg id="lockIconClosed" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -2151,6 +2339,36 @@
         <path d="M19.4 15a8.6 8.6 0 0 0 .1-1l2-1.2-2-3.4-2.2.6c-.5-.4-1-.7-1.6-.9L13.9 6h-3.8L9.3 8.9c-.6.2-1.1.5-1.6.9l-2.2-.6-2 3.4 2 1.2a8.6 8.6 0 0 0 0 2l-2 1.2 2 3.4 2.2-.6c.5.4 1 .7 1.6.9L10.1 22h3.8l.8-2.9c.6-.2 1.1-.5 1.6-.9l2.2.6 2-3.4-2-1.2c.1-.3.1-.7.1-1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
+  </div>
+
+  <div class="dice-panel" id="dicePanel" data-open="false" aria-label="Dice roller">
+    <div class="dice-head" id="diceDragHandle">
+      <div class="note-title">Dice Roller</div>
+      <button class="icon-btn" id="diceClose" type="button" aria-label="Close dice roller">✕</button>
+    </div>
+    <div class="dice-body">
+      <div class="dice-row" id="diceTypes" role="group" aria-label="Dice types">
+        <button class="dice-btn" type="button" data-dice="4" aria-pressed="false">d4</button>
+        <button class="dice-btn" type="button" data-dice="6" aria-pressed="false">d6</button>
+        <button class="dice-btn" type="button" data-dice="8" aria-pressed="false">d8</button>
+        <button class="dice-btn" type="button" data-dice="10" aria-pressed="false">d10</button>
+        <button class="dice-btn" type="button" data-dice="12" aria-pressed="false">d12</button>
+        <button class="dice-btn" type="button" data-dice="20" aria-pressed="true">d20</button>
+        <button class="dice-btn" type="button" data-dice="100" aria-pressed="false">d100</button>
+      </div>
+      <div class="dice-row">
+        <label class="small" for="diceCount">Count</label>
+        <input class="amt" id="diceCount" type="number" min="1" value="1" inputmode="numeric" style="width:70px;" />
+        <label class="small" for="diceMod">Modifier</label>
+        <input class="amt" id="diceMod" type="number" value="0" inputmode="numeric" style="width:70px;" />
+        <button class="btn primary" id="diceRollBtn" type="button">Roll</button>
+      </div>
+      <div class="dice-results">
+        <div class="small" id="diceSummary">Ready to roll.</div>
+        <div class="small" id="diceDetail"></div>
+        <div class="dice-history" id="diceHistory"></div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -2187,6 +2405,38 @@
       "Invisible","Paralyzed","Petrified","Poisoned","Prone","Restrained",
       "Stunned","Unconscious"
     ];
+
+    const CONDITION_DETAILS = {
+      Blinded: "A blinded creature can’t see and automatically fails any ability check that requires sight. Attack rolls against it have advantage, and its attack rolls have disadvantage.",
+      Charmed: "A charmed creature can’t attack the charmer or target the charmer with harmful abilities or magical effects. The charmer has advantage on social checks to interact with it.",
+      Deafened: "A deafened creature can’t hear and automatically fails any ability check that requires hearing.",
+      Frightened: "A frightened creature has disadvantage on ability checks and attack rolls while the source of fear is in line of sight, and it can’t willingly move closer to the source.",
+      Grappled: "A grappled creature’s speed becomes 0, and it can’t benefit from bonuses to speed. The condition ends if the grappler is incapacitated or the creature is moved away.",
+      Incapacitated: "An incapacitated creature can’t take actions or reactions.",
+      Invisible: "An invisible creature is impossible to see without special senses. Attack rolls against it have disadvantage, and its attack rolls have advantage.",
+      Paralyzed: "A paralyzed creature is incapacitated and can’t move or speak. It automatically fails Str/Dex saves, attack rolls against it have advantage, and hits are critical within 5 ft.",
+      Petrified: "A petrified creature is transformed to stone, is incapacitated, can’t move or speak, is unaware, automatically fails Str/Dex saves, and has resistance to all damage.",
+      Poisoned: "A poisoned creature has disadvantage on attack rolls and ability checks.",
+      Prone: "A prone creature’s only movement is to crawl unless it stands up. Attack rolls against it have advantage within 5 ft, otherwise disadvantage.",
+      Restrained: "A restrained creature’s speed becomes 0, attack rolls against it have advantage, its attack rolls have disadvantage, and it has disadvantage on Dex saves.",
+      Stunned: "A stunned creature is incapacitated, can’t move, can only speak falteringly, automatically fails Str/Dex saves, and attack rolls against it have advantage.",
+      Unconscious: "An unconscious creature is incapacitated, prone, unaware, automatically fails Str/Dex saves, and attacks have advantage; hits are critical within 5 ft."
+    };
+
+    const CONDITION_SEVERITY = [
+      "Unconscious","Petrified","Paralyzed","Stunned","Restrained","Blinded",
+      "Poisoned","Frightened","Charmed","Grappled","Prone","Incapacitated","Invisible","Deafened"
+    ];
+
+    const DURATION_UNITS = {
+      turns: { label: "turns", seconds: 6 },
+      seconds: { label: "seconds", seconds: 1 },
+      minutes: { label: "minutes", seconds: 60 },
+      hours: { label: "hours", seconds: 3600 },
+      days: { label: "days", seconds: 86400 },
+      indefinite: { label: "indefinite", seconds: Infinity },
+      permanent: { label: "permanent", seconds: Infinity }
+    };
 
     const baseSkills = [
       { name:"Acrobatics",       abil:"dex", custom:false },
@@ -2333,6 +2583,11 @@
       }
     };
 
+    const diceState = {
+      sides: 20,
+      history: []
+    };
+
     /**********************************************************************
      * Helpers
      **********************************************************************/
@@ -2391,8 +2646,8 @@
     }
     function renderXPBox(){
       const xp = Math.max(0, state.xp|0);
-      const maxLvl = levelFromXP(xp);
-      const lvl = Math.min(state.xpLevel || maxLvl, maxLvl);
+      const rawLevel = parseInt($("#mainTotalLevel").textContent, 10);
+      const lvl = clamp(Number.isFinite(rawLevel) ? rawLevel : state.xpLevel || 1, 1, 20);
       state.xpLevel = lvl;
       const nextRow = XP_THRESHOLDS.find(r => r.lvl === Math.min(20, lvl + 1));
       const next = nextRow ? nextRow.xp : XP_THRESHOLDS[XP_THRESHOLDS.length - 1].xp;
@@ -2418,14 +2673,162 @@
      * Status
      **********************************************************************/
     function getActiveStatusList(){
-      const out = [...state.status.conditions];
-      if (state.status.exhaustion > 0) out.push(`Exhaustion ${state.status.exhaustion}`);
-      return out;
+      return getStatusEntries()
+        .sort((a, b)=> a.remaining - b.remaining)
+        .map(entry => entry.label);
+    }
+    function getStatusEntries(){
+      const list = state.status.conditions.map((c)=>({
+        name: c.name,
+        duration: formatStatusDuration(c),
+        label: `${c.name}${formatStatusDuration(c) ? ` (${formatStatusDuration(c)})` : ""}`,
+        remaining: getStatusRemainingValue(c)
+      }));
+      if (state.status.exhaustion > 0){
+        list.push({
+          name: `Exhaustion ${state.status.exhaustion}`,
+          duration: "permanent",
+          label: `Exhaustion ${state.status.exhaustion}`,
+          remaining: Infinity
+        });
+      }
+      return list;
+    }
+    function formatStatusDuration(status){
+      const unit = status.durationUnit || "indefinite";
+      if (unit === "indefinite" || unit === "permanent") return DURATION_UNITS[unit].label;
+      const value = status.durationValue || 0;
+      const label = DURATION_UNITS[unit]?.label || unit;
+      return `${value} ${label}`;
+    }
+    function getStatusRemainingValue(status){
+      const unit = status.durationUnit || "indefinite";
+      if (unit === "indefinite" || unit === "permanent") return Infinity;
+      const seconds = DURATION_UNITS[unit]?.seconds ?? 0;
+      const value = status.durationValue || 0;
+      return value * seconds;
     }
     function summarizeStatus(active){
       if (!active.length) return "None";
-      if (active.length === 1) return active[0];
-      return `${active[0]} +${active.length - 1}`;
+      return active[0];
+    }
+    function getMostSeriousStatus(){
+      if (!state.status.conditions.length){
+        return state.status.exhaustion > 0 ? `Exhaustion ${state.status.exhaustion}` : "None";
+      }
+      const order = new Map(CONDITION_SEVERITY.map((name, idx)=>[name, idx]));
+      const sorted = [...state.status.conditions].sort((a, b)=>{
+        const aRank = order.has(a.name) ? order.get(a.name) : CONDITION_SEVERITY.length;
+        const bRank = order.has(b.name) ? order.get(b.name) : CONDITION_SEVERITY.length;
+        return aRank - bRank;
+      });
+      return sorted[0]?.name || "None";
+    }
+    function renderCurrentStatusList(){
+      const list = $("#currentStatusList");
+      if (!list) return;
+      const entries = getStatusEntries().sort((a, b)=> a.remaining - b.remaining);
+      if (!entries.length){
+        list.innerHTML = `<div class="small muted">No active statuses.</div>`;
+        return;
+      }
+      list.innerHTML = entries.map(entry => `
+        <div class="status-item">
+          <div class="name">${escapeHTML(entry.name)}</div>
+          <div class="meta">${escapeHTML(entry.duration || "")}</div>
+        </div>
+      `).join("");
+    }
+    function normalizeStatusConditions(){
+      if (!Array.isArray(state.status.conditions)) state.status.conditions = [];
+      if (state.status.conditions.length && typeof state.status.conditions[0] === "string"){
+        state.status.conditions = state.status.conditions.map((name)=>({
+          name,
+          durationUnit: "indefinite",
+          durationValue: null,
+          addedAt: Date.now()
+        }));
+      } else {
+        state.status.conditions = state.status.conditions.map((cond)=>({
+          name: cond.name || "Unknown",
+          durationUnit: cond.durationUnit || "indefinite",
+          durationValue: cond.durationUnit === "indefinite" || cond.durationUnit === "permanent" ? null : (cond.durationValue ?? 1),
+          addedAt: cond.addedAt || Date.now()
+        }));
+      }
+    }
+
+    /**********************************************************************
+     * Dice Roller
+     **********************************************************************/
+    let diceDrag = null;
+    function setDiceType(sides){
+      diceState.sides = sides;
+      document.querySelectorAll("#diceTypes [data-dice]").forEach((btn)=>{
+        btn.setAttribute("aria-pressed", btn.dataset.dice === String(sides) ? "true" : "false");
+      });
+    }
+    function toggleDicePanel(open){
+      const panel = $("#dicePanel");
+      const next = open ?? panel.dataset.open !== "true";
+      panel.dataset.open = next ? "true" : "false";
+      $("#diceFab").setAttribute("aria-pressed", next ? "true" : "false");
+    }
+    function renderDiceHistory(){
+      const history = $("#diceHistory");
+      history.innerHTML = diceState.history.length
+        ? diceState.history.map(item => `<div class="dice-history-item">${escapeHTML(item)}</div>`).join("")
+        : `<div class="dice-history-item">No rolls yet.</div>`;
+    }
+    function rollDice(){
+      const count = Math.max(1, parseInt($("#diceCount").value, 10) || 1);
+      const mod = parseInt($("#diceMod").value, 10) || 0;
+      const rolls = [];
+      let total = 0;
+      for (let i=0; i<count; i++){
+        const roll = 1 + Math.floor(Math.random() * diceState.sides);
+        rolls.push(roll);
+        total += roll;
+      }
+      total += mod;
+      const summary = `${count}d${diceState.sides}${mod ? (mod > 0 ? `+${mod}` : `${mod}`) : ""} = ${total}`;
+      $("#diceSummary").textContent = summary;
+      $("#diceDetail").textContent = `Rolls: [${rolls.join(", ")}]`;
+      diceState.history.unshift(summary);
+      diceState.history = diceState.history.slice(0, 10);
+      renderDiceHistory();
+    }
+    function startDiceDrag(e){
+      if (e.button !== 0) return;
+      const panel = $("#dicePanel");
+      const rect = panel.getBoundingClientRect();
+      e.preventDefault();
+      diceDrag = {
+        pointerId: e.pointerId,
+        offsetX: e.clientX - rect.left,
+        offsetY: e.clientY - rect.top
+      };
+      panel.style.left = `${rect.left}px`;
+      panel.style.top = `${rect.top}px`;
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+      panel.setPointerCapture(e.pointerId);
+    }
+    function moveDiceDrag(e){
+      if (!diceDrag || diceDrag.pointerId !== e.pointerId) return;
+      const panel = $("#dicePanel");
+      const maxX = window.innerWidth - panel.offsetWidth;
+      const maxY = window.innerHeight - panel.offsetHeight;
+      const x = clamp(e.clientX - diceDrag.offsetX, 10, Math.max(10, maxX - 10));
+      const y = clamp(e.clientY - diceDrag.offsetY, 10, Math.max(10, maxY - 10));
+      panel.style.left = `${x}px`;
+      panel.style.top = `${y}px`;
+    }
+    function endDiceDrag(e){
+      if (!diceDrag || diceDrag.pointerId !== e.pointerId) return;
+      const panel = $("#dicePanel");
+      panel.releasePointerCapture(e.pointerId);
+      diceDrag = null;
     }
 
     /**********************************************************************
@@ -2441,6 +2844,25 @@
       document.body.setAttribute("data-wide", state.settings.wide ? "on" : "off");
     }
 
+    function fitTextToLines(el, baseSize, minSize, lines){
+      if (!el) return;
+      el.style.fontSize = `${baseSize}px`;
+      const computed = getComputedStyle(el);
+      const lineHeight = parseFloat(computed.lineHeight);
+      const baseLineHeight = Number.isFinite(lineHeight) ? lineHeight / baseSize : 1.2;
+      let size = baseSize;
+      let maxHeight = baseLineHeight * size * lines;
+      while (el.scrollHeight > maxHeight + 1 && size > minSize){
+        size -= 1;
+        el.style.fontSize = `${size}px`;
+        maxHeight = baseLineHeight * size * lines;
+      }
+    }
+    function fitTopbarText(){
+      fitTextToLines($("#tb_name"), 34, 18, 2);
+      fitTextToLines($("#tb_sub"), 14, 10, 2);
+    }
+
     function renderTopbar(){
       $("#tb_name").textContent = state.name;
       $("#tb_sub").textContent = `${state.race} • ${state.classSummary}`;
@@ -2450,16 +2872,19 @@
       $("#tb_pb").textContent = formatSigned(state.prof);
 
       const total = coinTotalGP(state.coins);
-      $("#tb_money_total").textContent = `${total.toFixed(2)} gp`;
-      $("#i_money").textContent = `${total.toFixed(2)} gp`;
+      const rounded = Math.round(total);
+      $("#tb_money_total").textContent = `${rounded} gp`;
+      $("#i_money").textContent = `${rounded} gp`;
 
       $("#tb_insp").textContent = state.inspiration ? "Yes" : "No";
       $("#inspBtn").setAttribute("aria-pressed", state.inspiration ? "true" : "false");
       applyInspirationGlow();
 
       const active = getActiveStatusList();
-      $("#tb_status").textContent = summarizeStatus(active);
+      $("#tb_status").textContent = getMostSeriousStatus();
       $("#statusTooltipText").textContent = active.length ? active.join(", ") : "None";
+      fitTopbarText();
+      renderCurrentStatusList();
 
       // main quickstats mirror
       $("#m_hp_cur").textContent = state.hp.cur;
@@ -2502,10 +2927,6 @@
     function renderPortrait(){
       const img = $("#portraitImg");
       img.src = state.portrait.url;
-      img.style.setProperty("--pz", String(state.portrait.zoom));
-      img.style.setProperty("--px", `${state.portrait.x}%`);
-      img.style.setProperty("--py", `${state.portrait.y}%`);
-      // applied via CSS vars on element, but we set them on root of img:
       img.style.setProperty("--pz", state.portrait.zoom);
       img.style.setProperty("--px", `${state.portrait.x}%`);
       img.style.setProperty("--py", `${state.portrait.y}%`);
@@ -2515,11 +2936,10 @@
       const thumb = $("#tb_portrait");
       if (thumb){
         thumb.src = state.portrait.url;
-        thumb.style.setProperty("--pz", String(state.portrait.zoom));
         thumb.style.setProperty("--px", `${state.portrait.x}%`);
         thumb.style.setProperty("--py", `${state.portrait.y}%`);
         thumb.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
-        thumb.style.transform = `scale(${state.portrait.zoom})`;
+        thumb.style.transform = "none";
       }
     }
 
@@ -2800,32 +3220,62 @@
      * UI / dialogs
      **********************************************************************/
     function openStatusDialog(){
-      const grid = $("#condGrid");
-      if (!grid.dataset.built){
-        grid.innerHTML = CONDITIONS.map(c => `
-          <label class="check">
-            <input type="checkbox" value="${escapeHTML(c)}" />
-            <span>${escapeHTML(c)}</span>
-          </label>
-        `).join("");
-        grid.dataset.built = "1";
-      }
-      grid.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
-        cb.checked = state.status.conditions.includes(cb.value);
-      });
+      normalizeStatusConditions();
+      renderConditionList();
       $("#exhaustSel").value = String(state.status.exhaustion);
+      renderCurrentStatusList();
       $("#statusDialog").showModal();
     }
-    function applyStatusFromDialog(){
-      const selected = [...$("#condGrid").querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
-      state.status.conditions = selected;
-      state.status.exhaustion = parseInt($("#exhaustSel").value, 10) || 0;
-      $("#statusDialog").close();
+    function renderConditionList(){
+      const list = $("#condList");
+      if (!list || list.dataset.built) return;
+      list.innerHTML = CONDITIONS.map(c => `
+        <button class="cond-btn" type="button" data-condition="${escapeHTML(c)}">${escapeHTML(c)}</button>
+      `).join("");
+      list.dataset.built = "1";
+    }
+    function openStatusAddDialog(name){
+      const dialog = $("#statusAddDialog");
+      dialog.dataset.condition = name;
+      $("#statusAddTitle").textContent = `Add ${name}`;
+      $("#statusAddDesc").textContent = CONDITION_DETAILS[name] || "";
+      $("#statusAddValue").value = 1;
+      $("#statusAddUnit").value = "turns";
+      updateStatusAddControls();
+      dialog.showModal();
+    }
+    function updateStatusAddControls(){
+      const unit = $("#statusAddUnit").value;
+      const valueInput = $("#statusAddValue");
+      const isFixed = unit === "indefinite" || unit === "permanent";
+      valueInput.style.display = isFixed ? "none" : "inline-flex";
+      valueInput.disabled = isFixed;
+    }
+    function applyStatusAdd(){
+      const dialog = $("#statusAddDialog");
+      const name = dialog.dataset.condition;
+      if (!name) return;
+      const unit = $("#statusAddUnit").value;
+      const value = unit === "indefinite" || unit === "permanent"
+        ? null
+        : Math.max(1, parseInt($("#statusAddValue").value, 10) || 1);
+      state.status.conditions = state.status.conditions.filter(c => c.name !== name);
+      state.status.conditions.push({
+        name,
+        durationUnit: unit,
+        durationValue: value,
+        addedAt: Date.now()
+      });
+      dialog.close();
+      renderCurrentStatusList();
       renderTopbar();
     }
     function clearStatus(){
-      $("#condGrid").querySelectorAll('input[type="checkbox"]').forEach(cb=> cb.checked=false);
+      state.status.conditions = [];
+      state.status.exhaustion = 0;
       $("#exhaustSel").value = "0";
+      renderCurrentStatusList();
+      renderTopbar();
     }
 
     function openCoinDialog(){
@@ -2838,27 +3288,51 @@
       const dialog = $("#coinAdjustDialog");
       dialog.dataset.coin = key;
       $("#coinAdjustTitle").textContent = `${currency.name} (${currency.k.toUpperCase()})`;
-      $("#coinAdjustHint").textContent = `Update ${currency.name} coins.`;
-      $("#coinAdjustValue").value = String(state.coins[key] ?? 0);
+      $("#coinAdjustCurrent").textContent = String(state.coins[key] ?? 0);
+      setCoinAdjustMode("set");
       dialog.showModal();
     }
-    function updateCoinAmount(delta){
+    function setCoinAdjustMode(mode){
       const dialog = $("#coinAdjustDialog");
       const key = dialog.dataset.coin;
       if (!key) return;
+      const currency = getCurrency(key);
+      if (!currency) return;
+      dialog.dataset.mode = mode;
+      dialog.querySelectorAll("[data-coin-mode]").forEach((btn)=>{
+        btn.setAttribute("aria-pressed", btn.dataset.coinMode === mode ? "true" : "false");
+      });
       const current = state.coins[key] ?? 0;
-      const next = Math.max(0, current + delta);
-      state.coins[key] = next;
-      $("#coinAdjustValue").value = String(next);
-      renderCoinPurse();
-      renderTopbar();
+      const hint = $("#coinAdjustHint");
+      if (mode === "add"){
+        hint.textContent = `Add ${currency.name} coins.`;
+        $("#coinAdjustValue").value = "";
+      } else if (mode === "remove"){
+        hint.textContent = `Remove ${currency.name} coins.`;
+        $("#coinAdjustValue").value = "";
+      } else {
+        hint.textContent = `Set total ${currency.name} coins.`;
+        $("#coinAdjustValue").value = String(current);
+      }
+      $("#coinAdjustCurrent").textContent = String(current);
     }
     function applyCoinAmount(){
       const dialog = $("#coinAdjustDialog");
       const key = dialog.dataset.coin;
       if (!key) return;
-      const next = Math.max(0, parseInt($("#coinAdjustValue").value, 10) || 0);
+      const mode = dialog.dataset.mode || "set";
+      const current = state.coins[key] ?? 0;
+      const amount = Math.max(0, parseInt($("#coinAdjustValue").value, 10) || 0);
+      let next = current;
+      if (mode === "add"){
+        next = current + amount;
+      } else if (mode === "remove"){
+        next = Math.max(0, current - amount);
+      } else {
+        next = amount;
+      }
       state.coins[key] = next;
+      $("#coinAdjustCurrent").textContent = String(next);
       renderCoinPurse();
       renderTopbar();
       dialog.close();
@@ -3107,6 +3581,7 @@
       renderHP();
       renderMain();
       renderCombat();
+      if (state.xpMode === "xp") renderXPBox();
     }
 
     /**********************************************************************
@@ -3191,11 +3666,14 @@
       saveSettings();
     }
     function setPortraitPosition(x, y){
-      state.portrait.x = clamp(Math.round(x), 0, 100);
-      state.portrait.y = clamp(Math.round(y), 0, 100);
+      state.portrait.x = clamp(Math.round(x * 10) / 10, 0, 100);
+      state.portrait.y = clamp(Math.round(y * 10) / 10, 0, 100);
       renderPortrait();
       updatePortraitPreview();
       saveSettings();
+    }
+    function nudgePortrait(dx, dy){
+      setPortraitPosition(state.portrait.x + dx, state.portrait.y + dy);
     }
     function resetPortraitCrop(){
       state.portrait.zoom = 1.00;
@@ -3210,6 +3688,9 @@
       e.preventDefault();
       const rect = preview.getBoundingClientRect();
       preview.classList.add("is-dragging");
+      if (preview.setPointerCapture){
+        preview.setPointerCapture(e.pointerId);
+      }
       portraitDrag = {
         startX: e.clientX,
         startY: e.clientY,
@@ -3217,35 +3698,27 @@
         originY: state.portrait.y,
         rectW: rect.width || 1,
         rectH: rect.height || 1,
-        pointerId: e.pointerId
+        pointerId: e.pointerId,
+        active: true
       };
-      window.addEventListener("pointermove", movePortraitDrag, { passive: false });
-      window.addEventListener("pointerup", endPortraitDrag, { passive: false });
-      window.addEventListener("pointercancel", endPortraitDrag, { passive: false });
     }
     function movePortraitDrag(e){
-      const preview = $("#portraitPreview");
-      if (!preview || preview.dataset.dragging !== "1") return;
+      if (!portraitDrag || !portraitDrag.active) return;
+      if (portraitDrag.pointerId !== undefined && e.pointerId !== portraitDrag.pointerId) return;
       e.preventDefault();
-      const startX = parseFloat(preview.dataset.dragStartX || "0");
-      const startY = parseFloat(preview.dataset.dragStartY || "0");
-      const originX = parseFloat(preview.dataset.dragOriginX || "50");
-      const originY = parseFloat(preview.dataset.dragOriginY || "30");
-      const rectW = parseFloat(preview.dataset.dragRectW || "1");
-      const rectH = parseFloat(preview.dataset.dragRectH || "1");
-      const dx = (e.clientX - startX) / rectW * 100;
-      const dy = (e.clientY - startY) / rectH * 100;
-      setPortraitPosition(originX + dx, originY + dy);
+      const dx = (e.clientX - portraitDrag.startX) / portraitDrag.rectW * 100;
+      const dy = (e.clientY - portraitDrag.startY) / portraitDrag.rectH * 100;
+      setPortraitPosition(portraitDrag.originX + dx, portraitDrag.originY + dy);
     }
     function endPortraitDrag(e){
       const preview = $("#portraitPreview");
       if (!portraitDrag) return;
       if (portraitDrag.pointerId !== undefined && e.pointerId !== portraitDrag.pointerId) return;
       preview.classList.remove("is-dragging");
+      if (preview && preview.releasePointerCapture && portraitDrag.pointerId !== undefined){
+        preview.releasePointerCapture(portraitDrag.pointerId);
+      }
       portraitDrag = null;
-      window.removeEventListener("pointermove", movePortraitDrag, { passive: false });
-      window.removeEventListener("pointerup", endPortraitDrag, { passive: false });
-      window.removeEventListener("pointercancel", endPortraitDrag, { passive: false });
     }
 
     /**********************************************************************
@@ -3262,6 +3735,7 @@
      **********************************************************************/
     function init(){
       state.xpLevel = levelFromXP(state.xp);
+      normalizeStatusConditions();
       // portrait
       renderPortrait();
       $("#portraitImg").addEventListener("click", openPortraitEditor);
@@ -3270,8 +3744,20 @@
       $("#statusBtn").addEventListener("click", openStatusDialog);
       $("#statusClose").addEventListener("click", ()=> $("#statusDialog").close());
       $("#cancelStatusBtn").addEventListener("click", ()=> $("#statusDialog").close());
-      $("#applyStatusBtn").addEventListener("click", applyStatusFromDialog);
       $("#clearStatusBtn").addEventListener("click", clearStatus);
+      $("#condList").addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-condition]");
+        if (!btn) return;
+        openStatusAddDialog(btn.dataset.condition);
+      });
+      $("#exhaustSel").addEventListener("change", ()=>{
+        state.status.exhaustion = parseInt($("#exhaustSel").value, 10) || 0;
+        renderCurrentStatusList();
+        renderTopbar();
+      });
+      $("#statusAddClose").addEventListener("click", ()=> $("#statusAddDialog").close());
+      $("#statusAddApply").addEventListener("click", applyStatusAdd);
+      $("#statusAddUnit").addEventListener("change", updateStatusAddControls);
 
       // money
       $("#moneyBtn").addEventListener("click", openCoinDialog);
@@ -3290,10 +3776,32 @@
         openCoinAdjustDialog(card.dataset.coin);
       });
       $("#coinAdjustClose").addEventListener("click", ()=> $("#coinAdjustDialog").close());
-      $("#coinAdjustDec").addEventListener("click", ()=> updateCoinAmount(-1));
-      $("#coinAdjustInc").addEventListener("click", ()=> updateCoinAmount(1));
       $("#coinAdjustApply").addEventListener("click", applyCoinAmount);
+      $("#coinAdjustMode").addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-coin-mode]");
+        if (!btn) return;
+        setCoinAdjustMode(btn.dataset.coinMode);
+      });
+      $("#coinAdjustValue").addEventListener("keydown", (e)=>{
+        if (e.key === "Enter") applyCoinAmount();
+      });
       $("#attuneClose").addEventListener("click", ()=> $("#attuneDialog").close());
+
+      // dice roller
+      setDiceType(diceState.sides);
+      renderDiceHistory();
+      $("#diceFab").addEventListener("click", ()=> toggleDicePanel());
+      $("#diceClose").addEventListener("click", ()=> toggleDicePanel(false));
+      $("#diceRollBtn").addEventListener("click", rollDice);
+      $("#diceTypes").addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-dice]");
+        if (!btn) return;
+        setDiceType(parseInt(btn.dataset.dice, 10));
+      });
+      $("#diceDragHandle").addEventListener("pointerdown", startDiceDrag);
+      $("#dicePanel").addEventListener("pointermove", moveDiceDrag);
+      $("#dicePanel").addEventListener("pointerup", endDiceDrag);
+      $("#dicePanel").addEventListener("pointercancel", endDiceDrag);
 
       // inspiration
       $("#inspBtn").addEventListener("click", ()=>{
@@ -3484,6 +3992,10 @@
       $("#portraitDone").addEventListener("click", ()=> $("#portraitDialog").close());
       $("#portraitApplyUrl").addEventListener("click", applyPortraitUrl);
       $("#portraitReset").addEventListener("click", resetPortraitCrop);
+      $("#portraitNudgeUp").addEventListener("click", ()=> nudgePortrait(0, -2));
+      $("#portraitNudgeDown").addEventListener("click", ()=> nudgePortrait(0, 2));
+      $("#portraitNudgeLeft").addEventListener("click", ()=> nudgePortrait(-2, 0));
+      $("#portraitNudgeRight").addEventListener("click", ()=> nudgePortrait(2, 0));
       $("#pz").addEventListener("input", applyPortraitControls);
       $("#portraitPreview").addEventListener("pointerdown", startPortraitDrag);
       $("#portraitPreview").addEventListener("pointermove", movePortraitDrag);
@@ -3520,6 +4032,8 @@
       renderSpells();
       renderInventory();
       renderNotes();
+      fitTopbarText();
+      window.addEventListener("resize", fitTopbarText);
 
       // default combat subtab
       setCombatSubtab("actions");
