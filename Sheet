@@ -84,21 +84,24 @@
       opacity: 0;
       transition: opacity 220ms ease;
       background:
-        linear-gradient(90deg, rgba(216,192,138,0.20), transparent 6%),
-        linear-gradient(270deg, rgba(216,192,138,0.20), transparent 6%);
-      animation: inspPulse 6.5s ease-in-out infinite;
+        linear-gradient(90deg, rgba(216,192,138,0.18), transparent 6%),
+        linear-gradient(270deg, rgba(216,192,138,0.18), transparent 6%),
+        linear-gradient(0deg, rgba(216,192,138,0.18), transparent 14%);
+      animation: inspPulse 4.8s ease-in-out infinite;
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
     @keyframes inspPulse{
       0%,100%{
         background:
           linear-gradient(90deg, rgba(216,192,138,0.16), transparent 6%),
-          linear-gradient(270deg, rgba(216,192,138,0.16), transparent 6%);
+          linear-gradient(270deg, rgba(216,192,138,0.16), transparent 6%),
+          linear-gradient(0deg, rgba(216,192,138,0.16), transparent 14%);
       }
       50%{
         background:
           linear-gradient(90deg, rgba(255,225,162,0.26), transparent 6%),
-          linear-gradient(270deg, rgba(255,225,162,0.26), transparent 6%);
+          linear-gradient(270deg, rgba(255,225,162,0.26), transparent 6%),
+          linear-gradient(0deg, rgba(255,219,143,0.24), transparent 14%);
       }
     }
 
@@ -3703,7 +3706,7 @@
       };
     }
     function movePortraitDrag(e){
-      if (!portraitDrag || !portraitDrag.active) return;
+      if (!portraitDrag) return;
       if (portraitDrag.pointerId !== undefined && e.pointerId !== portraitDrag.pointerId) return;
       e.preventDefault();
       const dx = (e.clientX - portraitDrag.startX) / portraitDrag.rectW * 100;
