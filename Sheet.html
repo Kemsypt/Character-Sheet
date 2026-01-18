@@ -87,8 +87,8 @@
         linear-gradient(90deg, rgba(216,192,138,0.12), transparent 6%),
         linear-gradient(270deg, rgba(216,192,138,0.12), transparent 6%);
       animation: inspPulse 30s ease-in-out infinite;
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-      mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 70%, transparent 70%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 70%, transparent 70%);
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
     @keyframes inspPulse{
@@ -265,8 +265,8 @@
       display: inline-block;
     }
 
-    .chip-money{ width: 150px; }
-    .chip-status{ width: 150px; }
+    .chip-money{ width: 120px; }
+    .chip-status{ width: 120px; }
     .chip-insp{ width: 120px; }
     .chip-rest{ width: 190px; }
 
@@ -583,6 +583,12 @@
       gap: 12px;
       background: rgba(255,255,255,0.06);
     }
+    .panel-title-row{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
     .panel-title{
       margin:0;
       font-size: 12px;
@@ -798,6 +804,10 @@
       box-shadow: none;
       position: relative;
     }
+    #sp_list{
+      display: grid;
+      gap: 15px;
+    }
     .spellbook-card[data-has-style="true"]{
       border-color: var(--sb-hi);
       background: linear-gradient(180deg, color-mix(in srgb, var(--sb-mid) 30%, transparent), rgba(255,255,255,0.03));
@@ -809,6 +819,16 @@
       gap: 10px;
       flex-wrap:wrap;
       margin-bottom: 10px;
+    }
+    .spellbook-head-actions{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .spellbook-delete{
+      border-color: rgba(248,113,113,0.45);
+      color: #fecaca;
     }
     .spellbook-name-btn{
       background: transparent;
@@ -1929,27 +1949,217 @@
       color: var(--muted);
     }
 
-    .note-card{
+    .notes-subtabs{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+      margin-bottom: 8px;
+    }
+    .notes-tab{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.78);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      cursor:pointer;
+    }
+    .notes-tab[aria-selected="true"]{
+      background: rgba(216,192,138,0.16);
+      border-color: rgba(216,192,138,0.36);
+      color: rgba(255,255,255,0.92);
+    }
+    .notes-tab-add{
+      border-style: dashed;
+      font-weight: 950;
+    }
+    .notes-legend{
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items:center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .notes-legend span{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+    }
+    .notes-toolbar{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items:center;
+    }
+    .notes-search-row{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap: wrap;
+      margin: 10px 0 14px;
+    }
+    .notes-search{
+      flex: 1 1 240px;
+    }
+    .notes-section{
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(0,0,0,0.16);
       border-radius: 16px;
       padding: 12px;
-      display:flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
-    .note-title{
-      font-weight: 950;
+    .notes-section-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .notes-section-title{
+      font-weight: 900;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       font-size: 12px;
+    }
+    .notes-section-actions{
+      display:flex;
+      gap: 6px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+    .notes-section-body{
+      display:grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .notes-section.collapsed .notes-section-body{
+      display:none;
+    }
+    .notes-section.collapsed .notes-section-toggle{
+      transform: rotate(-90deg);
+    }
+    .note-card{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.20);
+      border-radius: 14px;
+      padding: 10px;
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .note-card[data-status="done"]{
+      border-color: rgba(124,245,156,0.35);
+      background: rgba(255,255,255,0.06);
+      opacity: 0.7;
+    }
+    .note-card[data-status="failed"]{
+      border-color: rgba(248,113,113,0.45);
+      background: rgba(248,113,113,0.12);
+    }
+    .note-card.is-starred{
+      box-shadow: 0 0 0 1px rgba(216,192,138,0.35) inset;
+    }
+    .note-card.is-important{
+      border-color: rgba(93,178,255,0.55);
+      box-shadow: 0 0 0 1px rgba(93,178,255,0.35) inset;
+    }
+    .note-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 8px;
+    }
+    .note-title{
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .note-actions{
+      display:flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    .note-icon-btn{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.2);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 4px 6px;
+      font-size: 12px;
+      cursor:pointer;
+    }
+    .note-icon-btn[aria-pressed="true"]{
+      border-color: rgba(216,192,138,0.45);
+      background: rgba(216,192,138,0.18);
     }
     .note-body{
       min-height: 48px;
       background: rgba(0,0,0,0.2);
       border-radius: 12px;
       padding: 8px 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .note-list{
+      margin: 0;
+      padding-left: 18px;
+    }
+    .note-list li{
+      margin: 4px 0;
+    }
+    .note-body mark{
+      background: rgba(93,178,255,0.35);
+      color: var(--text);
+      padding: 0 2px;
+      border-radius: 4px;
+    }
+    .note-editor-toolbar{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0;
+    }
+    .note-editor-text{
+      min-height: 160px;
+      resize: vertical;
+    }
+    .notes-empty{
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .debug-panel{
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      width: min(420px, calc(100vw - 32px));
+      max-height: 45vh;
+      overflow: auto;
+      border: 1px solid rgba(93,178,255,0.35);
+      background: rgba(7,10,20,0.92);
+      border-radius: 14px;
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #dbeafe;
+      display: none;
+      z-index: 120;
+      box-shadow: var(--shadow);
+    }
+    .debug-panel[data-active="true"]{
+      display: block;
+    }
+    .debug-panel-title{
+      font-weight: 900;
+      margin-bottom: 6px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
   </style>
 </head>
@@ -2016,7 +2226,7 @@
           </div>
 
           <div class="cap chip-cap chip-insp" title="Inspiration">
-            <div class="chip-k">INSP</div>
+            <div class="chip-k">Inspiration</div>
             <div class="chip-row">
               <button class="pill-btn compact" id="inspBtn" type="button" aria-pressed="false" title="Toggle inspiration">
                 <span>✦</span>
@@ -2322,11 +2532,13 @@
     <!-- SPELLS -->
     <section class="panel" id="tab-spells" data-tabpanel data-active="false" role="tabpanel" aria-labelledby="tabbtn-spells">
       <div class="panel-header">
-        <h2 class="panel-title">Spell Book</h2>
+        <div class="panel-title-row">
+          <h2 class="panel-title">Spell Book</h2>
+          <button class="mini" id="addSpellbookBtn" type="button" title="Add spellbook (edit mode only)" style="display:none;">Add new spellbook</button>
+        </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <span class="tag">Prepared: <span class="num" id="sp_prep">14</span></span>
           <span class="tag">Ability: Wisdom</span>
-          <button class="mini" id="addSpellbookBtn" type="button" title="Add spellbook (edit mode only)" style="display:none;">＋ Spellbook</button>
         </div>
       </div>
       <div class="panel-body" id="sp_list"></div>
@@ -2423,11 +2635,83 @@
     <section class="panel" id="tab-notes" data-tabpanel data-active="false" role="tabpanel" aria-labelledby="tabbtn-notes">
       <div class="panel-header">
         <h2 class="panel-title">Notes</h2>
-        <button class="mini" id="addNoteBtn" type="button">＋</button>
+        <div class="notes-toolbar">
+          <button class="btn" id="addQuickNoteBtn" type="button">Quick Note</button>
+          <button class="btn" id="addAdvancedNoteBtn" type="button">Advance Note</button>
+          <button class="btn" id="addNoteSectionBtn" type="button">New Section</button>
+        </div>
       </div>
-      <div class="panel-body" id="n_notes"></div>
+      <div class="panel-body">
+        <div class="notes-subtabs" id="notesSubtabs" role="tablist" aria-label="Notes categories"></div>
+        <div class="notes-legend" id="notesLegend">
+          <span>★ Starred</span>
+          <span>✓ Completed</span>
+          <span>✕ Failed</span>
+          <span>❗ Important</span>
+        </div>
+        <div class="notes-search-row">
+          <input class="select notes-search" id="notesSearchInput" placeholder="Search notes..." />
+          <button class="btn" id="notesSearchClear" type="button">Clear</button>
+        </div>
+        <div id="notesSections"></div>
+      </div>
     </section>
   </main>
+
+  <dialog id="quickNoteDialog" aria-label="Quick note">
+    <div class="dlg-head">
+      <h3 class="dlg-title">Quick Note</h3>
+      <button class="icon-btn" id="quickNoteClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <label class="small" for="quickNoteTitle">Title</label>
+      <input class="select" id="quickNoteTitle" placeholder="Note title" />
+      <div class="note-editor-toolbar">
+        <button class="btn" type="button" data-md="bold">Bold</button>
+        <button class="btn" type="button" data-md="italic">Italic</button>
+        <button class="btn" type="button" data-md="h1">H1</button>
+        <button class="btn" type="button" data-md="h2">H2</button>
+        <button class="btn" type="button" data-md="list">Bullets</button>
+        <button class="btn" type="button" data-md="check">Checklist</button>
+      </div>
+      <textarea class="select note-editor-text" id="quickNoteBody" placeholder="Write your note with markdown..."></textarea>
+      <div class="row" style="margin-top:10px; justify-content:flex-end;">
+        <button class="btn" id="quickNoteCancel" type="button">Cancel</button>
+        <button class="btn primary" id="quickNoteSave" type="button">Save Note</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="advancedNoteDialog" aria-label="Advanced note">
+    <div class="dlg-head">
+      <h3 class="dlg-title">Advanced Note</h3>
+      <button class="icon-btn" id="advancedNoteClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <label class="small" for="advancedNoteTitle">Title</label>
+      <input class="select" id="advancedNoteTitle" placeholder="Note title" />
+      <label class="small" for="advancedNoteFormat" style="margin-top:10px;">Format</label>
+      <select class="select" id="advancedNoteFormat">
+        <option value="paragraph">Paragraph</option>
+        <option value="bullets">Bullet List</option>
+        <option value="checklist">Checklist</option>
+      </select>
+      <div class="note-editor-toolbar">
+        <button class="btn" type="button" data-md="bold">Bold</button>
+        <button class="btn" type="button" data-md="italic">Italic</button>
+        <button class="btn" type="button" data-md="h1">H1</button>
+        <button class="btn" type="button" data-md="h2">H2</button>
+        <button class="btn" type="button" data-md="list">Bullets</button>
+        <button class="btn" type="button" data-md="check">Checklist</button>
+      </div>
+      <textarea class="select note-editor-text" id="advancedNoteBody" placeholder="Add structured notes (one line per item for lists)..."></textarea>
+      <div class="row" style="margin-top:10px; justify-content:flex-end;">
+        <button class="btn" id="advancedNoteCancel" type="button">Cancel</button>
+        <button class="btn primary" id="advancedNoteSave" type="button">Save Note</button>
+      </div>
+    </div>
+  </dialog>
+
   <!-- Spell import dialog -->
   <dialog id="spellImportDialog" aria-label="Spell importer">
     <div class="dlg-head">
@@ -2822,6 +3106,17 @@
         </label>
       </div>
 
+      <div class="toggle">
+        <div>
+          <strong>Debug Mode</strong>
+          <div class="muted" style="font-size:12px; margin-top:4px;">Show a debug panel with logs and data fetch status.</div>
+        </div>
+        <label class="switch" for="debugToggle">
+          <input id="debugToggle" type="checkbox" />
+          <span>Enabled</span>
+        </label>
+      </div>
+
       
 
       <div style="height:12px"></div>
@@ -2831,7 +3126,10 @@
         <div class="small">The sheet can cache spell details for offline use (Info button + spell summaries).</div>
         <div class="row" style="align-items:center; justify-content:space-between; margin-top:10px;">
           <div class="small muted" id="spellCacheStatus">Cache: not loaded</div>
-          <button class="btn" id="clearSpellCacheBtn" type="button">Clear spell cache</button>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+            <button class="btn" id="refreshSpellCacheBtn" type="button">Re-download spells</button>
+            <button class="btn" id="clearSpellCacheBtn" type="button">Clear spell cache</button>
+          </div>
         </div>
       </div>
 
@@ -2996,6 +3294,11 @@
     <button class="fab" id="settingsFab" type="button" aria-label="Open settings" title="Settings">
       <span aria-hidden="true" class="gear">⚙</span>
     </button>
+  </div>
+
+  <div class="debug-panel" id="debugPanel" data-active="false" aria-live="polite">
+    <div class="debug-panel-title">Debug Log</div>
+    <div id="debugLog"></div>
   </div>
 
   <div class="dice-panel" id="dicePanel" data-open="false" aria-label="Dice roller">
@@ -3276,11 +3579,60 @@
         ]
       },
 
-      notes: [
-        { title:"Travel Prep", body:"Keep a slot for Speak with Animals when traveling." },
-        { title:"Fey Signs", body:"Mark fey signs near the old stone bridge." },
-        { title:"Debts", body:"Owes a favor to the apothecary in Westhollow." }
+      notesTabs: [
+        {
+          id: "notes",
+          label: "Notes",
+          sections: [
+            {
+              id: "notes-main",
+              title: "Notes",
+              collapsed: false,
+              notes: [
+                { id: "note-1", title:"Travel Prep", body:"Keep a slot for Speak with Animals when traveling.", starred:false, status:null, important:false },
+                { id: "note-2", title:"Fey Signs", body:"Mark fey signs near the old stone bridge.", starred:false, status:null, important:false },
+                { id: "note-3", title:"Debts", body:"Owes a favor to the apothecary in Westhollow.", starred:false, status:null, important:false }
+              ]
+            }
+          ]
+        },
+        {
+          id: "people",
+          label: "People",
+          sections: [
+            { id: "people-main", title: "Notes", collapsed: false, notes: [] }
+          ]
+        },
+        {
+          id: "locations",
+          label: "Locations",
+          sections: [
+            { id: "locations-main", title: "Notes", collapsed: false, notes: [] }
+          ]
+        },
+        {
+          id: "quests",
+          label: "Quests",
+          sections: [
+            { id: "quests-main", title: "Notes", collapsed: false, notes: [] }
+          ]
+        },
+        {
+          id: "items",
+          label: "Items",
+          sections: [
+            { id: "items-main", title: "Notes", collapsed: false, notes: [] }
+          ]
+        },
+        {
+          id: "other",
+          label: "Other",
+          sections: [
+            { id: "other-main", title: "Notes", collapsed: false, notes: [] }
+          ]
+        }
       ],
+      notesActiveTabId: "notes",
 
       portrait: {
         url: PORTRAIT_URL,
@@ -3293,7 +3645,8 @@
         theme: "midnight",
         inspGlowEnabled: true,
         wide: false,
-        editUnlocked: false
+        editUnlocked: false,
+        debugEnabled: false
       }
     };
 
@@ -3301,6 +3654,36 @@
       history: []
     };
     let cheatRollQueued = false;
+    const debugState = {
+      entries: []
+    };
+
+    function debugLog(message, extra){
+      const ts = new Date().toLocaleTimeString();
+      let line = `[${ts}] ${message}`;
+      if (extra){
+        if (extra instanceof Error){
+          line += ` (${extra.message})`;
+        }else if (typeof extra === "string"){
+          line += ` (${extra})`;
+        }else{
+          try{ line += ` ${JSON.stringify(extra)}`; }catch{}
+        }
+      }
+      debugState.entries.push(line);
+      if (debugState.entries.length > 200){
+        debugState.entries.shift();
+      }
+      renderDebugLog();
+    }
+
+    function renderDebugLog(){
+      const logEl = document.getElementById("debugLog");
+      const panel = document.getElementById("debugPanel");
+      if (!logEl || !panel) return;
+      logEl.textContent = debugState.entries.join("\n");
+      panel.dataset.active = state.settings.debugEnabled ? "true" : "false";
+    }
 
     /**********************************************************************
      * Helpers
@@ -3765,6 +4148,10 @@
       document.body.setAttribute("data-insp-glow", on ? "on" : "off");
     }
 
+    function applyDebugMode(){
+      renderDebugLog();
+    }
+
     function applyWide(){
       document.body.setAttribute("data-wide", state.settings.wide ? "on" : "off");
     }
@@ -4015,17 +4402,156 @@
     /**********************************************************************
      * Spells: spellbooks + spell cache
      **********************************************************************/
-    const SPELL_LIST_URL = "https://raw.githubusercontent.com/Kemsypt/Character-Sheet/main/Data/Spell%20List.json";
-    const SPELL_GH_CONTENTS_URL = "https://api.github.com/repos/Kemsypt/Character-Sheet/contents/Data/Spells?ref=main";
-    const SPELL_CACHE_DB = "dnd_spell_cache_v1";
-    const SPELL_CACHE_META_KEY = "dnd_spell_cache_meta_v1";
-    const SPELL_LIST_CACHE_KEY = "dnd_spell_list_cache_v1";
+    const SPELL_DATA_URL = "https://raw.githubusercontent.com/Kemsypt/Character-Sheet/main/Data/Spells.json";
+    const SPELL_SOURCES_URL = "https://raw.githubusercontent.com/Kemsypt/Character-Sheet/main/Data/Spells%20Sources.json";
+    const SPELL_CACHE_DB = "dnd_spell_cache_v2";
+    const SPELL_CACHE_META_KEY = "dnd_spell_cache_meta_v2";
+    const SPELL_LIST_CACHE_KEY = "dnd_spell_list_cache_v2";
 
     function slugify(s){
       return String(s||"").toLowerCase().trim()
         .replace(/["'`]/g, "")
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
+    }
+
+    const SPELL_SCHOOL_MAP = {
+      A: "Abjuration",
+      C: "Conjuration",
+      D: "Divination",
+      E: "Enchantment",
+      V: "Evocation",
+      I: "Illusion",
+      N: "Necromancy",
+      T: "Transmutation"
+    };
+
+    function formatSpellSchool(code){
+      return SPELL_SCHOOL_MAP[code] || code || "";
+    }
+
+    function formatSpellTime(timeArr){
+      if (!Array.isArray(timeArr) || !timeArr.length) return "";
+      return timeArr.map(t=>{
+        const num = t.number || 1;
+        let unit = t.unit || "action";
+        if (unit === "bonus") unit = "bonus action";
+        if (unit === "reaction") unit = "reaction";
+        const plural = num === 1 ? "" : "s";
+        return `${num} ${unit}${plural}`;
+      }).join(", ");
+    }
+
+    function formatSpellRange(range){
+      if (!range || typeof range !== "object") return "";
+      if (range.type === "self") return "Self";
+      const dist = range.distance || {};
+      if (dist.type === "self") return "Self";
+      if (dist.type === "touch") return "Touch";
+      if (dist.type === "sight") return "Sight";
+      if (dist.type === "unlimited") return "Unlimited";
+      if (dist.type === "special") return "Special";
+      if (dist.amount && dist.type){
+        const unit = dist.type === "feet" ? "ft." : dist.type;
+        return `${dist.amount} ${unit}`;
+      }
+      return range.type || "";
+    }
+
+    function formatSpellComponents(components){
+      if (!components || typeof components !== "object") return "";
+      const parts = [];
+      if (components.v) parts.push("V");
+      if (components.s) parts.push("S");
+      if (components.m){
+        let mat = components.m;
+        if (typeof mat === "object" && mat.text) mat = mat.text;
+        parts.push(mat ? `M (${mat})` : "M");
+      }
+      return parts.join(", ");
+    }
+
+    function formatSpellDuration(durations){
+      if (!Array.isArray(durations) || !durations.length) return "";
+      const d = durations[0];
+      if (!d) return "";
+      if (d.type === "instant") return "Instantaneous";
+      if (d.type === "permanent") return "Permanent";
+      if (d.type === "special") return "Special";
+      if (d.type === "timed" && d.duration){
+        const amt = d.duration.amount || 1;
+        const unit = d.duration.type || "round";
+        const label = `${amt} ${unit}${amt === 1 ? "" : "s"}`;
+        return d.concentration ? `Concentration, up to ${label}` : label;
+      }
+      return d.type || "";
+    }
+
+    function flattenSpellEntries(entries){
+      const out = [];
+      const walk = (entry)=>{
+        if (!entry) return;
+        if (typeof entry === "string"){
+          out.push(entry);
+          return;
+        }
+        if (Array.isArray(entry)){
+          entry.forEach(walk);
+          return;
+        }
+        if (typeof entry === "object" && Array.isArray(entry.entries)){
+          entry.entries.forEach(walk);
+        }
+      };
+      walk(entries);
+      return out;
+    }
+
+    function buildSpellId(spell){
+      const source = spell.source ? String(spell.source).toLowerCase() : "unknown";
+      return `${slugify(spell.name)}-${source}`;
+    }
+
+    function extractSpellClasses(spell, sources){
+      if (!spell || !sources || !spell.source) return [];
+      const bySource = sources[spell.source];
+      if (!bySource || !bySource[spell.name]) return [];
+      const classes = bySource[spell.name].class || [];
+      return classes.map(c=> c.name).filter(Boolean);
+    }
+
+    function normalizeSpellEntry(spell, sources){
+      const id = buildSpellId(spell);
+      const entries = flattenSpellEntries(spell.entries || []);
+      const higher = flattenSpellEntries(spell.entriesHigherLevel || []);
+      return {
+        id,
+        name: spell.name,
+        level: spell.level ?? 0,
+        school: formatSpellSchool(spell.school),
+        casting_time: formatSpellTime(spell.time),
+        range: formatSpellRange(spell.range),
+        components: formatSpellComponents(spell.components),
+        duration: formatSpellDuration(spell.duration),
+        concentration: Array.isArray(spell.duration) ? spell.duration.some(d=> d && d.concentration) : false,
+        ritual: !!spell.ritual,
+        classes: extractSpellClasses(spell, sources),
+        desc: entries,
+        higher_level: higher,
+        brief: entries[0] || ""
+      };
+    }
+
+    async function loadSpellData(){
+      const [spellResp, sourcesResp] = await Promise.all([
+        fetch(SPELL_DATA_URL, { cache: "no-store" }),
+        fetch(SPELL_SOURCES_URL, { cache: "no-store" })
+      ]);
+      if (!spellResp.ok) throw new Error("Failed to load spells");
+      const spellsRaw = await spellResp.json();
+      const sourcesRaw = sourcesResp.ok ? await sourcesResp.json() : null;
+      const list = (spellsRaw?.spell || []).map(spell=> normalizeSpellEntry(spell, sourcesRaw));
+      return { list, sources: sourcesRaw };
     }
 
     const SpellCache = {
@@ -4080,7 +4606,7 @@
           req.onerror = ()=> resolve(null);
         });
       },
-      async clear(){
+      async clear({ silent = false } = {}){
         try{
           const db = await this.open();
           await new Promise((resolve)=>{
@@ -4092,7 +4618,11 @@
         }catch{}
         try{ localStorage.removeItem(SPELL_CACHE_META_KEY); }catch{}
         try{ localStorage.removeItem(SPELL_LIST_CACHE_KEY); }catch{}
-        updateSpellCacheStatus();
+        spellImportState.data = null;
+        spellImportState.byId = null;
+        spellImportState.selected.clear();
+        if (!silent) updateSpellCacheStatus();
+        debugLog("Spell cache cleared.");
       }
     };
 
@@ -4119,54 +4649,50 @@
       el.textContent = `Cache: ${meta.count} spells (last updated ${when})`;
     }
 
+    async function refreshSpellData({ silent = false } = {}){
+      if (!silent) updateSpellCacheStatus('Cache: downloading…');
+      try{
+        const { list } = await loadSpellData();
+        if (!list.length){
+          updateSpellCacheStatus('Cache: unavailable (no spells)');
+          return false;
+        }
+        await SpellCache.clear({ silent: true });
+        localStorage.setItem(SPELL_LIST_CACHE_KEY, JSON.stringify({ at: Date.now(), list }));
+        spellImportState.data = list;
+        spellImportState.byId = new Map(list.map(sp=> [sp.id, sp]));
+        spellImportState.selected.clear();
+        buildSpellImportFilters();
+        applySpellImportUiToState();
+        renderSpellImportList();
+        updateSpellImportConfirm();
+        const total = list.length;
+        let done = 0;
+        for (const spell of list){
+          await SpellCache.put(spell.id, spell);
+          done++;
+          if (!silent && (done % 50 === 0 || done === total)){
+            updateSpellCacheStatus(`Cache: downloading… ${done}/${total}`);
+          }
+        }
+        setSpellCacheMeta({ count: total, updatedAt: Date.now() });
+        if (!silent) updateSpellCacheStatus();
+        debugLog(`Spell cache refreshed (${total} spells).`);
+        return true;
+      }catch(err){
+        updateSpellCacheStatus('Cache: unavailable (offline?)');
+        debugLog('Spell cache refresh failed.', err);
+        return false;
+      }
+    }
+
     async function warmSpellCache(){
       const meta = getSpellCacheMeta();
       if (meta && meta.count && meta.count > 0){
         updateSpellCacheStatus();
         return;
       }
-      updateSpellCacheStatus('Cache: downloading…');
-      try{
-        // Cache spell list used by importer (for offline use)
-        try{
-          const rList = await fetch(SPELL_LIST_URL, { cache: 'no-store' });
-          if (rList.ok){
-            const list = await rList.json();
-            localStorage.setItem(SPELL_LIST_CACHE_KEY, JSON.stringify({ at: Date.now(), list }));
-          }
-        }catch{}
-
-        const resp = await fetch(SPELL_GH_CONTENTS_URL, { cache: 'no-store' });
-        if (!resp.ok) throw new Error('Failed to list spells');
-        const items = await resp.json();
-        const files = (items||[]).filter(it => it && it.type === 'file' && /\.json$/i.test(it.name||'') && it.download_url);
-        const total = files.length;
-        let done = 0;
-
-        const queue = files.slice();
-        const concurrency = 6;
-        const workers = Array.from({ length: concurrency }, async ()=>{
-          while(queue.length){
-            const it = queue.shift();
-            try{
-              const r = await fetch(it.download_url, { cache: 'no-store' });
-              if (r.ok){
-                const data = await r.json();
-                const key = data.id || data.key || slugify(data.name) || slugify((it.name||'').replace(/\.json$/i,''));
-                if (key) await SpellCache.put(key, data);
-              }
-            }catch{}
-            done++;
-            if (done % 10 === 0 || done === total){
-              updateSpellCacheStatus(`Cache: downloading… ${done}/${total}`);
-            }
-          }
-        });
-        await Promise.all(workers);
-        setSpellCacheMeta({ count: total, updatedAt: Date.now() });
-      }catch(err){
-        updateSpellCacheStatus('Cache: unavailable (offline?)');
-      }
+      await refreshSpellData();
     }
 
     async function getSpellDetails(importSpell){
@@ -4176,7 +4702,7 @@
       if (byId) return byId;
       const byName = await SpellCache.getByName(importSpell.name);
       if (byName) return byName;
-      return null;
+      return importSpell;
     }
 
     function ensureSpellbooks(){
@@ -4278,6 +4804,18 @@
       renderSpells();
     }
 
+    function deleteSpellbook(bookId){
+      if (!state.settings.editUnlocked) return;
+      ensureSpellbooks();
+      const book = state.spellbooks.find(b=> b.id === bookId);
+      if (!book) return;
+      const confirmText = prompt(`Type "delete" to delete the ${book.name || "spellbook"} spellbook.`);
+      if ((confirmText || "").trim().toLowerCase() !== "delete") return;
+      state.spellbooks = (state.spellbooks || []).filter(b=> b.id !== bookId);
+      saveSettings();
+      renderSpells();
+    }
+
     function handleSpellbookClick(e){
       const importBtn = e.target.closest('[data-book-import]');
       if (importBtn){
@@ -4287,6 +4825,11 @@
       const editBtn = e.target.closest('[data-book-edit]');
       if (editBtn){
         openSpellbookEdit(editBtn.dataset.bookEdit);
+        return;
+      }
+      const delBtn = e.target.closest('[data-book-delete]');
+      if (delBtn){
+        deleteSpellbook(delBtn.dataset.bookDelete);
         return;
       }
       const rmBtn = e.target.closest('[data-spell-remove]');
@@ -4330,6 +4873,7 @@
               ${headBtn}
               <div class="spellbook-head-actions">
                 <button class="tag" type="button" data-book-import="${escapeHTML(book.id)}">Import Spells</button>
+                ${canEdit ? `<button class="tag spellbook-delete" type="button" data-book-delete="${escapeHTML(book.id)}">Delete Spellbook</button>` : ""}
               </div>
             </div>
             <div class="spellbook-body">
@@ -4531,11 +5075,9 @@
           }catch{}
         }
         if (!spellImportState.data){
-          const resp = await fetch(SPELL_LIST_URL, { cache: 'no-store' });
-          if (!resp.ok) throw new Error('Failed to load spells');
-          const data = await resp.json();
-          spellImportState.data = data;
-          localStorage.setItem(SPELL_LIST_CACHE_KEY, JSON.stringify({ at: Date.now(), list: data }));
+          const { list } = await loadSpellData();
+          spellImportState.data = list;
+          localStorage.setItem(SPELL_LIST_CACHE_KEY, JSON.stringify({ at: Date.now(), list }));
         }
         spellImportState.byId = new Map(spellImportState.data.map(sp=> [sp.id, sp]));
         buildSpellImportFilters();
@@ -4544,6 +5086,7 @@
         updateSpellImportConfirm();
       }catch(err){
         if (listEl) listEl.innerHTML = '<div class="muted">Unable to load spell list.</div>';
+        debugLog('Unable to load spell list.', err);
       }
     }
 
@@ -4668,13 +5211,312 @@
       `).join("");
     }
 
+    let notesSearchQuery = "";
+
+    function createNoteId(){
+      return `note-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    }
+
+    function createSectionId(){
+      return `section-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    }
+
+    function normalizeNotesTabs(tabs){
+      if (!Array.isArray(tabs) || tabs.length === 0){
+        return state.notesTabs;
+      }
+      return tabs.map((tab, tabIdx)=>({
+        id: tab.id || `tab-${tabIdx}-${Date.now()}`,
+        label: tab.label || `Tab ${tabIdx + 1}`,
+        sections: Array.isArray(tab.sections) && tab.sections.length
+          ? tab.sections.map((section, secIdx)=>({
+            id: section.id || `section-${tabIdx}-${secIdx}-${Date.now()}`,
+            title: section.title || "Notes",
+            collapsed: !!section.collapsed,
+            notes: Array.isArray(section.notes)
+              ? section.notes.map((note, noteIdx)=>({
+                id: note.id || `note-${tabIdx}-${secIdx}-${noteIdx}-${Date.now()}`,
+                title: note.title || "Untitled",
+                body: note.body || "",
+                starred: !!note.starred,
+                status: note.status || null,
+                important: !!note.important
+              }))
+              : []
+          }))
+          : [{ id: createSectionId(), title: "Notes", collapsed: false, notes: [] }]
+      }));
+    }
+
+    function getActiveNotesTab(){
+      return (state.notesTabs || []).find(t=> t.id === state.notesActiveTabId) || state.notesTabs[0];
+    }
+
+    function setActiveNotesTab(tabId){
+      state.notesActiveTabId = tabId;
+      renderNotes();
+      saveSettings();
+    }
+
+    function matchesNotesQuery(note, query){
+      if (!query) return true;
+      const q = query.toLowerCase();
+      return String(note.title || "").toLowerCase().includes(q)
+        || String(note.body || "").toLowerCase().includes(q);
+    }
+
+    function escapeRegExp(s){
+      return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function renderInlineMarkdown(text, query){
+      const tokens = query ? text.replace(new RegExp(escapeRegExp(query), "gi"), m=> `[[mark]]${m}[[/mark]]`) : text;
+      let out = escapeHTML(tokens);
+      out = out.replace(/\[\[mark\]\]/g, "<mark>").replace(/\[\[\/mark\]\]/g, "</mark>");
+      out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      out = out.replace(/\*(.+?)\*/g, "<em>$1</em>");
+      return out;
+    }
+
+    function renderMarkdown(text, query){
+      const lines = String(text || "").split(/\r?\n/);
+      let html = "";
+      let listMode = null;
+      const closeList = ()=>{
+        if (listMode){
+          html += `</ul>`;
+          listMode = null;
+        }
+      };
+      for (const line of lines){
+        const trimmed = line.trim();
+        const checkMatch = trimmed.match(/^- \[( |x|X)\] (.+)$/);
+        const bulletMatch = trimmed.match(/^- (.+)$/);
+        if (checkMatch){
+          if (listMode !== "check"){
+            closeList();
+            listMode = "check";
+            html += `<ul class="note-list">`;
+          }
+          const checked = checkMatch[1].toLowerCase() === "x";
+          html += `<li>${checked ? "☑" : "☐"} ${renderInlineMarkdown(checkMatch[2], query)}</li>`;
+          continue;
+        }
+        if (bulletMatch){
+          if (listMode !== "bullet"){
+            closeList();
+            listMode = "bullet";
+            html += `<ul class="note-list">`;
+          }
+          html += `<li>${renderInlineMarkdown(bulletMatch[1], query)}</li>`;
+          continue;
+        }
+        closeList();
+        if (!trimmed){
+          html += `<div style="height:8px;"></div>`;
+          continue;
+        }
+        if (trimmed.startsWith("# ")){
+          html += `<div class="note-title">${renderInlineMarkdown(trimmed.slice(2), query)}</div>`;
+          continue;
+        }
+        if (trimmed.startsWith("## ")){
+          html += `<div class="note-title" style="font-size:12px;">${renderInlineMarkdown(trimmed.slice(3), query)}</div>`;
+          continue;
+        }
+        html += `<div>${renderInlineMarkdown(trimmed, query)}</div>`;
+      }
+      closeList();
+      return html;
+    }
+
+    function renderNotesSubtabs(){
+      const tabsWrap = $("#notesSubtabs");
+      if (!tabsWrap) return;
+      const canEdit = !!state.settings.editUnlocked;
+      const tabs = (state.notesTabs || []).map(tab=>{
+        const active = tab.id === state.notesActiveTabId;
+        return `<button class="notes-tab" type="button" data-notes-tab="${escapeHTML(tab.id)}" aria-selected="${active ? "true" : "false"}">${escapeHTML(tab.label)}</button>`;
+      }).join("");
+      const addTabBtn = canEdit ? `<button class="notes-tab notes-tab-add" type="button" data-notes-tab-add aria-label="Add tab">＋</button>` : "";
+      tabsWrap.innerHTML = tabs + addTabBtn;
+    }
+
     function renderNotes(){
-      $("#n_notes").innerHTML = state.notes.map((n, idx) => `
-        <div class="note-card" data-note="${idx}">
-          <div class="note-title" contenteditable="true" data-note-title="${idx}">${escapeHTML(n.title)}</div>
-          <div class="note-body" contenteditable="true" data-note-body="${idx}">${escapeHTML(n.body)}</div>
-        </div>
-      `).join("");
+      renderNotesSubtabs();
+      const searchInput = $("#notesSearchInput");
+      if (searchInput && searchInput.value !== notesSearchQuery){
+        searchInput.value = notesSearchQuery;
+      }
+      const sectionsWrap = $("#notesSections");
+      if (!sectionsWrap) return;
+      const tab = getActiveNotesTab();
+      if (!tab){
+        sectionsWrap.innerHTML = `<div class="notes-empty">No notes tabs available.</div>`;
+        return;
+      }
+      const query = notesSearchQuery.trim().toLowerCase();
+      const canEdit = !!state.settings.editUnlocked;
+      sectionsWrap.innerHTML = (tab.sections || []).map(section=>{
+        const matches = (section.notes || []).filter(note=> matchesNotesQuery(note, query));
+        const notesHtml = matches.length ? matches.map(note=>{
+          const status = note.status || "none";
+          const starred = note.starred ? "is-starred" : "";
+          const important = note.important ? "is-important" : "";
+          return `
+            <div class="note-card ${starred} ${important}" data-note-id="${escapeHTML(note.id)}" data-section-id="${escapeHTML(section.id)}" data-tab-id="${escapeHTML(tab.id)}" data-status="${escapeHTML(status)}">
+              <div class="note-header">
+                <div class="note-title">${renderInlineMarkdown(note.title || "Untitled", query)}</div>
+                <div class="note-actions">
+                  <button class="note-icon-btn" type="button" data-note-action="star" aria-pressed="${note.starred ? "true" : "false"}" title="Star">★</button>
+                  <button class="note-icon-btn" type="button" data-note-action="done" aria-pressed="${note.status === "done" ? "true" : "false"}" title="Complete">✓</button>
+                  <button class="note-icon-btn" type="button" data-note-action="failed" aria-pressed="${note.status === "failed" ? "true" : "false"}" title="Failed">✕</button>
+                  <button class="note-icon-btn" type="button" data-note-action="important" aria-pressed="${note.important ? "true" : "false"}" title="Important">❗</button>
+                  ${canEdit ? `
+                    <button class="note-icon-btn" type="button" data-note-action="move-up" title="Move up">⬆</button>
+                    <button class="note-icon-btn" type="button" data-note-action="move-down" title="Move down">⬇</button>
+                    <button class="note-icon-btn" type="button" data-note-action="edit" title="Edit">✎</button>
+                    <button class="note-icon-btn" type="button" data-note-action="delete" title="Delete">🗑</button>
+                  ` : ""}
+                </div>
+              </div>
+              <div class="note-body">${renderMarkdown(note.body || "", query)}</div>
+            </div>
+          `;
+        }).join("") : `<div class="notes-empty">No matching notes in this section.</div>`;
+
+        return `
+          <div class="notes-section ${section.collapsed ? "collapsed" : ""}" data-section-id="${escapeHTML(section.id)}">
+            <div class="notes-section-header">
+              <div class="notes-section-title">${escapeHTML(section.title)}</div>
+              <div class="notes-section-actions">
+                <button class="note-icon-btn notes-section-toggle" type="button" data-section-action="toggle" title="Collapse / expand">▾</button>
+              </div>
+            </div>
+            <div class="notes-section-body">
+              ${notesHtml}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function addNotesSection(){
+      if (!state.settings.editUnlocked) return;
+      const tab = getActiveNotesTab();
+      if (!tab) return;
+      const title = prompt("Section title", "Notes");
+      if (!title) return;
+      tab.sections.push({
+        id: createSectionId(),
+        title: title.trim(),
+        collapsed: false,
+        notes: []
+      });
+      saveSettings();
+      renderNotes();
+    }
+
+    function addNotesTab(){
+      if (!state.settings.editUnlocked) return;
+      const label = prompt("Tab name", "Notes");
+      if (!label) return;
+      const id = `tab-${Date.now()}`;
+      state.notesTabs.push({
+        id,
+        label: label.trim(),
+        sections: [{ id: createSectionId(), title: "Notes", collapsed: false, notes: [] }]
+      });
+      state.notesActiveTabId = id;
+      saveSettings();
+      renderNotes();
+    }
+
+    function addNoteToActiveTab(note, tabId, sectionId){
+      const target = resolveNotesTarget(tabId, sectionId);
+      if (!target) return;
+      target.section.notes.unshift(note);
+      saveSettings();
+      renderNotes();
+    }
+
+    function openQuickNoteDialog(context = {}){
+      if (!state.settings.editUnlocked) return;
+      const dialog = $("#quickNoteDialog");
+      $("#quickNoteTitle").value = context.note ? context.note.title : "";
+      $("#quickNoteBody").value = context.note ? context.note.body : "";
+      dialog.dataset.noteId = context.note ? context.note.id : "";
+      dialog.dataset.sectionId = context.sectionId || "";
+      dialog.dataset.tabId = context.tabId || "";
+      dialog.showModal();
+    }
+
+    function openAdvancedNoteDialog(context = {}){
+      if (!state.settings.editUnlocked) return;
+      const dialog = $("#advancedNoteDialog");
+      $("#advancedNoteTitle").value = context.note ? context.note.title : "";
+      $("#advancedNoteBody").value = context.note ? context.note.body : "";
+      $("#advancedNoteFormat").value = "paragraph";
+      dialog.dataset.noteId = context.note ? context.note.id : "";
+      dialog.dataset.sectionId = context.sectionId || "";
+      dialog.dataset.tabId = context.tabId || "";
+      dialog.showModal();
+    }
+
+    function applyNoteEditorFormat(text, format){
+      const lines = String(text || "").split(/\r?\n/).filter(l=> l.trim());
+      if (format === "bullets"){
+        return lines.map(line=> `- ${line}`).join("\n");
+      }
+      if (format === "checklist"){
+        return lines.map(line=> `- [ ] ${line}`).join("\n");
+      }
+      return text;
+    }
+
+    function insertMarkdown(textarea, before, after = ""){
+      if (!textarea) return;
+      const start = textarea.selectionStart || 0;
+      const end = textarea.selectionEnd || 0;
+      const value = textarea.value;
+      const selected = value.slice(start, end) || "text";
+      const nextValue = value.slice(0, start) + before + selected + after + value.slice(end);
+      textarea.value = nextValue;
+      const cursor = start + before.length + selected.length + after.length;
+      textarea.setSelectionRange(cursor, cursor);
+      textarea.focus();
+    }
+
+    function findNoteById(tabId, sectionId, noteId){
+      const tab = (state.notesTabs || []).find(t=> t.id === tabId);
+      if (!tab) return null;
+      const section = (tab.sections || []).find(s=> s.id === sectionId);
+      if (!section) return null;
+      const note = (section.notes || []).find(n=> n.id === noteId);
+      return { tab, section, note };
+    }
+
+    function resolveNotesTarget(tabId, sectionId){
+      const tab = (state.notesTabs || []).find(t=> t.id === tabId) || getActiveNotesTab();
+      if (!tab) return null;
+      const section = (tab.sections || []).find(s=> s.id === sectionId) || tab.sections?.[0];
+      if (!section) return null;
+      return { tab, section };
+    }
+
+    function toggleNoteStatus(note, status){
+      if (!note) return;
+      note.status = note.status === status ? null : status;
+    }
+
+    function moveNote(section, noteId, direction){
+      if (!section || !Array.isArray(section.notes)) return;
+      const idx = section.notes.findIndex(n=> n.id === noteId);
+      if (idx < 0) return;
+      const next = idx + direction;
+      if (next < 0 || next >= section.notes.length) return;
+      const [note] = section.notes.splice(idx, 1);
+      section.notes.splice(next, 0, note);
     }
 
     function renderCustomCurrencyPanel(){
@@ -4714,24 +5556,6 @@
       state.customCurrencies = state.customCurrencies.filter(c => c.k !== key);
       delete state.coins[key];
       renderCoinPurse();
-    }
-
-    function addNote(){
-      state.notes.push({ title:"New Note", body:"" });
-      renderNotes();
-    }
-
-    function updateNoteFromElement(el){
-      const titleIdx = el.dataset.noteTitle;
-      const bodyIdx = el.dataset.noteBody;
-      if (titleIdx !== undefined){
-        if (!state.notes[titleIdx]) return;
-        state.notes[titleIdx].title = el.textContent.trim() || "Untitled";
-      }
-      if (bodyIdx !== undefined){
-        if (!state.notes[bodyIdx]) return;
-        state.notes[bodyIdx].body = el.textContent.trim();
-      }
     }
 
     function renderCoinPurse(){
@@ -5002,6 +5826,7 @@
             state.settings.inspGlowEnabled = (s.inspGlowEnabled ?? state.settings.inspGlowEnabled);
             state.settings.wide = (s.wide ?? state.settings.wide);
             state.settings.editUnlocked = (s.editUnlocked ?? state.settings.editUnlocked);
+            state.settings.debugEnabled = (s.debugEnabled ?? state.settings.debugEnabled);
             state.xpMode = s.xpMode ?? state.xpMode;
             state.xp = s.xp ?? state.xp;
             state.xpLevel = s.xpLevel ?? state.xpLevel;
@@ -5019,12 +5844,23 @@
               state.portrait.x = s.portrait.x ?? state.portrait.x;
               state.portrait.y = s.portrait.y ?? state.portrait.y;
             }
+
+            if (Array.isArray(s.notesTabs)){
+              state.notesTabs = normalizeNotesTabs(s.notesTabs);
+            }
+            if (s.notesActiveTabId){
+              state.notesActiveTabId = s.notesActiveTabId;
+            }
           }
         }
       }catch{}
+      if (!state.notesTabs.find(t=> t.id === state.notesActiveTabId)){
+        state.notesActiveTabId = state.notesTabs[0]?.id || "notes";
+      }
       applyTheme(state.settings.theme);
       applyWide();
       applyInspirationGlow();
+      applyDebugMode();
       applyEditMode(state.settings.editUnlocked);
       renderPortrait();
     }
@@ -5035,6 +5871,7 @@
         inspGlowEnabled: state.settings.inspGlowEnabled,
         wide: state.settings.wide,
         editUnlocked: state.settings.editUnlocked,
+        debugEnabled: state.settings.debugEnabled,
         portrait: { ...state.portrait },
         xpMode: state.xpMode,
         xp: state.xp,
@@ -5042,7 +5879,9 @@
         coins: state.coins,
         customCurrencies: state.customCurrencies,
         spells: state.spells,
-        spellbooks: state.spellbooks
+        spellbooks: state.spellbooks,
+        notesTabs: state.notesTabs,
+        notesActiveTabId: state.notesActiveTabId
       }));
     }
 
@@ -5058,6 +5897,7 @@
       applyTheme(state.settings.theme);
       $("#glowToggle").checked = !!state.settings.inspGlowEnabled;
       $("#wideToggle").checked = !!state.settings.wide;
+      $("#debugToggle").checked = !!state.settings.debugEnabled;
       const isXP = state.xpMode === "xp";
       $("#btnModeMilestone").setAttribute("aria-pressed", isXP ? "false" : "true");
       $("#btnModeXP").setAttribute("aria-pressed", isXP ? "true" : "false");
@@ -5087,9 +5927,15 @@
       $("#addAbilityBtn").style.display = unlocked ? "grid" : "none";
       $("#addAttuneBtn").style.display = unlocked ? "grid" : "none";
       if (document.getElementById('addSpellbookBtn')) $("#addSpellbookBtn").style.display = unlocked ? 'inline-flex' : 'none';
+      ["addQuickNoteBtn","addAdvancedNoteBtn","addNoteSectionBtn"].forEach(id=>{
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.disabled = !unlocked;
+      });
 
       renderAbilities();
       renderCoinPurse();
+      renderNotes();
       saveSettings();
     }
 
@@ -5256,6 +6102,9 @@
         pointerId: e.pointerId,
         active: true
       };
+      window.addEventListener("pointermove", movePortraitDrag);
+      window.addEventListener("pointerup", endPortraitDrag);
+      window.addEventListener("pointercancel", endPortraitDrag);
     }
     function movePortraitDrag(e){
       if (!portraitDrag) return;
@@ -5274,6 +6123,9 @@
         preview.releasePointerCapture(portraitDrag.pointerId);
       }
       portraitDrag = null;
+      window.removeEventListener("pointermove", movePortraitDrag);
+      window.removeEventListener("pointerup", endPortraitDrag);
+      window.removeEventListener("pointercancel", endPortraitDrag);
     }
 
     /**********************************************************************
@@ -5435,6 +6287,9 @@
       if (document.getElementById('clearSpellCacheBtn')){
         $("#clearSpellCacheBtn").addEventListener('click', ()=> SpellCache.clear());
       }
+      if (document.getElementById('refreshSpellCacheBtn')){
+        $("#refreshSpellCacheBtn").addEventListener('click', ()=> refreshSpellData());
+      }
 
       // dice roller
       renderDiceHistory();
@@ -5536,11 +6391,14 @@
         state.settings.theme = "midnight";
         state.settings.inspGlowEnabled = true;
         state.settings.wide = false;
+        state.settings.debugEnabled = false;
         applyTheme(state.settings.theme);
         $("#glowToggle").checked = true;
         $("#wideToggle").checked = false;
+        $("#debugToggle").checked = false;
         applyInspirationGlow();
         applyWide();
+        applyDebugMode();
         saveSettings();
       });
       $("#saveTheme").addEventListener("click", ()=>{
@@ -5558,6 +6416,11 @@
       $("#wideToggle").addEventListener("change", ()=>{
         state.settings.wide = $("#wideToggle").checked;
         applyWide();
+        saveSettings();
+      });
+      $("#debugToggle").addEventListener("change", ()=>{
+        state.settings.debugEnabled = $("#debugToggle").checked;
+        applyDebugMode();
         saveSettings();
       });
 
@@ -5632,13 +6495,165 @@
       });
 
       // notes
-      $("#addNoteBtn").addEventListener("click", addNote);
-      $("#n_notes").addEventListener("focusout", (e)=>{
-        const el = e.target;
-        if (!(el instanceof HTMLElement)) return;
-        if (el.dataset.noteTitle !== undefined || el.dataset.noteBody !== undefined){
-          updateNoteFromElement(el);
+      $("#addQuickNoteBtn").addEventListener("click", ()=> openQuickNoteDialog());
+      $("#addAdvancedNoteBtn").addEventListener("click", ()=> openAdvancedNoteDialog());
+      $("#addNoteSectionBtn").addEventListener("click", addNotesSection);
+      $("#notesSearchInput").addEventListener("input", (e)=>{
+        notesSearchQuery = e.target.value || "";
+        renderNotes();
+      });
+      $("#notesSearchClear").addEventListener("click", ()=>{
+        notesSearchQuery = "";
+        renderNotes();
+      });
+      $("#notesSubtabs").addEventListener("click", (e)=>{
+        const tabBtn = e.target.closest("[data-notes-tab]");
+        if (tabBtn){
+          setActiveNotesTab(tabBtn.dataset.notesTab);
+          return;
         }
+        const addBtn = e.target.closest("[data-notes-tab-add]");
+        if (addBtn){
+          addNotesTab();
+        }
+      });
+      $("#notesSections").addEventListener("click", (e)=>{
+        const sectionToggle = e.target.closest("[data-section-action]");
+        if (sectionToggle){
+          const sectionEl = sectionToggle.closest(".notes-section");
+          if (!sectionEl) return;
+          const sectionId = sectionEl.dataset.sectionId;
+          const tab = getActiveNotesTab();
+          const section = (tab?.sections || []).find(s=> s.id === sectionId);
+          if (section){
+            section.collapsed = !section.collapsed;
+            saveSettings();
+            renderNotes();
+          }
+          return;
+        }
+        const noteAction = e.target.closest("[data-note-action]");
+        if (!noteAction) return;
+        const card = noteAction.closest(".note-card");
+        if (!card) return;
+        const tabId = card.dataset.tabId;
+        const sectionId = card.dataset.sectionId;
+        const noteId = card.dataset.noteId;
+        const found = findNoteById(tabId, sectionId, noteId);
+        if (!found) return;
+        const action = noteAction.dataset.noteAction;
+        if (action === "star"){
+          found.note.starred = !found.note.starred;
+        }else if (action === "done"){
+          toggleNoteStatus(found.note, "done");
+        }else if (action === "failed"){
+          toggleNoteStatus(found.note, "failed");
+        }else if (action === "important"){
+          found.note.important = !found.note.important;
+        }else if (action === "move-up"){
+          if (!state.settings.editUnlocked) return;
+          moveNote(found.section, noteId, -1);
+        }else if (action === "move-down"){
+          if (!state.settings.editUnlocked) return;
+          moveNote(found.section, noteId, 1);
+        }else if (action === "delete"){
+          if (!state.settings.editUnlocked) return;
+          const ok = confirm("Delete this note?");
+          if (ok){
+            found.section.notes = found.section.notes.filter(n=> n.id !== noteId);
+          }
+        }else if (action === "edit"){
+          if (!state.settings.editUnlocked) return;
+          openQuickNoteDialog({ note: found.note, tabId, sectionId });
+          return;
+        }
+        saveSettings();
+        renderNotes();
+      });
+
+      // note dialogs
+      $("#quickNoteClose").addEventListener("click", ()=> $("#quickNoteDialog").close());
+      $("#quickNoteCancel").addEventListener("click", ()=> $("#quickNoteDialog").close());
+      $("#advancedNoteClose").addEventListener("click", ()=> $("#advancedNoteDialog").close());
+      $("#advancedNoteCancel").addEventListener("click", ()=> $("#advancedNoteDialog").close());
+      $("#quickNoteSave").addEventListener("click", ()=>{
+        const dialog = $("#quickNoteDialog");
+        const title = $("#quickNoteTitle").value.trim() || "Untitled";
+        const body = $("#quickNoteBody").value.trim();
+        const noteId = dialog.dataset.noteId;
+        const target = resolveNotesTarget(dialog.dataset.tabId, dialog.dataset.sectionId);
+        if (!target) return;
+        if (noteId){
+          const found = findNoteById(target.tab.id, target.section.id, noteId);
+          if (found && found.note){
+            found.note.title = title;
+            found.note.body = body;
+          }
+          saveSettings();
+          renderNotes();
+        }else{
+          addNoteToActiveTab({
+            id: createNoteId(),
+            title,
+            body,
+            starred: false,
+            status: null,
+            important: false
+          }, target.tab.id, target.section.id);
+        }
+        dialog.close();
+      });
+      $("#advancedNoteSave").addEventListener("click", ()=>{
+        const dialog = $("#advancedNoteDialog");
+        const title = $("#advancedNoteTitle").value.trim() || "Untitled";
+        const rawBody = $("#advancedNoteBody").value.trim();
+        const format = $("#advancedNoteFormat").value;
+        const body = applyNoteEditorFormat(rawBody, format);
+        const noteId = dialog.dataset.noteId;
+        const target = resolveNotesTarget(dialog.dataset.tabId, dialog.dataset.sectionId);
+        if (!target) return;
+        if (noteId){
+          const found = findNoteById(target.tab.id, target.section.id, noteId);
+          if (found && found.note){
+            found.note.title = title;
+            found.note.body = body;
+          }
+          saveSettings();
+          renderNotes();
+        }else{
+          addNoteToActiveTab({
+            id: createNoteId(),
+            title,
+            body,
+            starred: false,
+            status: null,
+            important: false
+          }, target.tab.id, target.section.id);
+        }
+        dialog.close();
+      });
+      document.querySelectorAll(".note-editor-toolbar").forEach(toolbar=>{
+        toolbar.addEventListener("click", (e)=>{
+          const btn = e.target.closest("[data-md]");
+          if (!btn) return;
+          const action = btn.dataset.md;
+          const dialog = btn.closest("dialog");
+          const textarea = dialog?.querySelector("textarea");
+          if (!textarea) return;
+          if (action === "bold"){
+            insertMarkdown(textarea, "**", "**");
+          }else if (action === "italic"){
+            insertMarkdown(textarea, "*", "*");
+          }else if (action === "h1"){
+            insertMarkdown(textarea, "# ", "");
+          }else if (action === "h2"){
+            insertMarkdown(textarea, "## ", "");
+          }else if (action === "list"){
+            insertMarkdown(textarea, "- ", "");
+          }else if (action === "check"){
+            insertMarkdown(textarea, "- [ ] ", "");
+          }
+        });
       });
 
       // custom currencies
