@@ -84,21 +84,24 @@
       opacity: 0;
       transition: opacity 220ms ease;
       background:
-        linear-gradient(90deg, rgba(216,192,138,0.20), transparent 6%),
-        linear-gradient(270deg, rgba(216,192,138,0.20), transparent 6%);
-      animation: inspPulse 6.5s ease-in-out infinite;
+        linear-gradient(90deg, rgba(216,192,138,0.18), transparent 6%),
+        linear-gradient(270deg, rgba(216,192,138,0.18), transparent 6%),
+        linear-gradient(0deg, rgba(216,192,138,0.18), transparent 14%);
+      animation: inspPulse 4.8s ease-in-out infinite;
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
     @keyframes inspPulse{
       0%,100%{
         background:
           linear-gradient(90deg, rgba(216,192,138,0.16), transparent 6%),
-          linear-gradient(270deg, rgba(216,192,138,0.16), transparent 6%);
+          linear-gradient(270deg, rgba(216,192,138,0.16), transparent 6%),
+          linear-gradient(0deg, rgba(216,192,138,0.16), transparent 14%);
       }
       50%{
         background:
           linear-gradient(90deg, rgba(255,225,162,0.26), transparent 6%),
-          linear-gradient(270deg, rgba(255,225,162,0.26), transparent 6%);
+          linear-gradient(270deg, rgba(255,225,162,0.26), transparent 6%),
+          linear-gradient(0deg, rgba(255,219,143,0.24), transparent 14%);
       }
     }
 
@@ -1041,7 +1044,7 @@
       z-index: 120;
     }
     #coinAdjustDialog{
-      width: 200px;
+      width: 70px;
     }
     dialog::backdrop{background: rgba(0,0,0,0.62); backdrop-filter: blur(6px);}
     .dlg-head{
@@ -1223,7 +1226,6 @@
       bottom: 90px;
       width: 320px;
       max-width: calc(100vw - 40px);
-      min-height: 420px;
       background: rgba(10,12,18,0.96);
       border: 1px solid rgba(255,255,255,0.16);
       border-radius: 16px;
@@ -1250,27 +1252,6 @@
       display:flex;
       flex-direction: column;
       gap: 10px;
-    }
-    .dice-rows{
-      display:flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .dice-row-line{
-      display:grid;
-      grid-template-columns: 1fr 70px 70px;
-      gap: 8px;
-      align-items: center;
-    }
-    .dice-row-line .amt{
-      width: 100%;
-    }
-    .dice-row-line .dice-label{
-      font-weight: 900;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
     }
     .dice-row{
       display:flex;
@@ -1300,59 +1281,6 @@
       display:flex;
       flex-direction: column;
       gap: 6px;
-    }
-    .dice-roll{
-      display:inline-flex;
-      align-items:center;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-    .roll-max{ color: var(--green); font-weight: 900; }
-    .roll-min{ color: var(--red); font-weight: 900; }
-    .roll-drop{ color: var(--faint); text-decoration: line-through; }
-    .dice-toast{
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(10,12,18,0.9);
-      border: 1px solid rgba(255,255,255,0.16);
-      padding: 14px 18px;
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 300ms ease;
-      z-index: 160;
-      font-weight: 900;
-    }
-    .dice-toast.is-visible{ opacity: 1; }
-    .dice-roll-animation{
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 80px;
-      height: 80px;
-      margin-left: -40px;
-      margin-top: -40px;
-      border-radius: 20px;
-      border: 2px solid rgba(216,192,138,0.45);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 34px;
-      opacity: 0;
-      transform: scale(0.6) rotate(0deg);
-      pointer-events: none;
-      z-index: 155;
-    }
-    .dice-roll-animation.is-rolling{
-      animation: diceSpin 900ms ease-in-out;
-    }
-    @keyframes diceSpin{
-      0%{ opacity: 0; transform: scale(0.6) rotate(0deg); }
-      20%{ opacity: 1; }
-      100%{ opacity: 0; transform: scale(1.2) rotate(320deg); }
     }
     .dice-history{
       max-height: 160px;
@@ -2425,56 +2353,20 @@
       <button class="icon-btn" id="diceClose" type="button" aria-label="Close dice roller">✕</button>
     </div>
     <div class="dice-body">
-      <div class="dice-rows" id="diceRows">
-        <div class="dice-row-line" data-dice-row data-sides="4">
-          <div class="dice-label">d4</div>
-          <input class="amt dice-count" type="number" min="0" value="0" inputmode="numeric" />
-          <input class="amt dice-mod" type="number" value="0" inputmode="numeric" />
-        </div>
-        <div class="dice-row-line" data-dice-row data-sides="6">
-          <div class="dice-label">d6</div>
-          <input class="amt dice-count" type="number" min="0" value="0" inputmode="numeric" />
-          <input class="amt dice-mod" type="number" value="0" inputmode="numeric" />
-        </div>
-        <div class="dice-row-line" data-dice-row data-sides="8">
-          <div class="dice-label">d8</div>
-          <input class="amt dice-count" type="number" min="0" value="0" inputmode="numeric" />
-          <input class="amt dice-mod" type="number" value="0" inputmode="numeric" />
-        </div>
-        <div class="dice-row-line" data-dice-row data-sides="10">
-          <div class="dice-label">d10</div>
-          <input class="amt dice-count" type="number" min="0" value="0" inputmode="numeric" />
-          <input class="amt dice-mod" type="number" value="0" inputmode="numeric" />
-        </div>
-        <div class="dice-row-line" data-dice-row data-sides="12">
-          <div class="dice-label">d12</div>
-          <input class="amt dice-count" type="number" min="0" value="0" inputmode="numeric" />
-          <input class="amt dice-mod" type="number" value="0" inputmode="numeric" />
-        </div>
-        <div class="dice-row-line" data-dice-row data-sides="20">
-          <div class="dice-label">d20</div>
-          <input class="amt dice-count" type="number" min="0" value="1" inputmode="numeric" />
-          <input class="amt dice-mod" type="number" value="0" inputmode="numeric" />
-        </div>
-        <div class="dice-row-line" data-dice-row data-sides="100">
-          <div class="dice-label">d100</div>
-          <input class="amt dice-count" type="number" min="0" value="0" inputmode="numeric" />
-          <input class="amt dice-mod" type="number" value="0" inputmode="numeric" />
-        </div>
-        <div class="dice-row-line" data-dice-row data-sides="custom">
-          <div class="dice-label">Custom</div>
-          <input class="amt dice-count" type="number" min="0" value="0" inputmode="numeric" />
-          <input class="amt dice-mod" type="number" value="0" inputmode="numeric" />
-        </div>
-        <div class="dice-row-line" data-dice-row data-sides="custom-sides">
-          <div class="dice-label">Sides</div>
-          <input class="amt" id="diceCustomSides" type="number" min="2" value="20" inputmode="numeric" />
-          <div></div>
-        </div>
+      <div class="dice-row" id="diceTypes" role="group" aria-label="Dice types">
+        <button class="dice-btn" type="button" data-dice="4" aria-pressed="false">d4</button>
+        <button class="dice-btn" type="button" data-dice="6" aria-pressed="false">d6</button>
+        <button class="dice-btn" type="button" data-dice="8" aria-pressed="false">d8</button>
+        <button class="dice-btn" type="button" data-dice="10" aria-pressed="false">d10</button>
+        <button class="dice-btn" type="button" data-dice="12" aria-pressed="false">d12</button>
+        <button class="dice-btn" type="button" data-dice="20" aria-pressed="true">d20</button>
+        <button class="dice-btn" type="button" data-dice="100" aria-pressed="false">d100</button>
       </div>
       <div class="dice-row">
-        <button class="dice-btn" id="diceAdvBtn" type="button" aria-pressed="false">Advantage</button>
-        <button class="dice-btn" id="diceDisBtn" type="button" aria-pressed="false">Disadvantage</button>
+        <label class="small" for="diceCount">Count</label>
+        <input class="amt" id="diceCount" type="number" min="1" value="1" inputmode="numeric" style="width:70px;" />
+        <label class="small" for="diceMod">Modifier</label>
+        <input class="amt" id="diceMod" type="number" value="0" inputmode="numeric" style="width:70px;" />
         <button class="btn primary" id="diceRollBtn" type="button">Roll</button>
       </div>
       <div class="dice-results">
@@ -2484,8 +2376,6 @@
       </div>
     </div>
   </div>
-  <div class="dice-roll-animation" id="diceRollAnimation">🎲</div>
-  <div class="dice-toast" id="diceToast"></div>
 
   <script>
     /**********************************************************************
@@ -2700,8 +2590,8 @@
     };
 
     const diceState = {
-      history: [],
-      advantage: "normal"
+      sides: 20,
+      history: []
     };
 
     /**********************************************************************
@@ -2878,10 +2768,11 @@
      * Dice Roller
      **********************************************************************/
     let diceDrag = null;
-    function setDiceAdvantage(mode){
-      diceState.advantage = mode;
-      $("#diceAdvBtn").setAttribute("aria-pressed", mode === "advantage" ? "true" : "false");
-      $("#diceDisBtn").setAttribute("aria-pressed", mode === "disadvantage" ? "true" : "false");
+    function setDiceType(sides){
+      diceState.sides = sides;
+      document.querySelectorAll("#diceTypes [data-dice]").forEach((btn)=>{
+        btn.setAttribute("aria-pressed", btn.dataset.dice === String(sides) ? "true" : "false");
+      });
     }
     function toggleDicePanel(open){
       const panel = $("#dicePanel");
@@ -2892,83 +2783,26 @@
     function renderDiceHistory(){
       const history = $("#diceHistory");
       history.innerHTML = diceState.history.length
-        ? diceState.history.map(item => `<div class="dice-history-item">${item}</div>`).join("")
+        ? diceState.history.map(item => `<div class="dice-history-item">${escapeHTML(item)}</div>`).join("")
         : `<div class="dice-history-item">No rolls yet.</div>`;
     }
-    function formatRollValue(value, sides, classes = []){
-      const extra = [];
-      if (value === 1) extra.push("roll-min");
-      if (value === sides) extra.push("roll-max");
-      return `<span class="${[...extra, ...classes].join(" ")}">${value}</span>`;
-    }
-    function formatAdvRoll(a, b, chosen, sides){
-      const first = formatRollValue(a, sides, chosen === a ? [] : ["roll-drop"]);
-      const second = formatRollValue(b, sides, chosen === b ? [] : ["roll-drop"]);
-      return `<span class="dice-roll">[${first} ${second}]</span>`;
-    }
     function rollDice(){
-      const rows = [...document.querySelectorAll("[data-dice-row][data-sides]")];
-      const customSides = Math.max(2, parseInt($("#diceCustomSides").value, 10) || 20);
-      const detailLines = [];
-      const summaryParts = [];
-      let grandTotal = 0;
-      let anyRolled = false;
-
-      rows.forEach((row)=>{
-        const sidesValue = row.dataset.sides === "custom" ? customSides : parseInt(row.dataset.sides, 10);
-        if (!Number.isFinite(sidesValue)) return;
-        const count = Math.max(0, parseInt(row.querySelector(".dice-count")?.value, 10) || 0);
-        const mod = parseInt(row.querySelector(".dice-mod")?.value, 10) || 0;
-        if (count <= 0) return;
-        anyRolled = true;
-        const rollParts = [];
-        let subtotal = 0;
-        for (let i=0; i<count; i++){
-          if (diceState.advantage === "advantage" || diceState.advantage === "disadvantage"){
-            const a = 1 + Math.floor(Math.random() * sidesValue);
-            const b = 1 + Math.floor(Math.random() * sidesValue);
-            const chosen = diceState.advantage === "advantage" ? Math.max(a, b) : Math.min(a, b);
-            subtotal += chosen;
-            rollParts.push(formatAdvRoll(a, b, chosen, sidesValue));
-          } else {
-            const roll = 1 + Math.floor(Math.random() * sidesValue);
-            subtotal += roll;
-            rollParts.push(formatRollValue(roll, sidesValue));
-          }
-        }
-        subtotal += mod;
-        grandTotal += subtotal;
-        const modLabel = mod ? (mod > 0 ? `+${mod}` : `${mod}`) : "";
-        summaryParts.push(`${count}d${sidesValue}${modLabel}`);
-        detailLines.push(`<div><strong>${count}d${sidesValue}${modLabel}</strong>: ${rollParts.join(" ")} = <span class="num">${subtotal}</span></div>`);
-      });
-
-      if (!anyRolled){
-        $("#diceSummary").textContent = "Set at least one die count.";
-        $("#diceDetail").textContent = "";
-        return;
+      const count = Math.max(1, parseInt($("#diceCount").value, 10) || 1);
+      const mod = parseInt($("#diceMod").value, 10) || 0;
+      const rolls = [];
+      let total = 0;
+      for (let i=0; i<count; i++){
+        const roll = 1 + Math.floor(Math.random() * diceState.sides);
+        rolls.push(roll);
+        total += roll;
       }
-
-      const summary = `${summaryParts.join(" + ")} = ${grandTotal}`;
+      total += mod;
+      const summary = `${count}d${diceState.sides}${mod ? (mod > 0 ? `+${mod}` : `${mod}`) : ""} = ${total}`;
       $("#diceSummary").textContent = summary;
-      $("#diceDetail").innerHTML = detailLines.join("");
-      diceState.history.unshift(`${summary}<div>${detailLines.join("")}</div>`);
+      $("#diceDetail").textContent = `Rolls: [${rolls.join(", ")}]`;
+      diceState.history.unshift(summary);
       diceState.history = diceState.history.slice(0, 10);
       renderDiceHistory();
-      flashDiceResult(summary);
-      triggerDiceAnimation();
-    }
-    function flashDiceResult(text){
-      const toast = $("#diceToast");
-      toast.textContent = text;
-      toast.classList.add("is-visible");
-      setTimeout(()=> toast.classList.remove("is-visible"), 2200);
-    }
-    function triggerDiceAnimation(){
-      const anim = $("#diceRollAnimation");
-      anim.classList.remove("is-rolling");
-      void anim.offsetWidth;
-      anim.classList.add("is-rolling");
     }
     function startDiceDrag(e){
       if (e.button !== 0) return;
@@ -3053,8 +2887,7 @@
       applyInspirationGlow();
 
       const active = getActiveStatusList();
-      const mostSerious = getMostSeriousStatus();
-      $("#tb_status").textContent = active.length > 1 ? `${mostSerious} +${active.length - 1}` : mostSerious;
+      $("#tb_status").textContent = getMostSeriousStatus();
       $("#statusTooltipText").textContent = active.length ? active.join(", ") : "None";
       fitTopbarText();
       renderCurrentStatusList();
@@ -3876,7 +3709,7 @@
       };
     }
     function movePortraitDrag(e){
-      if (!portraitDrag || !portraitDrag.active) return;
+      if (!portraitDrag) return;
       if (portraitDrag.pointerId !== undefined && e.pointerId !== portraitDrag.pointerId) return;
       e.preventDefault();
       const dx = (e.clientX - portraitDrag.startX) / portraitDrag.rectW * 100;
@@ -3961,16 +3794,15 @@
       $("#attuneClose").addEventListener("click", ()=> $("#attuneDialog").close());
 
       // dice roller
+      setDiceType(diceState.sides);
       renderDiceHistory();
-      setDiceAdvantage("normal");
       $("#diceFab").addEventListener("click", ()=> toggleDicePanel());
       $("#diceClose").addEventListener("click", ()=> toggleDicePanel(false));
       $("#diceRollBtn").addEventListener("click", rollDice);
-      $("#diceAdvBtn").addEventListener("click", ()=>{
-        setDiceAdvantage(diceState.advantage === "advantage" ? "normal" : "advantage");
-      });
-      $("#diceDisBtn").addEventListener("click", ()=>{
-        setDiceAdvantage(diceState.advantage === "disadvantage" ? "normal" : "disadvantage");
+      $("#diceTypes").addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-dice]");
+        if (!btn) return;
+        setDiceType(parseInt(btn.dataset.dice, 10));
       });
       $("#diceDragHandle").addEventListener("pointerdown", startDiceDrag);
       $("#dicePanel").addEventListener("pointermove", moveDiceDrag);
