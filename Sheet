@@ -257,6 +257,11 @@
       align-items:center;
       margin-top: 6px;
     }
+    .chip-icon{
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+    }
 
     .chip-money{ width: 150px; }
     .chip-status{ width: 150px; }
@@ -1530,9 +1535,8 @@
             <div class="chip-k">GOLD</div>
             <div class="chip-row">
               <button class="pill-btn" id="moneyBtn" type="button" aria-haspopup="dialog" title="Open coin purse">
-                <span>💰</span>
+                <img class="chip-icon" src="https://i.imgur.com/bbdjD7q.png" alt="Gold" />
                 <span class="mono" id="tb_money_total">— gp</span>
-                <span>▾</span>
               </button>
             </div>
           </div>
@@ -1542,7 +1546,6 @@
             <div class="chip-row">
               <button class="pill-btn" id="statusBtn" type="button" aria-haspopup="dialog" title="Select conditions">
                 <span id="tb_status">None</span>
-                <span>▾</span>
               </button>
             </div>
 
