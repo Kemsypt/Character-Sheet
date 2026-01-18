@@ -74,36 +74,6 @@
         linear-gradient(180deg, var(--bg0), var(--bg1));
     }
 
-    /* Inspiration edge glow (optional via settings) */
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 200;
-      opacity: 0;
-      transition: opacity 220ms ease;
-      background:
-        linear-gradient(90deg, rgba(216,192,138,0.12), transparent 6%),
-        linear-gradient(270deg, rgba(216,192,138,0.12), transparent 6%);
-      animation: inspPulse 30s ease-in-out infinite;
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 70%, transparent 70%);
-      mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 70%, transparent 70%);
-    }
-    body[data-insp-glow="on"]::before{ opacity: 1; }
-    @keyframes inspPulse{
-      0%,100%{
-        background:
-          linear-gradient(90deg, rgba(216,192,138,0.08), transparent 6%),
-          linear-gradient(270deg, rgba(216,192,138,0.08), transparent 6%);
-      }
-      50%{
-        background:
-          linear-gradient(90deg, rgba(255,225,162,0.18), transparent 6%),
-          linear-gradient(270deg, rgba(255,225,162,0.18), transparent 6%);
-      }
-    }
-
     /* =======================
       TOP BAR
     ======================= */
@@ -181,7 +151,9 @@
       height: 150px;
       border-radius: 18px;
       object-fit: cover;
-      object-position: var(--px, 50%) var(--py, 30%);
+      object-position: center;
+      transform: scale(var(--pz, 1)) rotate(var(--pr, 0deg));
+      transform-origin: center;
       border: 1px solid rgba(255,255,255,0.14);
       background: rgba(0,0,0,0.18);
       box-shadow: var(--shadow);
@@ -267,7 +239,6 @@
 
     .chip-money{ width: 120px; }
     .chip-status{ width: 120px; }
-    .chip-insp{ width: 120px; }
     .chip-rest{ width: 190px; }
 
     .pill-btn{
@@ -551,10 +522,11 @@
     /* Responsive */
     @media (max-width: 980px){
       .topbar-inner{ grid-template-columns: 1fr; }
-      .chip-money, .chip-status, .chip-insp, .chip-rest{ width: auto; flex: 1 1 170px; }
+      .chip-money, .chip-status, .chip-rest{ width: auto; flex: 1 1 170px; }
       .hp-cap{ grid-template-columns: 1fr; }
       .hp-left{ min-width: 0; }
       .tooltip{ max-width: calc(100vw - 40px); }
+      .inventory-grid{ grid-template-columns: 1fr; }
     }
 
     /* =======================
@@ -804,6 +776,13 @@
       box-shadow: none;
       position: relative;
     }
+    .spellbook-add-btn{
+      padding: 10px 14px;
+      font-size: 12px;
+      border-radius: 14px;
+      min-width: 160px;
+      text-align: center;
+    }
     #sp_list{
       display: grid;
       gap: 15px;
@@ -852,6 +831,26 @@
       width: 30px;
       height: 30px;
       border-radius: 10px;
+    }
+    .spell-name-row{
+      display:flex;
+      align-items:center;
+      gap: 6px;
+    }
+    .spell-remove{
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      font-size: 12px;
+    }
+    .dice-inline{
+      border: none;
+      background: transparent;
+      padding: 0;
+      font-weight: 900;
+      text-decoration: underline;
+      color: var(--text);
+      cursor: pointer;
     }
 
     .spell-summary{
@@ -1014,17 +1013,16 @@
       box-shadow: var(--shadow);
       aspect-ratio: 2 / 3;
       position: relative;
-      /* NOT sticky; aligns with hero top */
     }
-
-    /* exact 2:3 ratio frame (600x900) */
-    .portrait{
-      width: 100%;
-      height: 100%;
-      display:block;
-      object-fit: cover;
-      object-position: var(--px, 50%) var(--py, 30%);
-      transform: scale(var(--pz, 1));
+    .portrait-img{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 120%;
+      height: auto;
+      min-width: 100%;
+      min-height: 100%;
+      transform: translate(-50%, -50%) translate(var(--px, 0%), var(--py, 0%)) scale(var(--pz, 1)) rotate(var(--pr, 0deg));
       transform-origin: center;
       filter: saturate(1.05) contrast(1.03);
       cursor: pointer;
@@ -1046,14 +1044,22 @@
       box-shadow: inset 0 0 80px rgba(0,0,0,0.55);
       opacity: 0.85;
     }
+    .portrait-editor-grid{
+      display:grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 820px){
+      .portrait-editor-grid{ grid-template-columns: 1fr; }
+    }
     .portrait-preview{
       border: 1px solid rgba(255,255,255,0.14);
       background: rgba(0,0,0,0.18);
       border-radius: 16px;
       overflow: hidden;
       aspect-ratio: 2 / 3;
-      width: min(260px, 100%);
-      margin-top: 10px;
+      width: min(280px, 100%);
       position: relative;
       cursor: grab;
       user-select: none;
@@ -1061,26 +1067,6 @@
     }
     .portrait-preview.is-dragging{
       cursor: grabbing;
-    }
-    .portrait-preview img{
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      object-position: var(--px, 50%) var(--py, 30%);
-      transform: scale(var(--pz, 1));
-      transform-origin: center;
-      filter: saturate(1.05) contrast(1.03);
-      pointer-events: none;
-    }
-    .portrait-preview-grid{
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px) 0 0 / 33.33% 100%,
-        linear-gradient(180deg, rgba(255,255,255,0.08) 1px, transparent 1px) 0 0 / 100% 33.33%;
-      opacity: 0.35;
     }
 
     /* Main "Quick Combat" row under hero */
@@ -1718,10 +1704,12 @@
       position: absolute;
       left: 50%;
       top: 50%;
-      transform: translate(-50%, -50%) translateY(var(--offset, 0px));
-      opacity: 0;
-      animation: diceFlash 2.6s ease-out;
+      transform: translate(-50%, -50%);
+      opacity: 1;
       pointer-events: none;
+    }
+    .dice-roll-alert.is-dismissed{
+      animation: diceDismiss 3s ease-out forwards;
     }
     .dice-roll-flash-inner{
       font-size: clamp(32px, 5vw, 64px);
@@ -1750,21 +1738,20 @@
       opacity: 1;
     }
     .dice-roll-animation .dice-cube{
-      width: 42px;
-      height: 42px;
+      width: 60px;
+      height: 60px;
       margin: 0 6px;
       animation: diceTumble 0.9s ease-in-out infinite;
       filter: drop-shadow(0 8px 14px rgba(0,0,0,0.4));
       display: block;
+      object-fit: contain;
     }
     .dice-roll-animation .dice-cube:nth-child(2){ animation-delay: 0.1s; }
     .dice-roll-animation .dice-cube:nth-child(3){ animation-delay: 0.2s; }
 
-    @keyframes diceFlash{
-      0%{ opacity: 0; transform: scale(0.85); }
-      12%{ opacity: 1; transform: scale(1); }
-      80%{ opacity: 1; transform: scale(1.02); }
-      100%{ opacity: 0; transform: scale(1.08); }
+    @keyframes diceDismiss{
+      0%{ opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+      100%{ opacity: 0; transform: translate(-50%, -50%) translateY(-500px); }
     }
     @keyframes diceTumble{
       0%{ transform: translateY(0) rotate(0deg); }
@@ -1949,12 +1936,140 @@
       color: var(--muted);
     }
 
+    .inventory-grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .inventory-section{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      border-radius: 16px;
+      padding: 10px;
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 120px;
+    }
+    .inventory-section[draggable="true"]{
+      cursor: grab;
+    }
+    .inventory-section.drag-over{
+      border-color: rgba(216,192,138,0.4);
+      box-shadow: 0 0 0 2px rgba(216,192,138,0.2) inset;
+    }
+    .inventory-section-header{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .inventory-section-title{
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+      text-align: left;
+    }
+    .inventory-section-actions{
+      display:flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .inventory-section-body table{
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .inventory-section-body th,
+    .inventory-section-body td{
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 8px 6px;
+      font-size: 12px;
+    }
+    .inventory-input{
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.2);
+      color: var(--text);
+      font-weight: 700;
+    }
+    .qty-stepper{
+      display:flex;
+      align-items:center;
+      gap: 6px;
+    }
+    .qty-stepper input{
+      width: 56px;
+      text-align: center;
+    }
+    .qty-stepper-buttons{
+      display:flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .qty-stepper-btn{
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 10px;
+      line-height: 1;
+    }
+    .inventory-basic-list{
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .inventory-basic-item{
+      display:flex;
+      gap: 6px;
+      align-items:center;
+    }
+    .inventory-basic-item button{
+      flex: 0 0 auto;
+    }
+    .equipped-list{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+    }
+    .equipped-row{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 8px;
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     .notes-subtabs{
       display:flex;
       gap: 10px;
       flex-wrap: wrap;
       align-items:center;
       margin-bottom: 8px;
+    }
+    .notes-tab-dock{
+      display:none;
+      padding: 8px 16px 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(8,10,16,0.86), rgba(8,10,16,0.64));
+    }
+    .notes-tab-dock[data-active="true"]{
+      display:block;
     }
     .notes-tab{
       border: 1px solid rgba(255,255,255,0.14);
@@ -2052,20 +2167,26 @@
       gap: 8px;
     }
     .note-card[data-status="done"]{
-      border-color: rgba(124,245,156,0.35);
-      background: rgba(255,255,255,0.06);
-      opacity: 0.7;
+      border-color: rgba(124,245,156,0.6);
+      background: rgba(124,245,156,0.14);
     }
     .note-card[data-status="failed"]{
-      border-color: rgba(248,113,113,0.45);
-      background: rgba(248,113,113,0.12);
+      border-color: rgba(148,163,184,0.6);
+      background: rgba(148,163,184,0.18);
+    }
+    .note-card[data-status="important"]{
+      border-color: rgba(251,113,133,0.7);
+      background: rgba(251,113,133,0.18);
     }
     .note-card.is-starred{
-      box-shadow: 0 0 0 1px rgba(216,192,138,0.35) inset;
+      border-color: var(--note-star, rgba(216,192,138,0.55));
+      box-shadow: 0 0 0 1px var(--note-star, rgba(216,192,138,0.45)) inset;
     }
-    .note-card.is-important{
-      border-color: rgba(93,178,255,0.55);
-      box-shadow: 0 0 0 1px rgba(93,178,255,0.35) inset;
+    .note-card.is-starred .note-title{
+      color: var(--note-star, var(--text));
+    }
+    .note-card[draggable="true"]{
+      cursor: grab;
     }
     .note-header{
       display:flex;
@@ -2076,6 +2197,16 @@
     .note-title{
       font-weight: 900;
       font-size: 13px;
+    }
+    .note-title-btn{
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
     }
     .note-actions{
       display:flex;
@@ -2103,7 +2234,13 @@
       padding: 8px 10px;
       font-size: 13px;
       line-height: 1.5;
-      white-space: pre-wrap;
+      white-space: normal;
+    }
+    .note-body img{
+      max-width: 100%;
+      border-radius: 10px;
+      display: block;
+      margin: 6px 0;
     }
     .note-list{
       margin: 0;
@@ -2123,14 +2260,32 @@
       flex-wrap: wrap;
       gap: 6px;
       margin: 8px 0;
+      align-items: center;
     }
-    .note-editor-text{
-      min-height: 160px;
+    .note-editor-rich{
+      min-height: 180px;
       resize: vertical;
+      overflow: auto;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.24);
+      color: var(--text);
+    }
+    .note-editor-rich:focus{
+      outline: 2px solid rgba(216,192,138,0.4);
+      outline-offset: 2px;
     }
     .notes-empty{
       font-size: 12px;
       color: var(--muted);
+    }
+    .note-star-picker{
+      position: fixed;
+      opacity: 0;
+      pointer-events: none;
+      width: 0;
+      height: 0;
     }
 
     .debug-panel{
@@ -2225,15 +2380,6 @@
             </div>
           </div>
 
-          <div class="cap chip-cap chip-insp" title="Inspiration">
-            <div class="chip-k">Inspiration</div>
-            <div class="chip-row">
-              <button class="pill-btn compact" id="inspBtn" type="button" aria-pressed="false" title="Toggle inspiration">
-                <span>✦</span>
-                <span id="tb_insp">No</span>
-              </button>
-            </div>
-          </div>
         </div>
 
         <!-- SECOND ROW: HP + Rest -->
@@ -2280,6 +2426,10 @@
       <span class="tab-spacer" aria-hidden="true"></span>
       <button class="tab rest-tab" id="restTabBtn" type="button" aria-haspopup="dialog" aria-label="Open rest options">🌙 Rest</button>
     </nav>
+
+    <div class="notes-tab-dock" id="notesTabDock" data-active="false" aria-label="Notes categories">
+      <div class="notes-subtabs" id="notesSubtabs" role="tablist" aria-label="Notes categories"></div>
+    </div>
   </header>
 
   <main class="wrap">
@@ -2426,7 +2576,7 @@
           <!-- RIGHT PORTRAIT (600x900), aligned with hero top -->
           <div class="portrait-frame" aria-label="Character portrait">
             <div style="position:relative;">
-              <img class="portrait" id="portraitImg" alt="Character portrait" />
+              <img class="portrait-img" id="portraitImg" alt="Character portrait" />
               <div class="portrait-overlay"></div>
               <div class="portrait-vignette"></div>
             </div>
@@ -2534,7 +2684,7 @@
       <div class="panel-header">
         <div class="panel-title-row">
           <h2 class="panel-title">Spell Book</h2>
-          <button class="mini" id="addSpellbookBtn" type="button" title="Add spellbook (edit mode only)" style="display:none;">Add new spellbook</button>
+        <button class="btn spellbook-add-btn" id="addSpellbookBtn" type="button" title="Add spellbook (edit mode only)" style="display:none;">Add new spellbook</button>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <span class="tag">Prepared: <span class="num" id="sp_prep">14</span></span>
@@ -2547,7 +2697,10 @@
     <!-- INVENTORY -->
     <section class="panel" id="tab-inventory" data-tabpanel data-active="false" role="tabpanel" aria-labelledby="tabbtn-inventory">
       <div class="panel-header">
-        <h2 class="panel-title">Inventory</h2>
+        <div class="panel-title-row">
+          <h2 class="panel-title">Inventory</h2>
+          <button class="btn" id="addBagBtn" type="button">Add Bag</button>
+        </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <span class="tag">Encumbrance: <span id="i_enc">Light</span></span>
           <button class="tag" id="inventoryCurrencyBtn" type="button">Currency: <span id="i_money">—</span></button>
@@ -2555,40 +2708,7 @@
       </div>
 
       <div class="panel-body">
-        <!-- NEW: Attunement top section -->
-        <div class="card" style="margin-bottom:12px;">
-          <h4>
-            Attunement
-            <button class="mini" id="addAttuneBtn" type="button" title="Add attunement slot (edit mode only)" style="display:none;">＋</button>
-          </h4>
-          <div class="small">Three slots by default. In edit mode you can add more slots.</div>
-          <div style="height:10px"></div>
-          <div class="attune" id="attuneList"></div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px;">
-          <div class="panel" style="box-shadow:none;">
-            <div class="panel-header"><h3 class="panel-title">Equipment</h3></div>
-            <div class="panel-body" style="padding:0;">
-              <table>
-                <thead><tr><th>Item</th><th class="right">Qty</th><th>Notes</th></tr></thead>
-                <tbody id="i_items"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="panel" style="box-shadow:none;">
-            <div class="panel-header"><h3 class="panel-title">Magic & Special</h3></div>
-            <div class="panel-body" id="i_magic"></div>
-
-            <div style="height:12px"></div>
-
-            <div class="panel" style="box-shadow:none;">
-              <div class="panel-header"><h3 class="panel-title">Tools / Kits</h3></div>
-              <div class="panel-body" id="i_tools"></div>
-            </div>
-          </div>
-        </div>
+        <div class="inventory-grid" id="inventoryGrid"></div>
       </div>
     </section>
 
@@ -2642,7 +2762,6 @@
         </div>
       </div>
       <div class="panel-body">
-        <div class="notes-subtabs" id="notesSubtabs" role="tablist" aria-label="Notes categories"></div>
         <div class="notes-legend" id="notesLegend">
           <span>★ Starred</span>
           <span>✓ Completed</span>
@@ -2653,61 +2772,122 @@
           <input class="select notes-search" id="notesSearchInput" placeholder="Search notes..." />
           <button class="btn" id="notesSearchClear" type="button">Clear</button>
         </div>
+        <input type="color" id="noteStarColorPicker" class="note-star-picker" aria-hidden="true" />
         <div id="notesSections"></div>
       </div>
     </section>
   </main>
 
-  <dialog id="quickNoteDialog" aria-label="Quick note">
+  <dialog id="noteEditorDialog" aria-label="Edit note">
     <div class="dlg-head">
-      <h3 class="dlg-title">Quick Note</h3>
-      <button class="icon-btn" id="quickNoteClose" type="button" aria-label="Close">✕</button>
+      <h3 class="dlg-title" id="noteEditorDialogTitle">Note Editor</h3>
+      <button class="icon-btn" id="noteEditorClose" type="button" aria-label="Close">✕</button>
     </div>
     <div class="dlg-body">
-      <label class="small" for="quickNoteTitle">Title</label>
-      <input class="select" id="quickNoteTitle" placeholder="Note title" />
-      <div class="note-editor-toolbar">
-        <button class="btn" type="button" data-md="bold">Bold</button>
-        <button class="btn" type="button" data-md="italic">Italic</button>
-        <button class="btn" type="button" data-md="h1">H1</button>
-        <button class="btn" type="button" data-md="h2">H2</button>
-        <button class="btn" type="button" data-md="list">Bullets</button>
-        <button class="btn" type="button" data-md="check">Checklist</button>
+      <label class="small" for="noteEditorTitleInput">Title</label>
+      <input class="select" id="noteEditorTitleInput" placeholder="Note title" />
+
+      <div class="note-editor-toolbar" id="noteEditorToolbar">
+        <button class="btn" type="button" data-cmd="bold"><strong>B</strong></button>
+        <button class="btn" type="button" data-cmd="italic"><em>I</em></button>
+        <button class="btn" type="button" data-cmd="underline"><span style="text-decoration:underline;">U</span></button>
+        <button class="btn" type="button" data-cmd="strikeThrough"><span style="text-decoration:line-through;">S</span></button>
+        <button class="btn" type="button" data-cmd="insertUnorderedList">• List</button>
+        <button class="btn" type="button" data-cmd="insertOrderedList">1. List</button>
+        <button class="btn" type="button" data-cmd="justifyLeft">Left</button>
+        <button class="btn" type="button" data-cmd="justifyCenter">Center</button>
+        <button class="btn" type="button" data-cmd="justifyRight">Right</button>
+        <button class="btn" type="button" data-cmd="justifyFull">Justify</button>
+        <label class="btn">
+          Text
+          <input type="color" id="noteTextColor" value="#ffffff" style="width:0; height:0; opacity:0; position:absolute;" />
+        </label>
+        <label class="btn">
+          Highlight
+          <input type="color" id="noteHighlightColor" value="#5db2ff" style="width:0; height:0; opacity:0; position:absolute;" />
+        </label>
+        <select class="select" id="noteFontSize" style="width:auto; min-width:90px;">
+          <option value="12">12px</option>
+          <option value="14" selected>14px</option>
+          <option value="16">16px</option>
+          <option value="18">18px</option>
+          <option value="20">20px</option>
+          <option value="24">24px</option>
+        </select>
+        <button class="btn" type="button" id="noteInsertLink">Link</button>
+        <button class="btn" type="button" id="noteInsertImage">Image URL</button>
       </div>
-      <textarea class="select note-editor-text" id="quickNoteBody" placeholder="Write your note with markdown..."></textarea>
+
+      <div class="note-editor-rich select" id="noteEditorBody" contenteditable="true" spellcheck="true"></div>
+
       <div class="row" style="margin-top:10px; justify-content:flex-end;">
-        <button class="btn" id="quickNoteCancel" type="button">Cancel</button>
-        <button class="btn primary" id="quickNoteSave" type="button">Save Note</button>
+        <button class="btn" id="noteEditorCancel" type="button">Cancel</button>
+        <button class="btn primary" id="noteEditorSave" type="button">Save Note</button>
       </div>
     </div>
   </dialog>
 
-  <dialog id="advancedNoteDialog" aria-label="Advanced note">
+  <dialog id="addBagDialog" aria-label="Add inventory section">
     <div class="dlg-head">
-      <h3 class="dlg-title">Advanced Note</h3>
-      <button class="icon-btn" id="advancedNoteClose" type="button" aria-label="Close">✕</button>
+      <h3 class="dlg-title">Add Bag</h3>
+      <button class="icon-btn" id="addBagClose" type="button" aria-label="Close">✕</button>
     </div>
     <div class="dlg-body">
-      <label class="small" for="advancedNoteTitle">Title</label>
-      <input class="select" id="advancedNoteTitle" placeholder="Note title" />
-      <label class="small" for="advancedNoteFormat" style="margin-top:10px;">Format</label>
-      <select class="select" id="advancedNoteFormat">
-        <option value="paragraph">Paragraph</option>
-        <option value="bullets">Bullet List</option>
-        <option value="checklist">Checklist</option>
+      <label class="small" for="addBagTitle">Title</label>
+      <input class="select" id="addBagTitle" placeholder="New section title" />
+
+      <label class="small" for="addBagType" style="margin-top:10px;">Type</label>
+      <select class="select" id="addBagType">
+        <option value="detailed">Detailed (Item / Qty / Notes)</option>
+        <option value="basic">Basic (simple list)</option>
       </select>
-      <div class="note-editor-toolbar">
-        <button class="btn" type="button" data-md="bold">Bold</button>
-        <button class="btn" type="button" data-md="italic">Italic</button>
-        <button class="btn" type="button" data-md="h1">H1</button>
-        <button class="btn" type="button" data-md="h2">H2</button>
-        <button class="btn" type="button" data-md="list">Bullets</button>
-        <button class="btn" type="button" data-md="check">Checklist</button>
+
+      <label class="small" for="addBagSpan" style="margin-top:10px;">Width</label>
+      <select class="select" id="addBagSpan">
+        <option value="1">1/3 width</option>
+        <option value="2">2/3 width</option>
+        <option value="3" selected>Full width</option>
+      </select>
+
+      <div class="card" style="margin-top:12px;">
+        <h4>Common Packs</h4>
+        <div class="small">Add a classic D&amp;D pack (1/3 width).</div>
+        <div class="row" style="margin-top:10px; justify-content:flex-start;">
+          <button class="btn" type="button" data-pack="explorers-pack">Explorer’s Pack</button>
+          <button class="btn" type="button" data-pack="burglar-pack">Burglar’s Pack</button>
+          <button class="btn" type="button" data-pack="diplomat-pack">Diplomat’s Pack</button>
+          <button class="btn" type="button" data-pack="priest-pack">Priest’s Pack</button>
+          <button class="btn" type="button" data-pack="scholar-pack">Scholar’s Pack</button>
+          <button class="btn" type="button" data-pack="disguise-kit">Disguise Kit</button>
+        </div>
       </div>
-      <textarea class="select note-editor-text" id="advancedNoteBody" placeholder="Add structured notes (one line per item for lists)..."></textarea>
-      <div class="row" style="margin-top:10px; justify-content:flex-end;">
-        <button class="btn" id="advancedNoteCancel" type="button">Cancel</button>
-        <button class="btn primary" id="advancedNoteSave" type="button">Save Note</button>
+
+      <div class="row" style="margin-top:12px; justify-content:flex-end;">
+        <button class="btn" id="addBagCancel" type="button">Cancel</button>
+        <button class="btn primary" id="addBagApply" type="button">Add Section</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="inventorySectionDialog" aria-label="Edit inventory section">
+    <div class="dlg-head">
+      <h3 class="dlg-title">Edit Section</h3>
+      <button class="icon-btn" id="inventorySectionClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <label class="small" for="inventorySectionTitle">Title</label>
+      <input class="select" id="inventorySectionTitle" placeholder="Section title" />
+
+      <label class="small" for="inventorySectionSpan" style="margin-top:10px;">Width</label>
+      <select class="select" id="inventorySectionSpan">
+        <option value="1">1/3 width</option>
+        <option value="2">2/3 width</option>
+        <option value="3">Full width</option>
+      </select>
+
+      <div class="row" style="margin-top:12px; justify-content:flex-end;">
+        <button class="btn" id="inventorySectionCancel" type="button">Cancel</button>
+        <button class="btn primary" id="inventorySectionSave" type="button">Save</button>
       </div>
     </div>
   </dialog>
@@ -2804,6 +2984,28 @@
       <div class="card">
         <h4>Name</h4>
         <input class="select" id="spellbookEditName" placeholder="Spellbook name" />
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="card">
+        <h4>Spellcasting Modifier</h4>
+        <div class="small">Sets the save DC shown for spells in this book.</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-top:10px;">
+          <div class="field" style="justify-content:flex-start;">
+            <label style="min-width:110px;">Ability</label>
+            <select class="select" id="spellbookEditModType">
+              <option value="int">Intelligence</option>
+              <option value="wis">Wisdom</option>
+              <option value="cha">Charisma</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="field" style="justify-content:flex-start;">
+            <label style="min-width:110px;">Custom Mod</label>
+            <input class="select" id="spellbookEditModCustom" type="number" value="0" />
+          </div>
+        </div>
       </div>
 
       <div style="height:12px"></div>
@@ -3086,17 +3288,6 @@
 
       <div class="toggle">
         <div>
-          <strong>Inspiration Edge Glow</strong>
-          <div class="muted" style="font-size:12px; margin-top:4px;">When Inspiration is active, show a gold glow around the screen edge.</div>
-        </div>
-        <label class="switch" for="glowToggle">
-          <input id="glowToggle" type="checkbox" />
-          <span>Enabled</span>
-        </label>
-      </div>
-
-      <div class="toggle">
-        <div>
           <strong>Wide Screen</strong>
           <div class="muted" style="font-size:12px; margin-top:4px;">Let the sheet expand to full screen width.</div>
         </div>
@@ -3145,6 +3336,19 @@
         </div>
       </div>
 
+      <div class="card">
+        <h4>Character Data</h4>
+        <div class="small">Export your character as JSON or import a saved file.</div>
+        <div class="row" style="margin-top:10px; justify-content:flex-start;">
+          <button class="btn" id="exportCharacterBtn" type="button">Export JSON</button>
+          <label class="btn" for="importCharacterInput">Import JSON</label>
+          <input id="importCharacterInput" type="file" accept="application/json" style="display:none;" />
+        </div>
+        <div style="height:8px"></div>
+        <button class="btn danger" id="deleteCharacterBtn" type="button">Delete Character</button>
+        <div class="small muted" style="margin-top:6px;">Type "delete" to confirm wiping all data.</div>
+      </div>
+
       <div style="height:12px"></div>
 
       <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
@@ -3161,55 +3365,72 @@
       <button class="icon-btn" id="portraitClose" type="button" aria-label="Close">✕</button>
     </div>
     <div class="dlg-body">
-      <div class="card">
-        <h4>Image URL</h4>
-        <div class="small">Paste a new URL. (Only works in edit mode.)</div>
-        <div style="display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;">
-          <input class="select" id="portraitUrl" type="url" placeholder="https://..." />
-          <button class="btn primary" id="portraitApplyUrl" type="button">Apply</button>
-        </div>
-      </div>
-
-      <div style="height:12px"></div>
-
-      <div class="card">
-        <h4>Crop / Position</h4>
-        <div class="small">Use zoom + position to “crop” inside the frame.</div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-          <div class="field">
-            <label>Zoom</label>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input id="pz" type="range" min="1" max="2.2" step="0.01" style="width:160px;">
-              <span class="val" id="pzVal">1.00</span>
+      <div class="portrait-editor-grid">
+        <div>
+          <div class="card">
+            <h4>Image URL</h4>
+            <div class="small">Paste a new portrait URL to replace the image.</div>
+            <div style="display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;">
+              <input class="select" id="portraitUrl" type="url" placeholder="https://..." />
+              <button class="btn primary" id="portraitApplyUrl" type="button">Load</button>
             </div>
           </div>
-          <div class="field">
-            <label>Reset</label>
-            <button class="btn" id="portraitReset" type="button">Default crop</button>
+
+          <div style="height:12px"></div>
+
+          <div class="card">
+            <h4>Adjustments</h4>
+            <div class="field" style="margin-top:8px;">
+              <label>Zoom</label>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input id="portraitZoom" type="range" min="0.8" max="2.4" step="0.01" style="width:180px;">
+                <span class="val" id="portraitZoomVal">1.00</span>
+              </div>
+            </div>
+            <div class="field" style="margin-top:8px;">
+              <label>Rotate</label>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input id="portraitRotate" type="range" min="-15" max="15" step="1" style="width:180px;">
+                <span class="val" id="portraitRotateVal">0°</span>
+              </div>
+            </div>
+            <div class="field" style="margin-top:8px;">
+              <label>Position X</label>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input id="portraitPosX" type="range" min="-40" max="40" step="1" style="width:180px;">
+                <span class="val" id="portraitPosXVal">0%</span>
+              </div>
+            </div>
+            <div class="field" style="margin-top:8px;">
+              <label>Position Y</label>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input id="portraitPosY" type="range" min="-40" max="40" step="1" style="width:180px;">
+                <span class="val" id="portraitPosYVal">0%</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+              <button class="btn" id="portraitReset" type="button">Reset</button>
+            </div>
           </div>
         </div>
 
-        <div class="portrait-preview" id="portraitPreview" aria-label="Portrait position preview">
-          <img id="portraitPreviewImg" alt="Portrait preview" />
-          <div class="portrait-preview-grid"></div>
-        </div>
-        <div class="small" style="margin-top:8px;">
-          Drag inside the preview to reposition. Position: <strong id="portraitPosLabel">50% / 30%</strong>
-        </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-          <button class="btn" id="portraitNudgeUp" type="button">Up</button>
-          <button class="btn" id="portraitNudgeDown" type="button">Down</button>
-          <button class="btn" id="portraitNudgeLeft" type="button">Left</button>
-          <button class="btn" id="portraitNudgeRight" type="button">Right</button>
+        <div>
+          <div class="portrait-preview" id="portraitPreview" aria-label="Portrait position preview">
+            <img class="portrait-img" id="portraitPreviewImg" alt="Portrait preview" />
+            <div class="portrait-overlay"></div>
+            <div class="portrait-vignette"></div>
+          </div>
+          <div class="small" style="margin-top:8px;">
+            Drag inside the preview to reposition. Position: <strong id="portraitPosLabel">0% / 0%</strong>
+          </div>
         </div>
       </div>
 
-      <div style="height:12px"></div>
-
-      <div class="row">
-        <div class="small">Tip: set Y lower (e.g. 20–35%) to keep face higher in frame.</div>
-        <button class="btn primary" id="portraitDone" type="button">Done</button>
+      <div class="row" style="margin-top:12px;">
+        <div class="small">Changes apply instantly to the main portrait &amp; thumbnail.</div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
+          <button class="btn primary" id="portraitDone" type="button">Done</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -3488,7 +3709,6 @@
 
       hp: { cur: 73, max: 73, temp: 0 },
 
-      inspiration: false,
       status: { conditions: [], exhaustion: 0 },
 
       coins: { pp: 2, gp: 121, ep: 0, sp: 35, cp: 70 },
@@ -3563,19 +3783,42 @@
           { item: "Ring of Warmth", notes:"Attuned • cold resistance (example)", detail:"Grants resistance to cold damage. Keeps the wearer comfortable in frigid climates." },
           { item: "", notes:"(empty)", detail:"No attunement item slotted." }
         ],
-        items: [
-          { name:"Quarterstaff", qty: 1, notes:"Focus (wooden staff)" },
-          { name:"Leather Armor", qty: 1, notes:"AC baseline" },
-          { name:"Explorer’s Pack", qty: 1, notes:"Bedroll, rations, etc." },
-          { name:"Herbalism Kit", qty: 1, notes:"Poultices & remedies" }
-        ],
-        magic: [
-          "Cloak of the Grove (flavor) — smells faintly of cedar.",
-          "Stone charm — warms near fey crossings."
-        ],
-        tools: [
-          "Herbalism Kit",
-          "Calligrapher’s Supplies"
+        equipped: ["", "", "", "", "", ""],
+        sections: [
+          { id: "attunement", type: "attunement", title: "Attunement", span: 3, lockedTitle: true },
+          { id: "equipped", type: "equipped", title: "Equipped", span: 3 },
+          {
+            id: "equipment",
+            type: "detailed",
+            title: "Equipment",
+            span: 2,
+            items: [
+              { name:"Quarterstaff", qty: 1, notes:"Focus (wooden staff)" },
+              { name:"Leather Armor", qty: 1, notes:"AC baseline" },
+              { name:"Explorer’s Pack", qty: 1, notes:"Bedroll, rations, etc." },
+              { name:"Herbalism Kit", qty: 1, notes:"Poultices & remedies" }
+            ]
+          },
+          {
+            id: "magic",
+            type: "basic",
+            title: "Magic & Special",
+            span: 1,
+            items: [
+              "Cloak of the Grove (flavor) — smells faintly of cedar.",
+              "Stone charm — warms near fey crossings."
+            ]
+          },
+          {
+            id: "tools",
+            type: "basic",
+            title: "Tools / Kits",
+            span: 1,
+            items: [
+              "Herbalism Kit",
+              "Calligrapher’s Supplies"
+            ]
+          }
         ]
       },
 
@@ -3589,9 +3832,9 @@
               title: "Notes",
               collapsed: false,
               notes: [
-                { id: "note-1", title:"Travel Prep", body:"Keep a slot for Speak with Animals when traveling.", starred:false, status:null, important:false },
-                { id: "note-2", title:"Fey Signs", body:"Mark fey signs near the old stone bridge.", starred:false, status:null, important:false },
-                { id: "note-3", title:"Debts", body:"Owes a favor to the apothecary in Westhollow.", starred:false, status:null, important:false }
+                { id: "note-1", title:"Travel Prep", body:"Keep a slot for Speak with Animals when traveling.", starred:false, starColor:"", status:null },
+                { id: "note-2", title:"Fey Signs", body:"Mark fey signs near the old stone bridge.", starred:false, starColor:"", status:null },
+                { id: "note-3", title:"Debts", body:"Owes a favor to the apothecary in Westhollow.", starred:false, starColor:"", status:null }
               ]
             }
           ]
@@ -3637,13 +3880,13 @@
       portrait: {
         url: PORTRAIT_URL,
         zoom: 1.00,
-        x: 50,
-        y: 30
+        x: 0,
+        y: 0,
+        rotate: 0
       },
 
       settings: {
         theme: "midnight",
-        inspGlowEnabled: true,
         wide: false,
         editUnlocked: false,
         debugEnabled: false
@@ -3889,6 +4132,7 @@
      **********************************************************************/
     let diceDrag = null;
     const diceFlashItems = [];
+    let lastDiceFlashAt = 0;
     function toggleDicePanel(open){
       const panel = $("#dicePanel");
       const next = open ?? panel.dataset.open !== "true";
@@ -3941,16 +4185,14 @@
       animation.dataset.active = "true";
       setTimeout(()=>{ animation.dataset.active = "false"; }, 900);
     }
-    function updateDiceFlashOffsets(){
-      let offset = 0;
-      diceFlashItems.forEach((item)=>{
-        item.style.setProperty("--offset", `${-offset}px`);
-        const height = item.offsetHeight || 0;
-        offset += height + 15;
-      });
+    function clearDiceFlash(){
+      diceFlashItems.forEach(item=> item.remove());
+      diceFlashItems.length = 0;
     }
     function flashDiceResult(total, allMax, allMin){
       const flash = $("#diceRollFlash");
+      clearDiceFlash();
+      lastDiceFlashAt = Date.now();
       const alert = document.createElement("div");
       const inner = document.createElement("div");
       alert.className = "dice-roll-alert";
@@ -3960,18 +4202,17 @@
       inner.classList.toggle("is-min", allMin);
       alert.appendChild(inner);
       flash.appendChild(alert);
-      diceFlashItems.unshift(alert);
-      updateDiceFlashOffsets();
-      const cleanup = ()=>{
-        const idx = diceFlashItems.indexOf(alert);
-        if (idx !== -1){
-          diceFlashItems.splice(idx, 1);
-          updateDiceFlashOffsets();
-        }
-        alert.remove();
-      };
-      alert.addEventListener("animationend", cleanup, { once: true });
-      setTimeout(cleanup, 2600);
+      diceFlashItems.push(alert);
+    }
+    function dismissDiceFlash(){
+      if (!diceFlashItems.length) return;
+      diceFlashItems.forEach(alert=>{
+        if (alert.dataset.dismissed) return;
+        alert.dataset.dismissed = "true";
+        alert.classList.add("is-dismissed");
+        alert.addEventListener("animationend", ()=> alert.remove(), { once: true });
+      });
+      diceFlashItems.length = 0;
     }
     function rollRandom(sides){
       return 1 + Math.floor(Math.random() * sides);
@@ -4142,12 +4383,6 @@
     /**********************************************************************
      * Rendering
      **********************************************************************/
-    function applyInspirationGlow(){
-      const enabled = !!state.settings.inspGlowEnabled;
-      const on = state.inspiration && enabled;
-      document.body.setAttribute("data-insp-glow", on ? "on" : "off");
-    }
-
     function applyDebugMode(){
       renderDebugLog();
     }
@@ -4184,6 +4419,17 @@
       fitTextToLines($("#tb_sub"), 14, 10, 2);
       fitTextToLines($("#mainName"), 34, 18, 2);
     }
+    function fitTextToWidth(el, baseSize, minSize){
+      if (!el || !el.parentElement) return;
+      const parent = el.parentElement;
+      let size = baseSize;
+      el.style.fontSize = `${size}px`;
+      const maxWidth = parent.clientWidth - 12;
+      while (el.scrollWidth > maxWidth && size > minSize){
+        size -= 1;
+        el.style.fontSize = `${size}px`;
+      }
+    }
 
     function renderTopbar(){
       const tbName = $("#tb_name");
@@ -4204,13 +4450,11 @@
         $("#tb_money_icon").src = goldIcon;
       }
 
-      $("#tb_insp").textContent = state.inspiration ? "Yes" : "No";
-      $("#inspBtn").setAttribute("aria-pressed", state.inspiration ? "true" : "false");
-      applyInspirationGlow();
-
       const active = getActiveStatusList();
       $("#tb_status").textContent = getToolbarStatusLabel();
       $("#statusTooltipText").textContent = active.length ? active.join(", ") : "None";
+      fitTextToWidth($("#tb_status"), 13, 9);
+      fitTextToWidth($("#tb_money_total"), 13, 9);
       fitTopbarText();
       renderCurrentStatusList();
 
@@ -4254,20 +4498,19 @@
 
     function renderPortrait(){
       const img = $("#portraitImg");
+      if (!img) return;
       img.src = state.portrait.url;
       img.style.setProperty("--pz", state.portrait.zoom);
       img.style.setProperty("--px", `${state.portrait.x}%`);
       img.style.setProperty("--py", `${state.portrait.y}%`);
-      // also set on inline style for object-position
-      img.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
-      img.style.transform = `scale(${state.portrait.zoom})`;
+      img.style.setProperty("--pr", `${state.portrait.rotate}deg`);
       const thumb = $("#tb_portrait");
       if (thumb){
         thumb.src = state.portrait.url;
-        thumb.style.setProperty("--px", `${state.portrait.x}%`);
-        thumb.style.setProperty("--py", `${state.portrait.y}%`);
-        thumb.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
-        thumb.style.transform = "none";
+        const posX = 50 + (state.portrait.x || 0);
+        const posY = 50 + (state.portrait.y || 0);
+        thumb.style.objectPosition = `${posX}% ${posY}%`;
+        thumb.style.transform = `scale(${state.portrait.zoom}) rotate(${state.portrait.rotate}deg)`;
       }
     }
 
@@ -4278,8 +4521,7 @@
       preview.style.setProperty("--pz", state.portrait.zoom);
       preview.style.setProperty("--px", `${state.portrait.x}%`);
       preview.style.setProperty("--py", `${state.portrait.y}%`);
-      preview.style.objectPosition = `${state.portrait.x}% ${state.portrait.y}%`;
-      preview.style.transform = `scale(${state.portrait.zoom})`;
+      preview.style.setProperty("--pr", `${state.portrait.rotate}deg`);
       $("#portraitPosLabel").textContent = `${state.portrait.x}% / ${state.portrait.y}%`;
     }
 
@@ -4485,6 +4727,52 @@
         return d.concentration ? `Concentration, up to ${label}` : label;
       }
       return d.type || "";
+    }
+
+    function normalizeDiceText(text){
+      return String(text || "").replace(/\{@(?:damage|dice)\s+([^}]+)\}/gi, "$1");
+    }
+
+    function formatDiceInline(text){
+      const cleaned = normalizeDiceText(text);
+      const escaped = escapeHTML(cleaned);
+      return escaped.replace(/(\b\d+d\d+(?:\s*[+-]\s*\d+)?\b)/gi, (match)=>{
+        const expr = match.replace(/\s+/g, "");
+        return `<button class="dice-inline" type="button" data-dice="${escapeHTML(expr)}">${escapeHTML(match)}</button>`;
+      });
+    }
+
+    function parseDiceExpression(expr){
+      const raw = String(expr || "").replace(/\s+/g, "");
+      if (!raw) return null;
+      const parts = raw.match(/[+-]?[^+-]+/g) || [];
+      const sets = [];
+      let flatMod = 0;
+      parts.forEach(part=>{
+        const sign = part.startsWith("-") ? -1 : 1;
+        const token = part.replace(/^[+-]/, "");
+        if (/^\d*d\d+$/i.test(token)){
+          const [countRaw, sidesRaw] = token.toLowerCase().split("d");
+          const count = parseInt(countRaw || "1", 10) || 1;
+          const sides = parseInt(sidesRaw, 10) || 0;
+          if (sides > 1){
+            sets.push({ count: Math.max(1, count), sides, mod: 0 });
+          }
+        }else if (/^\d+$/.test(token)){
+          flatMod += sign * (parseInt(token, 10) || 0);
+        }
+      });
+      if (!sets.length) return null;
+      if (flatMod){
+        sets[0].mod = (sets[0].mod || 0) + flatMod;
+      }
+      return sets;
+    }
+
+    function rollDiceExpression(expr){
+      const sets = parseDiceExpression(expr);
+      if (!sets) return;
+      rollDice("normal", { sets, label: expr });
     }
 
     function flattenSpellEntries(entries){
@@ -4706,7 +4994,13 @@
     }
 
     function ensureSpellbooks(){
-      if (Array.isArray(state.spellbooks) && state.spellbooks.length) return;
+      if (Array.isArray(state.spellbooks) && state.spellbooks.length){
+        state.spellbooks.forEach(book=>{
+          if (!book.spellModType) book.spellModType = "int";
+          if (!Number.isFinite(book.spellModCustom)) book.spellModCustom = 0;
+        });
+        return;
+      }
       const migrated = (state.spells?.list || []).map((sp, idx)=>{
         const levelNum = parseLevelLabel(sp.lvl);
         return {
@@ -4725,6 +5019,8 @@
           id: 'book-main',
           name: 'Spellbook',
           colors: { hi: '#d8c08a', mid: '#0f1422', text: '#f2f4f8' },
+          spellModType: "wis",
+          spellModCustom: 0,
           spells: migrated
         }
       ];
@@ -4736,6 +5032,19 @@
       const m = s.match(/(\d+)/);
       if (m) return parseInt(m[1],10) || 0;
       return 0;
+    }
+
+    function getSpellbookModValue(book){
+      if (!book) return 0;
+      if (book.spellModType === "custom"){
+        return parseInt(book.spellModCustom, 10) || 0;
+      }
+      const ability = getAbilityByKey(book.spellModType || "int");
+      return ability ? modFromScore(ability.score) : 0;
+    }
+
+    function getSpellbookSaveDc(book){
+      return 8 + (state.prof || 0) + getSpellbookModValue(book);
     }
 
     const SPELLBOOK_PRESETS = {
@@ -4752,44 +5061,57 @@
     function addSpellbook(){
       if (!state.settings.editUnlocked) return;
       ensureSpellbooks();
-      const id = `book-${Date.now()}`;
-      state.spellbooks.push({
-        id,
-        name: `Spellbook ${state.spellbooks.length+1}`,
-        colors: { ...SPELLBOOK_PRESETS.Wizard },
-        spells: []
-      });
-      saveSettings();
-      renderSpells();
+      openSpellbookEdit(null);
     }
 
     function openSpellbookEdit(bookId){
       if (!state.settings.editUnlocked) return;
       ensureSpellbooks();
-      const book = state.spellbooks.find(b=> b.id === bookId);
-      if (!book) return;
       const dlg = $('#spellbookEditDialog');
-      dlg.dataset.bookId = bookId;
-      $('#spellbookEditName').value = book.name || '';
-      $('#spellbookEditHi').value = book.colors?.hi || '#d8c08a';
-      $('#spellbookEditMid').value = book.colors?.mid || '#0f1422';
-      $('#spellbookEditText').value = book.colors?.text || '#f2f4f8';
+      const book = bookId ? state.spellbooks.find(b=> b.id === bookId) : null;
+      dlg.dataset.bookId = bookId || "";
+      dlg.dataset.mode = book ? "edit" : "new";
+      $('#spellbookEditName').value = book?.name || `Spellbook ${state.spellbooks.length + 1}`;
+      $('#spellbookEditHi').value = book?.colors?.hi || '#d8c08a';
+      $('#spellbookEditMid').value = book?.colors?.mid || '#0f1422';
+      $('#spellbookEditText').value = book?.colors?.text || '#f2f4f8';
+      $('#spellbookEditModType').value = book?.spellModType || "int";
+      $('#spellbookEditModCustom').value = Number.isFinite(book?.spellModCustom) ? book.spellModCustom : 0;
       dlg.showModal();
     }
 
     function saveSpellbookEdit(){
       const dlg = $('#spellbookEditDialog');
+      const mode = dlg.dataset.mode || "edit";
       const bookId = dlg.dataset.bookId;
-      if (!bookId) return;
       ensureSpellbooks();
-      const book = state.spellbooks.find(b=> b.id === bookId);
-      if (!book) return;
-      book.name = $('#spellbookEditName').value.trim() || book.name;
-      book.colors = {
+      const name = $('#spellbookEditName').value.trim() || `Spellbook ${state.spellbooks.length + 1}`;
+      const colors = {
         hi: $('#spellbookEditHi').value,
         mid: $('#spellbookEditMid').value,
         text: $('#spellbookEditText').value
       };
+      const spellModType = $('#spellbookEditModType').value;
+      const spellModCustom = parseInt($('#spellbookEditModCustom').value, 10) || 0;
+
+      if (mode === "new"){
+        const id = `book-${Date.now()}`;
+        state.spellbooks.push({
+          id,
+          name,
+          colors,
+          spellModType,
+          spellModCustom,
+          spells: []
+        });
+      }else{
+        const book = state.spellbooks.find(b=> b.id === bookId);
+        if (!book) return;
+        book.name = name;
+        book.colors = colors;
+        book.spellModType = spellModType;
+        book.spellModCustom = spellModCustom;
+      }
       dlg.close();
       saveSettings();
       renderSpells();
@@ -4845,18 +5167,25 @@
       const canEdit = !!state.settings.editUnlocked;
       $('#sp_list').innerHTML = (state.spellbooks || []).map(book=>{
         const colors = book.colors || { hi:'#d8c08a', mid:'#0f1422', text:'#f2f4f8' };
-        const rows = (book.spells || []).slice().sort((a,b)=> (a.level-b.level) || a.name.localeCompare(b.name)).map(sp=>{
-          const removeCol = canEdit ? `<td class="right"><button class="icon-btn spell-remove" type="button" data-spell-remove="${escapeHTML(sp.key)}" data-book-id="${escapeHTML(book.id)}" aria-label="Remove spell">✕</button></td>` : '';
+        const saveDc = getSpellbookSaveDc(book);
+        const rows = (book.spells || []).map(sp=>{
+          const removeBtn = canEdit ? `<button class="icon-btn spell-remove" type="button" data-spell-remove="${escapeHTML(sp.key)}" data-book-id="${escapeHTML(book.id)}" aria-label="Remove spell">✕</button>` : '';
+          const summaryHtml = formatDiceInline(sp.summary || "");
           return `
-            <tr>
-              <td><strong>${escapeHTML(sp.name)}</strong></td>
+            <tr data-spell-key="${escapeHTML(sp.key)}" data-book-id="${escapeHTML(book.id)}" ${canEdit ? `draggable="true"` : ""}>
+              <td>
+                <div class="spell-name-row">
+                  ${removeBtn}
+                  <strong>${escapeHTML(sp.name)}</strong>
+                </div>
+              </td>
               <td class="muted">${escapeHTML(formatSpellLevel(sp.level))}</td>
               <td class="muted">${escapeHTML(sp.castingTime||'')}</td>
               <td class="muted">${escapeHTML(sp.range||'')}</td>
               <td class="muted">${escapeHTML(sp.components||'')}</td>
               <td class="muted">${escapeHTML(sp.duration||'')}</td>
-              <td class="muted">${escapeHTML(sp.summary||'')}</td>
-              ${removeCol}
+              <td class="muted">${saveDc}</td>
+              <td class="muted">${summaryHtml}</td>
             </tr>
           `;
         }).join('');
@@ -4864,8 +5193,6 @@
         const headBtn = canEdit
           ? `<button class="spellbook-name-btn" type="button" data-book-edit="${escapeHTML(book.id)}">${escapeHTML(book.name||'Spellbook')}</button>`
           : `<div class="spellbook-name">${escapeHTML(book.name||'Spellbook')}</div>`;
-
-        const removeHdr = canEdit ? `<th class="right" style="width:40px;"></th>` : '';
 
         return `
           <div class="spellbook-card" data-book="${escapeHTML(book.id)}" style="--sb-hi:${escapeHTML(colors.hi)}; --sb-mid:${escapeHTML(colors.mid)}; --sb-text:${escapeHTML(colors.text)};">
@@ -4876,14 +5203,16 @@
                 ${canEdit ? `<button class="tag spellbook-delete" type="button" data-book-delete="${escapeHTML(book.id)}">Delete Spellbook</button>` : ""}
               </div>
             </div>
+            <div class="spellbook-meta small muted" style="margin-bottom:8px;">
+              Spell Mod: ${formatSigned(getSpellbookModValue(book))} • Save DC: ${saveDc}
+            </div>
             <div class="spellbook-body">
               <table class="spellbook-table">
                 <thead><tr>
-                  <th>Name</th><th>Level</th><th>Casting</th><th>Range</th><th>Components</th><th>Duration</th><th>Summary</th>
-                  ${removeHdr}
+                  <th>Name</th><th>Level</th><th>Casting</th><th>Range</th><th>Components</th><th>Duration</th><th>Save DC</th><th>Summary</th>
                 </tr></thead>
                 <tbody>
-                  ${rows || `<tr><td class="muted" colspan="${canEdit?8:7}">No spells yet.</td></tr>`}
+                  ${rows || `<tr><td class="muted" colspan="8">No spells yet.</td></tr>`}
                 </tbody>
               </table>
             </div>
@@ -4987,6 +5316,12 @@
       const countEl = $('#spellImportSelectedCount');
       if (countEl) countEl.textContent = String(spellImportState.selected.size);
       renderSpellImportSelectedPanel();
+    }
+
+    function clearSpellImportSelection(){
+      spellImportState.selected.clear();
+      updateSpellImportConfirm();
+      renderSpellImportList();
     }
 
     function renderSpellImportSelectedPanel(){
@@ -5102,6 +5437,15 @@
       updateSpellImportConfirm();
     }
 
+    function formatSpellTextBlock(text){
+      const cleaned = normalizeDiceText(text);
+      return String(cleaned || "")
+        .split(/\n+/)
+        .map(line=> line.trim())
+        .map(line=> line ? `<p>${formatDiceInline(line)}</p>` : `<div style="height:8px;"></div>`)
+        .join("");
+    }
+
     async function openSpellInfo(spellId){
       if (!spellImportState.byId) return;
       const sp = spellImportState.byId.get(spellId);
@@ -5137,9 +5481,9 @@
           <div class="kv">
             ${lines.filter(x=>x.v).map(x=> `<div class="k">${escapeHTML(x.k)}</div><div class="v">${escapeHTML(String(x.v))}</div>`).join('')}
           </div>
-          ${brief ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">Brief</div><div class="muted" style="white-space:pre-wrap; margin-top:6px;">${escapeHTML(brief)}</div>` : ''}
-          ${desc ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">Description</div><div class="muted" style="white-space:pre-wrap; margin-top:6px;">${escapeHTML(desc)}</div>` : ''}
-          ${higher ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">At Higher Levels</div><div class="muted" style="white-space:pre-wrap; margin-top:6px;">${escapeHTML(higher)}</div>` : ''}
+          ${brief ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">Brief</div><div class="muted" style="margin-top:6px;">${formatSpellTextBlock(brief)}</div>` : ''}
+          ${desc ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">Description</div><div class="muted" style="margin-top:6px;">${formatSpellTextBlock(desc)}</div>` : ''}
+          ${higher ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">At Higher Levels</div><div class="muted" style="margin-top:6px;">${formatSpellTextBlock(higher)}</div>` : ''}
         </div>
       `;
 
@@ -5181,34 +5525,250 @@
       updateSpellImportConfirm();
     }
 
+    function normalizeInventorySections(){
+      if (!state.inventory) state.inventory = {};
+      if (!Array.isArray(state.inventory.attunements)) state.inventory.attunements = [];
+      if (!Array.isArray(state.inventory.equipped) || state.inventory.equipped.length < 6){
+        const base = Array.isArray(state.inventory.equipped) ? state.inventory.equipped : [];
+        state.inventory.equipped = Array.from({ length: 6 }, (_, idx)=> base[idx] || "");
+      }
+      if (!Array.isArray(state.inventory.sections) || !state.inventory.sections.length){
+        const items = Array.isArray(state.inventory.items) ? state.inventory.items : [];
+        const magic = Array.isArray(state.inventory.magic) ? state.inventory.magic : [];
+        const tools = Array.isArray(state.inventory.tools) ? state.inventory.tools : [];
+        state.inventory.sections = [
+          { id: "attunement", type: "attunement", title: "Attunement", span: 3, lockedTitle: true },
+          { id: "equipped", type: "equipped", title: "Equipped", span: 3 },
+          { id: "equipment", type: "detailed", title: "Equipment", span: 2, items: items.length ? items : [] },
+          { id: "magic", type: "basic", title: "Magic & Special", span: 1, items: magic.length ? magic : [] },
+          { id: "tools", type: "basic", title: "Tools / Kits", span: 1, items: tools.length ? tools : [] }
+        ];
+      }
+      state.inventory.sections.forEach(section=>{
+        if (!Number.isFinite(section.span)) section.span = 3;
+        if (section.type === "attunement") section.lockedTitle = true;
+        if (section.type === "detailed" && !Array.isArray(section.items)) section.items = [];
+        if (section.type === "basic" && !Array.isArray(section.items)) section.items = [];
+      });
+    }
+
+    function getInventorySectionById(id){
+      normalizeInventorySections();
+      return (state.inventory.sections || []).find(s=> s.id === id);
+    }
+
     function renderInventory(){
-      $("#i_items").innerHTML = state.inventory.items.map(it => `
-        <tr>
-          <td><strong>${escapeHTML(it.name)}</strong></td>
-          <td class="right"><span class="num">${it.qty}</span></td>
-          <td class="muted">${escapeHTML(it.notes)}</td>
-        </tr>
-      `).join("");
+      normalizeInventorySections();
+      const grid = $("#inventoryGrid");
+      if (!grid) return;
+      const canEdit = !!state.settings.editUnlocked;
+      grid.innerHTML = (state.inventory.sections || []).map(section=>{
+        const span = clamp(parseInt(section.span, 10) || 3, 1, 3);
+        const baseAttrs = `data-section-id="${escapeHTML(section.id)}" data-section-type="${escapeHTML(section.type)}" style="grid-column: span ${span};" ${canEdit ? `draggable="true"` : ""}`;
+        const titleBtn = `<button class="inventory-section-title" type="button" data-inventory-action="edit-section">${escapeHTML(section.title || "Section")}</button>`;
+        const actionButtons = section.type === "attunement"
+          ? `<button class="mini" id="addAttuneBtn" type="button" data-inventory-action="add-attune" title="Add attunement slot (edit mode only)" style="display:${canEdit ? "grid" : "none"};">＋</button>`
+          : `<button class="note-icon-btn" type="button" data-inventory-action="add-row" title="Add row">＋</button>`;
 
-      $("#i_magic").innerHTML = `
-        <ul style="margin:0; padding-left:18px;">
-          ${state.inventory.magic.map(m => `<li class="muted">${escapeHTML(m)}</li>`).join("")}
-        </ul>
-      `;
-      $("#i_tools").innerHTML = `
-        <ul style="margin:0; padding-left:18px;">
-          ${state.inventory.tools.map(t => `<li class="muted">${escapeHTML(t)}</li>`).join("")}
-        </ul>
-      `;
+        if (section.type === "attunement"){
+          const attuneRows = (state.inventory.attunements || []).map((a, idx) => `
+            <div class="attune-row" role="button" tabindex="0" data-attune-index="${idx}">
+              <strong class="attune-slot">Slot ${idx+1}</strong>
+              <div>${escapeHTML(a.item || "(empty)")}</div>
+              <div class="attune-notes">${escapeHTML(a.notes || "")}</div>
+            </div>
+          `).join("");
+          return `
+            <div class="inventory-section" ${baseAttrs}>
+              <div class="inventory-section-header">
+                <div class="inventory-section-title" style="cursor:default;">${escapeHTML(section.title || "Attunement")}</div>
+                <div class="inventory-section-actions">${actionButtons}</div>
+              </div>
+              <div class="small">Three slots by default. In edit mode you can add more slots.</div>
+              <div class="attune" id="attuneList">${attuneRows}</div>
+            </div>
+          `;
+        }
+        if (section.type === "equipped"){
+          const equippedRows = (state.inventory.equipped || []).map((item, idx)=>`
+            <div class="equipped-row">
+              <div class="small muted">Slot ${idx + 1}</div>
+              <input class="inventory-input" data-equipped-index="${idx}" data-inventory-field="equipped" value="${escapeHTML(item || "")}" placeholder="Equipped item" />
+            </div>
+          `).join("");
+          return `
+            <div class="inventory-section" ${baseAttrs}>
+              <div class="inventory-section-header">
+                ${titleBtn}
+                <div class="inventory-section-actions"></div>
+              </div>
+              <div class="equipped-list">${equippedRows}</div>
+            </div>
+          `;
+        }
+        if (section.type === "detailed"){
+          const rows = (section.items || []).map((item, idx)=>`
+            <tr data-item-index="${idx}">
+              <td><input class="inventory-input" data-inventory-field="name" value="${escapeHTML(item.name || "")}" placeholder="Item" /></td>
+              <td>
+                <div class="qty-stepper">
+                  <input class="inventory-input" data-inventory-field="qty" type="number" value="${item.qty ?? 0}" min="0" />
+                  <div class="qty-stepper-buttons">
+                    <button class="qty-stepper-btn" type="button" data-inventory-action="qty-up">▲</button>
+                    <button class="qty-stepper-btn" type="button" data-inventory-action="qty-down">▼</button>
+                  </div>
+                </div>
+              </td>
+              <td><input class="inventory-input" data-inventory-field="notes" value="${escapeHTML(item.notes || "")}" placeholder="Notes" /></td>
+              ${canEdit ? `<td><button class="note-icon-btn" type="button" data-inventory-action="remove-row">✕</button></td>` : ""}
+            </tr>
+          `).join("");
+          return `
+            <div class="inventory-section" ${baseAttrs}>
+              <div class="inventory-section-header">
+                ${titleBtn}
+                <div class="inventory-section-actions">${actionButtons}</div>
+              </div>
+              <div class="inventory-section-body">
+                <table>
+                  <thead><tr><th>Item</th><th class="right">Qty</th><th>Notes</th>${canEdit ? `<th></th>` : ""}</tr></thead>
+                  <tbody>
+                    ${rows || `<tr><td class="muted" colspan="${canEdit ? 4 : 3}">No items yet.</td></tr>`}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        }
+        const basicItems = (section.items || []).map((item, idx)=>`
+          <div class="inventory-basic-item" data-item-index="${idx}">
+            <input class="inventory-input" data-inventory-field="basic" value="${escapeHTML(item || "")}" placeholder="Item" />
+            ${canEdit ? `<button class="note-icon-btn" type="button" data-inventory-action="remove-row">✕</button>` : ""}
+          </div>
+        `).join("");
+        return `
+          <div class="inventory-section" ${baseAttrs}>
+            <div class="inventory-section-header">
+              ${titleBtn}
+              <div class="inventory-section-actions">${actionButtons}</div>
+            </div>
+            <div class="inventory-basic-list">
+              ${basicItems || `<div class="notes-empty">No entries yet.</div>`}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
 
-      // attunement list
-      $("#attuneList").innerHTML = state.inventory.attunements.map((a, idx) => `
-        <div class="attune-row" role="button" tabindex="0" data-attune-index="${idx}">
-          <strong class="attune-slot">Slot ${idx+1}</strong>
-          <div>${escapeHTML(a.item || "(empty)")}</div>
-          <div class="attune-notes">${escapeHTML(a.notes || "")}</div>
-        </div>
-      `).join("");
+    const INVENTORY_PRESET_PACKS = {
+      "explorers-pack": {
+        title: "Explorer’s Pack",
+        items: [
+          { name: "Backpack", qty: 1, notes: "" },
+          { name: "Bedroll", qty: 1, notes: "" },
+          { name: "Rations (10 days)", qty: 1, notes: "" },
+          { name: "Waterskin", qty: 1, notes: "" }
+        ]
+      },
+      "burglar-pack": {
+        title: "Burglar’s Pack",
+        items: [
+          { name: "Backpack", qty: 1, notes: "" },
+          { name: "Ball Bearings (1,000)", qty: 1, notes: "" },
+          { name: "Hooded Lantern", qty: 1, notes: "" },
+          { name: "Oil (2 flasks)", qty: 2, notes: "" }
+        ]
+      },
+      "diplomat-pack": {
+        title: "Diplomat’s Pack",
+        items: [
+          { name: "Chest", qty: 1, notes: "" },
+          { name: "Fine Clothes", qty: 1, notes: "" },
+          { name: "Ink (1 oz bottle)", qty: 1, notes: "" },
+          { name: "Paper (5 sheets)", qty: 5, notes: "" }
+        ]
+      },
+      "priest-pack": {
+        title: "Priest’s Pack",
+        items: [
+          { name: "Backpack", qty: 1, notes: "" },
+          { name: "Blanket", qty: 1, notes: "" },
+          { name: "Rations (10 days)", qty: 1, notes: "" },
+          { name: "Waterskin", qty: 1, notes: "" }
+        ]
+      },
+      "scholar-pack": {
+        title: "Scholar’s Pack",
+        items: [
+          { name: "Backpack", qty: 1, notes: "" },
+          { name: "Book of Lore", qty: 1, notes: "" },
+          { name: "Ink (1 oz bottle)", qty: 1, notes: "" },
+          { name: "Parchment (10 sheets)", qty: 10, notes: "" }
+        ]
+      },
+      "disguise-kit": {
+        title: "Disguise Kit",
+        items: [
+          { name: "Cosmetics", qty: 1, notes: "" },
+          { name: "Wig", qty: 1, notes: "" },
+          { name: "Small Props", qty: 1, notes: "" },
+          { name: "Pouch", qty: 1, notes: "" }
+        ]
+      }
+    };
+
+    function addInventorySection(section){
+      normalizeInventorySections();
+      state.inventory.sections.push(section);
+      saveSettings();
+      renderInventory();
+    }
+
+    function openAddBagDialog(){
+      normalizeInventorySections();
+      $("#addBagTitle").value = "";
+      $("#addBagType").value = "detailed";
+      $("#addBagSpan").value = "3";
+      $("#addBagDialog").showModal();
+    }
+
+    function handleAddBagApply(){
+      const title = $("#addBagTitle").value.trim() || `Bag ${state.inventory.sections.length + 1}`;
+      const type = $("#addBagType").value;
+      const span = parseInt($("#addBagSpan").value, 10) || 3;
+      const section = {
+        id: `inv-${Date.now()}`,
+        type,
+        title,
+        span,
+        items: type === "detailed" ? [] : []
+      };
+      addInventorySection(section);
+      $("#addBagDialog").close();
+    }
+
+    function openInventorySectionDialog(section){
+      if (!section) return;
+      const dlg = $("#inventorySectionDialog");
+      dlg.dataset.sectionId = section.id;
+      $("#inventorySectionTitle").value = section.title || "";
+      $("#inventorySectionSpan").value = String(section.span || 3);
+      $("#inventorySectionTitle").disabled = !!section.lockedTitle;
+      dlg.showModal();
+    }
+
+    function saveInventorySectionDialog(){
+      const dlg = $("#inventorySectionDialog");
+      const sectionId = dlg.dataset.sectionId;
+      const section = getInventorySectionById(sectionId);
+      if (!section) return;
+      if (!section.lockedTitle){
+        section.title = $("#inventorySectionTitle").value.trim() || section.title;
+      }
+      section.span = parseInt($("#inventorySectionSpan").value, 10) || section.span;
+      dlg.close();
+      saveSettings();
+      renderInventory();
     }
 
     let notesSearchQuery = "";
@@ -5237,10 +5797,10 @@
               ? section.notes.map((note, noteIdx)=>({
                 id: note.id || `note-${tabIdx}-${secIdx}-${noteIdx}-${Date.now()}`,
                 title: note.title || "Untitled",
-                body: note.body || "",
+                body: toNoteHtml(note.body || ""),
                 starred: !!note.starred,
-                status: note.status || null,
-                important: !!note.important
+                starColor: note.starColor || "",
+                status: note.status || null
               }))
               : []
           }))
@@ -5258,76 +5818,32 @@
       saveSettings();
     }
 
+    function stripHtml(html){
+      const temp = document.createElement("div");
+      temp.innerHTML = html;
+      return temp.textContent || temp.innerText || "";
+    }
+
+    function isHtmlContent(text){
+      return /<\/?[a-z][\s\S]*>/i.test(String(text || ""));
+    }
+
+    function toNoteHtml(text){
+      if (!text) return "";
+      if (isHtmlContent(text)) return text;
+      return String(text || "")
+        .split(/\r?\n/)
+        .map(line=> line.trim())
+        .map(line=> line ? `<p>${escapeHTML(line)}</p>` : `<div style="height:8px;"></div>`)
+        .join("");
+    }
+
     function matchesNotesQuery(note, query){
       if (!query) return true;
       const q = query.toLowerCase();
-      return String(note.title || "").toLowerCase().includes(q)
-        || String(note.body || "").toLowerCase().includes(q);
-    }
-
-    function escapeRegExp(s){
-      return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    }
-
-    function renderInlineMarkdown(text, query){
-      const tokens = query ? text.replace(new RegExp(escapeRegExp(query), "gi"), m=> `[[mark]]${m}[[/mark]]`) : text;
-      let out = escapeHTML(tokens);
-      out = out.replace(/\[\[mark\]\]/g, "<mark>").replace(/\[\[\/mark\]\]/g, "</mark>");
-      out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-      out = out.replace(/\*(.+?)\*/g, "<em>$1</em>");
-      return out;
-    }
-
-    function renderMarkdown(text, query){
-      const lines = String(text || "").split(/\r?\n/);
-      let html = "";
-      let listMode = null;
-      const closeList = ()=>{
-        if (listMode){
-          html += `</ul>`;
-          listMode = null;
-        }
-      };
-      for (const line of lines){
-        const trimmed = line.trim();
-        const checkMatch = trimmed.match(/^- \[( |x|X)\] (.+)$/);
-        const bulletMatch = trimmed.match(/^- (.+)$/);
-        if (checkMatch){
-          if (listMode !== "check"){
-            closeList();
-            listMode = "check";
-            html += `<ul class="note-list">`;
-          }
-          const checked = checkMatch[1].toLowerCase() === "x";
-          html += `<li>${checked ? "☑" : "☐"} ${renderInlineMarkdown(checkMatch[2], query)}</li>`;
-          continue;
-        }
-        if (bulletMatch){
-          if (listMode !== "bullet"){
-            closeList();
-            listMode = "bullet";
-            html += `<ul class="note-list">`;
-          }
-          html += `<li>${renderInlineMarkdown(bulletMatch[1], query)}</li>`;
-          continue;
-        }
-        closeList();
-        if (!trimmed){
-          html += `<div style="height:8px;"></div>`;
-          continue;
-        }
-        if (trimmed.startsWith("# ")){
-          html += `<div class="note-title">${renderInlineMarkdown(trimmed.slice(2), query)}</div>`;
-          continue;
-        }
-        if (trimmed.startsWith("## ")){
-          html += `<div class="note-title" style="font-size:12px;">${renderInlineMarkdown(trimmed.slice(3), query)}</div>`;
-          continue;
-        }
-        html += `<div>${renderInlineMarkdown(trimmed, query)}</div>`;
-      }
-      closeList();
-      return html;
+      const title = String(note.title || "").toLowerCase();
+      const bodyText = stripHtml(String(note.body || "")).toLowerCase();
+      return title.includes(q) || bodyText.includes(q);
     }
 
     function renderNotesSubtabs(){
@@ -5362,25 +5878,27 @@
         const notesHtml = matches.length ? matches.map(note=>{
           const status = note.status || "none";
           const starred = note.starred ? "is-starred" : "";
-          const important = note.important ? "is-important" : "";
+          const starStyle = note.starColor ? `style="--note-star: ${escapeHTML(note.starColor)};"` : "";
+          const bodyHtml = toNoteHtml(note.body || "");
+          const titleText = escapeHTML(note.title || "Untitled");
           return `
-            <div class="note-card ${starred} ${important}" data-note-id="${escapeHTML(note.id)}" data-section-id="${escapeHTML(section.id)}" data-tab-id="${escapeHTML(tab.id)}" data-status="${escapeHTML(status)}">
+            <div class="note-card ${starred}" data-note-id="${escapeHTML(note.id)}" data-section-id="${escapeHTML(section.id)}" data-tab-id="${escapeHTML(tab.id)}" data-status="${escapeHTML(status)}" ${starStyle} ${canEdit ? `draggable="true"` : ""}>
               <div class="note-header">
-                <div class="note-title">${renderInlineMarkdown(note.title || "Untitled", query)}</div>
+                <div class="note-title">
+                  <button class="note-title-btn" type="button" data-note-action="open" title="Edit note">${titleText}</button>
+                </div>
                 <div class="note-actions">
-                  <button class="note-icon-btn" type="button" data-note-action="star" aria-pressed="${note.starred ? "true" : "false"}" title="Star">★</button>
+                  <button class="note-icon-btn" type="button" data-note-action="star" aria-pressed="${note.starred ? "true" : "false"}" title="Star (shift-click to remove)">★</button>
                   <button class="note-icon-btn" type="button" data-note-action="done" aria-pressed="${note.status === "done" ? "true" : "false"}" title="Complete">✓</button>
                   <button class="note-icon-btn" type="button" data-note-action="failed" aria-pressed="${note.status === "failed" ? "true" : "false"}" title="Failed">✕</button>
-                  <button class="note-icon-btn" type="button" data-note-action="important" aria-pressed="${note.important ? "true" : "false"}" title="Important">❗</button>
+                  <button class="note-icon-btn" type="button" data-note-action="important" aria-pressed="${note.status === "important" ? "true" : "false"}" title="Important">❗</button>
                   ${canEdit ? `
-                    <button class="note-icon-btn" type="button" data-note-action="move-up" title="Move up">⬆</button>
-                    <button class="note-icon-btn" type="button" data-note-action="move-down" title="Move down">⬇</button>
                     <button class="note-icon-btn" type="button" data-note-action="edit" title="Edit">✎</button>
                     <button class="note-icon-btn" type="button" data-note-action="delete" title="Delete">🗑</button>
                   ` : ""}
                 </div>
               </div>
-              <div class="note-body">${renderMarkdown(note.body || "", query)}</div>
+              <div class="note-body">${bodyHtml}</div>
             </div>
           `;
         }).join("") : `<div class="notes-empty">No matching notes in this section.</div>`;
@@ -5440,51 +5958,18 @@
       renderNotes();
     }
 
-    function openQuickNoteDialog(context = {}){
-      if (!state.settings.editUnlocked) return;
-      const dialog = $("#quickNoteDialog");
-      $("#quickNoteTitle").value = context.note ? context.note.title : "";
-      $("#quickNoteBody").value = context.note ? context.note.body : "";
+    function openNoteEditor(context = {}){
+      const dialog = $("#noteEditorDialog");
+      const titleInput = $("#noteEditorTitleInput");
+      const body = $("#noteEditorBody");
+      titleInput.value = context.note ? (context.note.title || "") : "";
+      body.innerHTML = context.note ? toNoteHtml(context.note.body || "") : "";
       dialog.dataset.noteId = context.note ? context.note.id : "";
       dialog.dataset.sectionId = context.sectionId || "";
       dialog.dataset.tabId = context.tabId || "";
+      $("#noteEditorDialogTitle").textContent = context.note ? "Edit Note" : "New Note";
       dialog.showModal();
-    }
-
-    function openAdvancedNoteDialog(context = {}){
-      if (!state.settings.editUnlocked) return;
-      const dialog = $("#advancedNoteDialog");
-      $("#advancedNoteTitle").value = context.note ? context.note.title : "";
-      $("#advancedNoteBody").value = context.note ? context.note.body : "";
-      $("#advancedNoteFormat").value = "paragraph";
-      dialog.dataset.noteId = context.note ? context.note.id : "";
-      dialog.dataset.sectionId = context.sectionId || "";
-      dialog.dataset.tabId = context.tabId || "";
-      dialog.showModal();
-    }
-
-    function applyNoteEditorFormat(text, format){
-      const lines = String(text || "").split(/\r?\n/).filter(l=> l.trim());
-      if (format === "bullets"){
-        return lines.map(line=> `- ${line}`).join("\n");
-      }
-      if (format === "checklist"){
-        return lines.map(line=> `- [ ] ${line}`).join("\n");
-      }
-      return text;
-    }
-
-    function insertMarkdown(textarea, before, after = ""){
-      if (!textarea) return;
-      const start = textarea.selectionStart || 0;
-      const end = textarea.selectionEnd || 0;
-      const value = textarea.value;
-      const selected = value.slice(start, end) || "text";
-      const nextValue = value.slice(0, start) + before + selected + after + value.slice(end);
-      textarea.value = nextValue;
-      const cursor = start + before.length + selected.length + after.length;
-      textarea.setSelectionRange(cursor, cursor);
-      textarea.focus();
+      setTimeout(()=> body.focus(), 10);
     }
 
     function findNoteById(tabId, sectionId, noteId){
@@ -5800,6 +6285,8 @@
       document.querySelectorAll("[data-tabpanel]").forEach(p=>{
         p.dataset.active = (p.id === `tab-${tab}`) ? "true" : "false";
       });
+      const dock = $("#notesTabDock");
+      if (dock) dock.dataset.active = tab === "notes" ? "true" : "false";
     }
 
     function setSubtab(which, scopeEl){
@@ -5814,7 +6301,7 @@
     }
 
     /**********************************************************************
-     * Settings (theme + glow + wide)
+     * Settings (theme + wide)
      **********************************************************************/
     function loadSettings(){
       try{
@@ -5823,7 +6310,6 @@
           const s = JSON.parse(raw);
           if (s && typeof s === "object"){
             state.settings.theme = s.theme ?? state.settings.theme;
-            state.settings.inspGlowEnabled = (s.inspGlowEnabled ?? state.settings.inspGlowEnabled);
             state.settings.wide = (s.wide ?? state.settings.wide);
             state.settings.editUnlocked = (s.editUnlocked ?? state.settings.editUnlocked);
             state.settings.debugEnabled = (s.debugEnabled ?? state.settings.debugEnabled);
@@ -5832,6 +6318,9 @@
             state.xpLevel = s.xpLevel ?? state.xpLevel;
             state.customCurrencies = Array.isArray(s.customCurrencies) ? s.customCurrencies : state.customCurrencies;
             state.coins = s.coins ?? state.coins;
+            if (s.inventory && typeof s.inventory === "object"){
+              state.inventory = { ...state.inventory, ...s.inventory };
+            }
 
             // spells / spellbooks persisted
             if (Array.isArray(s.spellbooks)) state.spellbooks = s.spellbooks;
@@ -5841,8 +6330,12 @@
             if (s.portrait){
               state.portrait.url = s.portrait.url ?? state.portrait.url;
               state.portrait.zoom = s.portrait.zoom ?? state.portrait.zoom;
-              state.portrait.x = s.portrait.x ?? state.portrait.x;
-              state.portrait.y = s.portrait.y ?? state.portrait.y;
+              const rawX = s.portrait.x ?? state.portrait.x;
+              const rawY = s.portrait.y ?? state.portrait.y;
+              const legacy = rawX >= 0 && rawX <= 100 && rawY >= 0 && rawY <= 100;
+              state.portrait.x = legacy ? rawX - 50 : rawX;
+              state.portrait.y = legacy ? rawY - 50 : rawY;
+              state.portrait.rotate = s.portrait.rotate ?? state.portrait.rotate ?? 0;
             }
 
             if (Array.isArray(s.notesTabs)){
@@ -5859,7 +6352,6 @@
       }
       applyTheme(state.settings.theme);
       applyWide();
-      applyInspirationGlow();
       applyDebugMode();
       applyEditMode(state.settings.editUnlocked);
       renderPortrait();
@@ -5868,7 +6360,6 @@
     function saveSettings(){
       localStorage.setItem("dnd_sheet_settings_v3", JSON.stringify({
         theme: state.settings.theme,
-        inspGlowEnabled: state.settings.inspGlowEnabled,
         wide: state.settings.wide,
         editUnlocked: state.settings.editUnlocked,
         debugEnabled: state.settings.debugEnabled,
@@ -5878,11 +6369,57 @@
         xpLevel: state.xpLevel,
         coins: state.coins,
         customCurrencies: state.customCurrencies,
+        inventory: state.inventory,
         spells: state.spells,
         spellbooks: state.spellbooks,
         notesTabs: state.notesTabs,
         notesActiveTabId: state.notesActiveTabId
       }));
+    }
+
+    function exportCharacter(){
+      const payload = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        state
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${slugify(state.name || "character") || "character"}-sheet.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function applyImportedState(data){
+      if (!data || typeof data !== "object") return;
+      const incoming = data.state && typeof data.state === "object" ? data.state : data;
+      Object.keys(incoming).forEach(key=>{
+        state[key] = incoming[key];
+      });
+      if (Array.isArray(state.notesTabs)){
+        state.notesTabs = normalizeNotesTabs(state.notesTabs);
+      }
+      normalizeStatusConditions();
+      normalizeInventorySections();
+      applyTheme(state.settings.theme);
+      applyWide();
+      applyDebugMode();
+      renderPortrait();
+      renderTopbar();
+      renderHP();
+      renderMain();
+      renderAbilities();
+      renderCoinPurse();
+      renderCombat();
+      renderSpells();
+      renderInventory();
+      renderNotes();
+      applyXPMode();
+      saveSettings();
     }
 
     function applyTheme(theme){
@@ -5895,7 +6432,6 @@
 
     function openSettings(){
       applyTheme(state.settings.theme);
-      $("#glowToggle").checked = !!state.settings.inspGlowEnabled;
       $("#wideToggle").checked = !!state.settings.wide;
       $("#debugToggle").checked = !!state.settings.debugEnabled;
       const isXP = state.xpMode === "xp";
@@ -5925,9 +6461,10 @@
       // show/hide edit-only buttons
       $("#addSkillBtn").style.display = unlocked ? "grid" : "none";
       $("#addAbilityBtn").style.display = unlocked ? "grid" : "none";
-      $("#addAttuneBtn").style.display = unlocked ? "grid" : "none";
+      const attuneBtn = $("#addAttuneBtn");
+      if (attuneBtn) attuneBtn.style.display = unlocked ? "grid" : "none";
       if (document.getElementById('addSpellbookBtn')) $("#addSpellbookBtn").style.display = unlocked ? 'inline-flex' : 'none';
-      ["addQuickNoteBtn","addAdvancedNoteBtn","addNoteSectionBtn"].forEach(id=>{
+      ["addNoteSectionBtn"].forEach(id=>{
         const btn = document.getElementById(id);
         if (!btn) return;
         btn.disabled = !unlocked;
@@ -5936,6 +6473,7 @@
       renderAbilities();
       renderCoinPurse();
       renderNotes();
+      renderInventory();
       saveSettings();
     }
 
@@ -6040,13 +6578,13 @@
      **********************************************************************/
     let portraitDrag = null;
     function openPortraitEditor(){
-      if (!state.settings.editUnlocked) return;
-      $("#portraitUrl").value = state.portrait.url;
-
-      $("#pz").value = state.portrait.zoom;
-      $("#pzVal").textContent = Number(state.portrait.zoom).toFixed(2);
+      $("#portraitUrl").value = state.portrait.url || "";
+      $("#portraitZoom").value = state.portrait.zoom ?? 1;
+      $("#portraitRotate").value = state.portrait.rotate ?? 0;
+      $("#portraitPosX").value = state.portrait.x ?? 0;
+      $("#portraitPosY").value = state.portrait.y ?? 0;
+      updatePortraitLabels();
       updatePortraitPreview();
-
       $("#portraitDialog").showModal();
     }
     function applyPortraitUrl(){
@@ -6057,31 +6595,36 @@
       updatePortraitPreview();
       saveSettings();
     }
+    function updatePortraitLabels(){
+      $("#portraitZoomVal").textContent = Number(state.portrait.zoom || 1).toFixed(2);
+      $("#portraitRotateVal").textContent = `${state.portrait.rotate || 0}°`;
+      $("#portraitPosXVal").textContent = `${state.portrait.x || 0}%`;
+      $("#portraitPosYVal").textContent = `${state.portrait.y || 0}%`;
+      $("#portraitPosLabel").textContent = `${state.portrait.x || 0}% / ${state.portrait.y || 0}%`;
+    }
     function applyPortraitControls(){
-      state.portrait.zoom = parseFloat($("#pz").value);
-
-      $("#pzVal").textContent = Number(state.portrait.zoom).toFixed(2);
-
+      state.portrait.zoom = parseFloat($("#portraitZoom").value) || 1;
+      state.portrait.rotate = parseInt($("#portraitRotate").value, 10) || 0;
+      state.portrait.x = clamp(parseInt($("#portraitPosX").value, 10) || 0, -40, 40);
+      state.portrait.y = clamp(parseInt($("#portraitPosY").value, 10) || 0, -40, 40);
+      updatePortraitLabels();
       renderPortrait();
       updatePortraitPreview();
       saveSettings();
-    }
-    function setPortraitPosition(x, y){
-      state.portrait.x = clamp(Math.round(x * 10) / 10, 0, 100);
-      state.portrait.y = clamp(Math.round(y * 10) / 10, 0, 100);
-      renderPortrait();
-      updatePortraitPreview();
-      saveSettings();
-    }
-    function nudgePortrait(dx, dy){
-      setPortraitPosition(state.portrait.x + dx, state.portrait.y + dy);
     }
     function resetPortraitCrop(){
       state.portrait.zoom = 1.00;
-      state.portrait.x = 50;
-      state.portrait.y = 30;
-      $("#pz").value = state.portrait.zoom;
-      applyPortraitControls();
+      state.portrait.rotate = 0;
+      state.portrait.x = 0;
+      state.portrait.y = 0;
+      $("#portraitZoom").value = state.portrait.zoom;
+      $("#portraitRotate").value = state.portrait.rotate;
+      $("#portraitPosX").value = state.portrait.x;
+      $("#portraitPosY").value = state.portrait.y;
+      updatePortraitLabels();
+      renderPortrait();
+      updatePortraitPreview();
+      saveSettings();
     }
     function startPortraitDrag(e){
       const preview = $("#portraitPreview");
@@ -6112,7 +6655,13 @@
       e.preventDefault();
       const dx = (e.clientX - portraitDrag.startX) / portraitDrag.rectW * 100;
       const dy = (e.clientY - portraitDrag.startY) / portraitDrag.rectH * 100;
-      setPortraitPosition(portraitDrag.originX + dx, portraitDrag.originY + dy);
+      state.portrait.x = clamp(Math.round(portraitDrag.originX + dx), -40, 40);
+      state.portrait.y = clamp(Math.round(portraitDrag.originY + dy), -40, 40);
+      $("#portraitPosX").value = state.portrait.x;
+      $("#portraitPosY").value = state.portrait.y;
+      updatePortraitLabels();
+      renderPortrait();
+      updatePortraitPreview();
     }
     function endPortraitDrag(e){
       const preview = $("#portraitPreview");
@@ -6123,6 +6672,7 @@
         preview.releasePointerCapture(portraitDrag.pointerId);
       }
       portraitDrag = null;
+      saveSettings();
       window.removeEventListener("pointermove", movePortraitDrag);
       window.removeEventListener("pointerup", endPortraitDrag);
       window.removeEventListener("pointercancel", endPortraitDrag);
@@ -6196,6 +6746,40 @@
       // spell importer + spellbooks
       if (document.getElementById('sp_list')){
         $("#sp_list").addEventListener('click', handleSpellbookClick);
+        let draggedSpell = null;
+        $("#sp_list").addEventListener("dragstart", (e)=>{
+          if (!state.settings.editUnlocked) return;
+          const row = e.target.closest("tr[data-spell-key]");
+          if (!row) return;
+          draggedSpell = {
+            bookId: row.dataset.bookId,
+            spellKey: row.dataset.spellKey
+          };
+          e.dataTransfer.effectAllowed = "move";
+        });
+        $("#sp_list").addEventListener("dragover", (e)=>{
+          if (!state.settings.editUnlocked) return;
+          const row = e.target.closest("tr[data-spell-key]");
+          if (!row) return;
+          e.preventDefault();
+        });
+        $("#sp_list").addEventListener("drop", (e)=>{
+          if (!state.settings.editUnlocked) return;
+          const row = e.target.closest("tr[data-spell-key]");
+          if (!row || !draggedSpell) return;
+          const bookId = row.dataset.bookId;
+          if (bookId !== draggedSpell.bookId) return;
+          const book = (state.spellbooks || []).find(b=> b.id === bookId);
+          if (!book) return;
+          const fromIdx = (book.spells || []).findIndex(s=> s.key === draggedSpell.spellKey);
+          const toIdx = (book.spells || []).findIndex(s=> s.key === row.dataset.spellKey);
+          if (fromIdx < 0 || toIdx < 0 || fromIdx === toIdx) return;
+          const [moved] = book.spells.splice(fromIdx, 1);
+          book.spells.splice(toIdx, 0, moved);
+          draggedSpell = null;
+          saveSettings();
+          renderSpells();
+        });
       }
       if (document.getElementById('addSpellbookBtn')){
         $("#addSpellbookBtn").addEventListener('click', addSpellbook);
@@ -6204,6 +6788,7 @@
       $("#spellImportClose").addEventListener('click', ()=> $("#spellImportDialog").close());
       $("#spellImportCancel").addEventListener('click', ()=> $("#spellImportDialog").close());
       $("#spellImportConfirm").addEventListener('click', applySpellImportSelection);
+      $("#spellImportDialog").addEventListener("close", clearSpellImportSelection);
       $("#spellImportApplyFilters").addEventListener('click', ()=>{
         applySpellImportUiToState();
         renderSpellImportList();
@@ -6304,11 +6889,14 @@
       $("#dicePanel").addEventListener("pointermove", moveDiceDrag);
       $("#dicePanel").addEventListener("pointerup", endDiceDrag);
       $("#dicePanel").addEventListener("pointercancel", endDiceDrag);
-
-      // inspiration
-      $("#inspBtn").addEventListener("click", ()=>{
-        state.inspiration = !state.inspiration;
-        renderTopbar();
+      document.body.addEventListener("click", (e)=>{
+        const btn = e.target.closest(".dice-inline");
+        if (!btn) return;
+        rollDiceExpression(btn.dataset.dice);
+      });
+      document.addEventListener("click", (e)=>{
+        if (Date.now() - lastDiceFlashAt < 200) return;
+        if (diceFlashItems.length) dismissDiceFlash();
       });
 
       // HP controls
@@ -6389,14 +6977,11 @@
       $("#settingsClose").addEventListener("click", ()=> $("#settingsDialog").close());
       $("#resetTheme").addEventListener("click", ()=>{
         state.settings.theme = "midnight";
-        state.settings.inspGlowEnabled = true;
         state.settings.wide = false;
         state.settings.debugEnabled = false;
         applyTheme(state.settings.theme);
-        $("#glowToggle").checked = true;
         $("#wideToggle").checked = false;
         $("#debugToggle").checked = false;
-        applyInspirationGlow();
         applyWide();
         applyDebugMode();
         saveSettings();
@@ -6405,13 +6990,30 @@
         saveSettings();
         $("#settingsDialog").close();
       });
+      $("#exportCharacterBtn").addEventListener("click", exportCharacter);
+      $("#importCharacterInput").addEventListener("change", (e)=>{
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try{
+            const data = JSON.parse(reader.result);
+            applyImportedState(data);
+          }catch(err){
+            alert("Unable to import character JSON.");
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = "";
+      });
+      $("#deleteCharacterBtn").addEventListener("click", ()=>{
+        const confirmText = prompt('Type "delete" to delete this character.');
+        if ((confirmText || "").trim().toLowerCase() !== "delete") return;
+        localStorage.removeItem("dnd_sheet_settings_v3");
+        location.reload();
+      });
       document.querySelectorAll('input[name="theme"]').forEach(r=>{
         r.addEventListener("change", ()=> applyTheme(r.value));
-      });
-      $("#glowToggle").addEventListener("change", ()=>{
-        state.settings.inspGlowEnabled = $("#glowToggle").checked;
-        applyInspirationGlow();
-        saveSettings();
       });
       $("#wideToggle").addEventListener("change", ()=>{
         state.settings.wide = $("#wideToggle").checked;
@@ -6439,8 +7041,6 @@
       $("#addAbilityClose").addEventListener("click", ()=> $("#addAbilityDialog").close());
       $("#addAbilityCancel").addEventListener("click", ()=> $("#addAbilityDialog").close());
       $("#addAbilityConfirm").addEventListener("click", addAbilityConfirm);
-
-      $("#addAttuneBtn").addEventListener("click", addAttunementSlot);
 
       // skills/abilities toggle
       $("#skillsGrid").addEventListener("click", (e)=>{
@@ -6481,12 +7081,12 @@
       });
 
       // attunement details
-      $("#attuneList").addEventListener("click", (e)=>{
+      $("#inventoryGrid").addEventListener("click", (e)=>{
         const row = e.target.closest("[data-attune-index]");
         if (!row) return;
         openAttuneDialog(parseInt(row.dataset.attuneIndex, 10));
       });
-      $("#attuneList").addEventListener("keydown", (e)=>{
+      $("#inventoryGrid").addEventListener("keydown", (e)=>{
         if (e.key !== "Enter" && e.key !== " ") return;
         const row = e.target.closest("[data-attune-index]");
         if (!row) return;
@@ -6495,8 +7095,8 @@
       });
 
       // notes
-      $("#addQuickNoteBtn").addEventListener("click", ()=> openQuickNoteDialog());
-      $("#addAdvancedNoteBtn").addEventListener("click", ()=> openAdvancedNoteDialog());
+      $("#addQuickNoteBtn").addEventListener("click", ()=> openNoteEditor());
+      $("#addAdvancedNoteBtn").addEventListener("click", ()=> openNoteEditor());
       $("#addNoteSectionBtn").addEventListener("click", addNotesSection);
       $("#notesSearchInput").addEventListener("input", (e)=>{
         notesSearchQuery = e.target.value || "";
@@ -6517,6 +7117,21 @@
           addNotesTab();
         }
       });
+      let pendingStarTarget = null;
+      const starPicker = $("#noteStarColorPicker");
+      if (starPicker){
+        starPicker.addEventListener("input", (e)=>{
+          if (!pendingStarTarget) return;
+          const found = findNoteById(pendingStarTarget.tabId, pendingStarTarget.sectionId, pendingStarTarget.noteId);
+          if (!found) return;
+          found.note.starred = true;
+          found.note.starColor = e.target.value;
+          pendingStarTarget = null;
+          saveSettings();
+          renderNotes();
+        });
+      }
+
       $("#notesSections").addEventListener("click", (e)=>{
         const sectionToggle = e.target.closest("[data-section-action]");
         if (sectionToggle){
@@ -6543,43 +7158,89 @@
         if (!found) return;
         const action = noteAction.dataset.noteAction;
         if (action === "star"){
-          found.note.starred = !found.note.starred;
+          if (e.shiftKey){
+            found.note.starred = false;
+            found.note.starColor = "";
+          }else if (starPicker){
+            pendingStarTarget = { tabId, sectionId, noteId };
+            starPicker.value = found.note.starColor || "#d8c08a";
+            starPicker.click();
+          }else{
+            found.note.starred = !found.note.starred;
+          }
         }else if (action === "done"){
           toggleNoteStatus(found.note, "done");
         }else if (action === "failed"){
           toggleNoteStatus(found.note, "failed");
         }else if (action === "important"){
-          found.note.important = !found.note.important;
-        }else if (action === "move-up"){
-          if (!state.settings.editUnlocked) return;
-          moveNote(found.section, noteId, -1);
-        }else if (action === "move-down"){
-          if (!state.settings.editUnlocked) return;
-          moveNote(found.section, noteId, 1);
+          toggleNoteStatus(found.note, "important");
         }else if (action === "delete"){
           if (!state.settings.editUnlocked) return;
           const ok = confirm("Delete this note?");
           if (ok){
             found.section.notes = found.section.notes.filter(n=> n.id !== noteId);
           }
-        }else if (action === "edit"){
-          if (!state.settings.editUnlocked) return;
-          openQuickNoteDialog({ note: found.note, tabId, sectionId });
+        }else if (action === "open" || action === "edit"){
+          openNoteEditor({ note: found.note, tabId, sectionId });
           return;
         }
         saveSettings();
         renderNotes();
       });
 
-      // note dialogs
-      $("#quickNoteClose").addEventListener("click", ()=> $("#quickNoteDialog").close());
-      $("#quickNoteCancel").addEventListener("click", ()=> $("#quickNoteDialog").close());
-      $("#advancedNoteClose").addEventListener("click", ()=> $("#advancedNoteDialog").close());
-      $("#advancedNoteCancel").addEventListener("click", ()=> $("#advancedNoteDialog").close());
-      $("#quickNoteSave").addEventListener("click", ()=>{
-        const dialog = $("#quickNoteDialog");
-        const title = $("#quickNoteTitle").value.trim() || "Untitled";
-        const body = $("#quickNoteBody").value.trim();
+      let draggedNote = null;
+      $("#notesSections").addEventListener("dragstart", (e)=>{
+        if (!state.settings.editUnlocked) return;
+        const card = e.target.closest(".note-card");
+        if (!card) return;
+        draggedNote = {
+          tabId: card.dataset.tabId,
+          sectionId: card.dataset.sectionId,
+          noteId: card.dataset.noteId
+        };
+        e.dataTransfer.effectAllowed = "move";
+      });
+      $("#notesSections").addEventListener("dragover", (e)=>{
+        if (!state.settings.editUnlocked) return;
+        if (e.target.closest(".notes-section")){
+          e.preventDefault();
+        }
+      });
+      $("#notesSections").addEventListener("drop", (e)=>{
+        if (!state.settings.editUnlocked) return;
+        const sectionEl = e.target.closest(".notes-section");
+        if (!sectionEl || !draggedNote) return;
+        e.preventDefault();
+        const targetSectionId = sectionEl.dataset.sectionId;
+        const tab = getActiveNotesTab();
+        if (!tab) return;
+        const source = findNoteById(draggedNote.tabId, draggedNote.sectionId, draggedNote.noteId);
+        const targetSection = (tab.sections || []).find(s=> s.id === targetSectionId);
+        if (!source || !targetSection) return;
+        source.section.notes = source.section.notes.filter(n=> n.id !== draggedNote.noteId);
+        const beforeCard = e.target.closest(".note-card");
+        if (beforeCard && beforeCard.dataset.noteId){
+          const targetIdx = targetSection.notes.findIndex(n=> n.id === beforeCard.dataset.noteId);
+          if (targetIdx >= 0){
+            targetSection.notes.splice(targetIdx, 0, source.note);
+          }else{
+            targetSection.notes.push(source.note);
+          }
+        }else{
+          targetSection.notes.push(source.note);
+        }
+        draggedNote = null;
+        saveSettings();
+        renderNotes();
+      });
+
+      // note editor dialog
+      $("#noteEditorClose").addEventListener("click", ()=> $("#noteEditorDialog").close());
+      $("#noteEditorCancel").addEventListener("click", ()=> $("#noteEditorDialog").close());
+      $("#noteEditorSave").addEventListener("click", ()=>{
+        const dialog = $("#noteEditorDialog");
+        const title = $("#noteEditorTitleInput").value.trim() || "Untitled";
+        const bodyHtml = $("#noteEditorBody").innerHTML.trim();
         const noteId = dialog.dataset.noteId;
         const target = resolveNotesTarget(dialog.dataset.tabId, dialog.dataset.sectionId);
         if (!target) return;
@@ -6587,7 +7248,7 @@
           const found = findNoteById(target.tab.id, target.section.id, noteId);
           if (found && found.note){
             found.note.title = title;
-            found.note.body = body;
+            found.note.body = bodyHtml;
           }
           saveSettings();
           renderNotes();
@@ -6595,65 +7256,72 @@
           addNoteToActiveTab({
             id: createNoteId(),
             title,
-            body,
+            body: bodyHtml,
             starred: false,
-            status: null,
-            important: false
+            starColor: "",
+            status: null
           }, target.tab.id, target.section.id);
         }
         dialog.close();
       });
-      $("#advancedNoteSave").addEventListener("click", ()=>{
-        const dialog = $("#advancedNoteDialog");
-        const title = $("#advancedNoteTitle").value.trim() || "Untitled";
-        const rawBody = $("#advancedNoteBody").value.trim();
-        const format = $("#advancedNoteFormat").value;
-        const body = applyNoteEditorFormat(rawBody, format);
-        const noteId = dialog.dataset.noteId;
-        const target = resolveNotesTarget(dialog.dataset.tabId, dialog.dataset.sectionId);
-        if (!target) return;
-        if (noteId){
-          const found = findNoteById(target.tab.id, target.section.id, noteId);
-          if (found && found.note){
-            found.note.title = title;
-            found.note.body = body;
-          }
-          saveSettings();
-          renderNotes();
-        }else{
-          addNoteToActiveTab({
-            id: createNoteId(),
-            title,
-            body,
-            starred: false,
-            status: null,
-            important: false
-          }, target.tab.id, target.section.id);
-        }
-        dialog.close();
+
+      $("#noteEditorToolbar").addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-cmd]");
+        if (!btn) return;
+        const cmd = btn.dataset.cmd;
+        document.execCommand(cmd, false, null);
+        $("#noteEditorBody").focus();
       });
-      document.querySelectorAll(".note-editor-toolbar").forEach(toolbar=>{
-        toolbar.addEventListener("click", (e)=>{
-          const btn = e.target.closest("[data-md]");
-          if (!btn) return;
-          const action = btn.dataset.md;
-          const dialog = btn.closest("dialog");
-          const textarea = dialog?.querySelector("textarea");
-          if (!textarea) return;
-          if (action === "bold"){
-            insertMarkdown(textarea, "**", "**");
-          }else if (action === "italic"){
-            insertMarkdown(textarea, "*", "*");
-          }else if (action === "h1"){
-            insertMarkdown(textarea, "# ", "");
-          }else if (action === "h2"){
-            insertMarkdown(textarea, "## ", "");
-          }else if (action === "list"){
-            insertMarkdown(textarea, "- ", "");
-          }else if (action === "check"){
-            insertMarkdown(textarea, "- [ ] ", "");
+      $("#noteTextColor").addEventListener("input", (e)=>{
+        document.execCommand("foreColor", false, e.target.value);
+        $("#noteEditorBody").focus();
+      });
+      $("#noteHighlightColor").addEventListener("input", (e)=>{
+        document.execCommand("hiliteColor", false, e.target.value);
+        $("#noteEditorBody").focus();
+      });
+      $("#noteFontSize").addEventListener("change", (e)=>{
+        const size = parseInt(e.target.value, 10);
+        if (!Number.isFinite(size)) return;
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return;
+        const range = selection.getRangeAt(0);
+        const span = document.createElement("span");
+        span.style.fontSize = `${size}px`;
+        span.appendChild(range.extractContents());
+        range.insertNode(span);
+        selection.removeAllRanges();
+        $("#noteEditorBody").focus();
+      });
+      $("#noteInsertLink").addEventListener("click", ()=>{
+        const url = prompt("Enter link URL");
+        if (!url) return;
+        document.execCommand("createLink", false, url);
+        $("#noteEditorBody").focus();
+      });
+      $("#noteInsertImage").addEventListener("click", ()=>{
+        const url = prompt("Enter image URL");
+        if (!url) return;
+        document.execCommand("insertImage", false, url);
+        const imgs = $("#noteEditorBody").querySelectorAll("img");
+        imgs.forEach(img=> img.style.maxWidth = "100%");
+        $("#noteEditorBody").focus();
+      });
+      $("#noteEditorBody").addEventListener("paste", (e)=>{
+        const items = e.clipboardData?.items || [];
+        for (const item of items){
+          if (item.type.startsWith("image/")){
+            const file = item.getAsFile();
+            if (!file) continue;
+            e.preventDefault();
+            const reader = new FileReader();
+            reader.onload = () => {
+              document.execCommand("insertImage", false, reader.result);
+            };
+            reader.readAsDataURL(file);
+            break;
           }
-        });
+        }
       });
 
       // custom currencies
@@ -6664,20 +7332,155 @@
         removeCustomCurrency(btn.dataset.customCoin);
       });
 
+      // inventory
+      $("#addBagBtn").addEventListener("click", openAddBagDialog);
+      $("#addBagClose").addEventListener("click", ()=> $("#addBagDialog").close());
+      $("#addBagCancel").addEventListener("click", ()=> $("#addBagDialog").close());
+      $("#addBagApply").addEventListener("click", handleAddBagApply);
+      $("#addBagDialog").addEventListener("click", (e)=>{
+        const btn = e.target.closest("[data-pack]");
+        if (!btn) return;
+        const preset = INVENTORY_PRESET_PACKS[btn.dataset.pack];
+        if (!preset) return;
+        addInventorySection({
+          id: `inv-${Date.now()}`,
+          type: "detailed",
+          title: preset.title,
+          span: 1,
+          items: preset.items.map(item=> ({ ...item }))
+        });
+        $("#addBagDialog").close();
+      });
+      $("#inventorySectionClose").addEventListener("click", ()=> $("#inventorySectionDialog").close());
+      $("#inventorySectionCancel").addEventListener("click", ()=> $("#inventorySectionDialog").close());
+      $("#inventorySectionSave").addEventListener("click", saveInventorySectionDialog);
+
+      const inventoryGrid = $("#inventoryGrid");
+      inventoryGrid.addEventListener("click", (e)=>{
+        const sectionEl = e.target.closest(".inventory-section");
+        if (!sectionEl) return;
+        const section = getInventorySectionById(sectionEl.dataset.sectionId);
+        if (!section) return;
+        const actionBtn = e.target.closest("[data-inventory-action]");
+        if (!actionBtn) return;
+        const action = actionBtn.dataset.inventoryAction;
+        const row = actionBtn.closest("[data-item-index]");
+        if (action === "edit-section"){
+          openInventorySectionDialog(section);
+          return;
+        }
+        if (action === "add-attune"){
+          addAttunementSlot();
+          return;
+        }
+        if (action === "add-row"){
+          if (section.type === "detailed"){
+            section.items.push({ name:"", qty: 1, notes: "" });
+          }else if (section.type === "basic"){
+            section.items.push("");
+          }
+          saveSettings();
+          renderInventory();
+          return;
+        }
+        if (action === "remove-row"){
+          if (!state.settings.editUnlocked) return;
+          const idx = row ? parseInt(row.dataset.itemIndex, 10) : -1;
+          if (idx < 0) return;
+          if (section.type === "detailed" || section.type === "basic"){
+            section.items.splice(idx, 1);
+          }
+          saveSettings();
+          renderInventory();
+          return;
+        }
+        if (action === "qty-up" || action === "qty-down"){
+          const idx = row ? parseInt(row.dataset.itemIndex, 10) : -1;
+          if (idx < 0 || section.type !== "detailed") return;
+          const item = section.items[idx];
+          const delta = action === "qty-up" ? 1 : -1;
+          item.qty = Math.max(0, (parseInt(item.qty, 10) || 0) + delta);
+          saveSettings();
+          renderInventory();
+        }
+      });
+      inventoryGrid.addEventListener("input", (e)=>{
+        const input = e.target;
+        if (!(input instanceof HTMLInputElement)) return;
+        const sectionEl = input.closest(".inventory-section");
+        if (!sectionEl) return;
+        const section = getInventorySectionById(sectionEl.dataset.sectionId);
+        if (!section) return;
+        if (section.type === "equipped"){
+          const idx = parseInt(input.dataset.equippedIndex, 10);
+          if (!Number.isFinite(idx)) return;
+          state.inventory.equipped[idx] = input.value;
+          saveSettings();
+          return;
+        }
+        const row = input.closest("[data-item-index]");
+        const idx = row ? parseInt(row.dataset.itemIndex, 10) : -1;
+        if (idx < 0) return;
+        const field = input.dataset.inventoryField;
+        if (section.type === "detailed"){
+          const item = section.items[idx];
+          if (field === "name") item.name = input.value;
+          if (field === "notes") item.notes = input.value;
+          if (field === "qty") item.qty = Math.max(0, parseInt(input.value, 10) || 0);
+        }else if (section.type === "basic"){
+          section.items[idx] = input.value;
+        }
+        saveSettings();
+      });
+      let draggedSectionId = null;
+      inventoryGrid.addEventListener("dragstart", (e)=>{
+        if (!state.settings.editUnlocked) return;
+        const sectionEl = e.target.closest(".inventory-section");
+        if (!sectionEl) return;
+        draggedSectionId = sectionEl.dataset.sectionId;
+        e.dataTransfer.effectAllowed = "move";
+      });
+      inventoryGrid.addEventListener("dragover", (e)=>{
+        if (!state.settings.editUnlocked) return;
+        const sectionEl = e.target.closest(".inventory-section");
+        if (!sectionEl) return;
+        e.preventDefault();
+        sectionEl.classList.add("drag-over");
+      });
+      inventoryGrid.addEventListener("dragleave", (e)=>{
+        const sectionEl = e.target.closest(".inventory-section");
+        if (!sectionEl) return;
+        sectionEl.classList.remove("drag-over");
+      });
+      inventoryGrid.addEventListener("drop", (e)=>{
+        if (!state.settings.editUnlocked) return;
+        const sectionEl = e.target.closest(".inventory-section");
+        if (!sectionEl || !draggedSectionId) return;
+        e.preventDefault();
+        sectionEl.classList.remove("drag-over");
+        const targetId = sectionEl.dataset.sectionId;
+        if (targetId === draggedSectionId) return;
+        const sections = state.inventory.sections || [];
+        const fromIdx = sections.findIndex(s=> s.id === draggedSectionId);
+        const toIdx = sections.findIndex(s=> s.id === targetId);
+        if (fromIdx < 0 || toIdx < 0) return;
+        const [moved] = sections.splice(fromIdx, 1);
+        sections.splice(toIdx, 0, moved);
+        draggedSectionId = null;
+        saveSettings();
+        renderInventory();
+      });
+
       // portrait dialog
       $("#portraitClose").addEventListener("click", ()=> $("#portraitDialog").close());
       $("#portraitDone").addEventListener("click", ()=> $("#portraitDialog").close());
       $("#portraitApplyUrl").addEventListener("click", applyPortraitUrl);
       $("#portraitReset").addEventListener("click", resetPortraitCrop);
-      $("#portraitNudgeUp").addEventListener("click", ()=> nudgePortrait(0, -2));
-      $("#portraitNudgeDown").addEventListener("click", ()=> nudgePortrait(0, 2));
-      $("#portraitNudgeLeft").addEventListener("click", ()=> nudgePortrait(-2, 0));
-      $("#portraitNudgeRight").addEventListener("click", ()=> nudgePortrait(2, 0));
-      $("#pz").addEventListener("input", applyPortraitControls);
+      ["portraitZoom", "portraitRotate", "portraitPosX", "portraitPosY"].forEach(id=>{
+        const input = document.getElementById(id);
+        if (input) input.addEventListener("input", applyPortraitControls);
+      });
       $("#portraitPreview").addEventListener("pointerdown", startPortraitDrag);
-      $("#portraitPreview").addEventListener("pointermove", movePortraitDrag);
-      $("#portraitPreview").addEventListener("pointerup", endPortraitDrag);
-      $("#portraitPreview").addEventListener("pointercancel", endPortraitDrag);
 
       // Editable blur commits to state
       document.addEventListener("focusout", (e)=>{
