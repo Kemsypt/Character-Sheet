@@ -87,6 +87,8 @@
         linear-gradient(90deg, rgba(216,192,138,0.12), transparent 6%),
         linear-gradient(270deg, rgba(216,192,138,0.12), transparent 6%);
       animation: inspPulse 30s ease-in-out infinite;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
     @keyframes inspPulse{
@@ -149,7 +151,7 @@
     }
     .id-name{
       margin:0;
-      font-size: 34px;
+      font-size: 44px;
       letter-spacing: 0.02em;
       font-weight: 900;
       line-height: 0.98;
@@ -677,6 +679,190 @@
       gap: 6px;
     }
 
+    .spell-import-layout{
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 12px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .spell-import-layout{ grid-template-columns: 1fr; }
+    }
+
+    .spell-filter-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .spell-filter-actions{
+      display:flex;
+      gap: 6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .spell-filter-chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      cursor:pointer;
+      font: inherit;
+      line-height: 1.1;
+      user-select:none;
+    }
+    .spell-filter-chip[aria-pressed="true"]{
+      border-color: rgba(216,192,138,0.55);
+      background: rgba(216,192,138,0.16);
+    }
+
+    .spell-import-check{
+      accent-color: var(--accent);
+      transform: scale(1.25);
+      transform-origin: top left;
+      margin-top: 2px;
+      cursor:pointer;
+    }
+
+    .spell-import-row{
+      grid-template-columns: auto 1fr auto;
+      align-items:start;
+    }
+
+    .spell-import-info{
+      padding: 6px 10px;
+      border-radius: 10px;
+      white-space: nowrap;
+      align-self:start;
+    }
+
+    .spell-import-selected{
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 10px;
+      background: rgba(0,0,0,0.10);
+      max-height: min(70vh, 720px);
+      overflow:auto;
+    }
+    .spell-selected-summary{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      margin-bottom: 10px;
+    }
+    .spell-selected-breakdown{
+      display:flex;
+      gap: 6px;
+      flex-wrap:wrap;
+    }
+    .spell-selected-list{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+    }
+    .spell-selected-row{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items:center;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .spell-selected-name{
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .spell-selected-remove{
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+    }
+
+    #spellImportDialog{
+      width: min(1040px, calc(100vw - 28px));
+    }
+
+    .spellbook-card{
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(255,255,255,0.04);
+      box-shadow: none;
+      position: relative;
+    }
+    .spellbook-card[data-has-style="true"]{
+      border-color: var(--sb-hi);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--sb-mid) 30%, transparent), rgba(255,255,255,0.03));
+    }
+    .spellbook-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+    .spellbook-name-btn{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 12px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-weight: 950;
+      letter-spacing: 0.01em;
+      cursor: default;
+    }
+    body[data-edit="on"] .spellbook-name-btn{
+      cursor: pointer;
+    }
+    .spellbook-card[data-has-style="true"] .spellbook-name-btn{
+      border-color: color-mix(in srgb, var(--sb-hi) 55%, rgba(255,255,255,0.10));
+      color: var(--sb-text);
+    }
+
+    .spell-remove-btn{
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+    }
+
+    .spell-summary{
+      min-height: 18px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.16);
+    }
+
+    #spellInfoBody .spell-info-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 780px){
+      #spellInfoBody .spell-info-grid{ grid-template-columns: 1fr; }
+    }
+    #spellInfoBody .spell-info-kv{
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+    }
+    #spellInfoBody .spell-info-k{
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    #spellInfoBody .spell-info-desc p{ margin: 0 0 10px 0; }
+
+
     [data-tabpanel]{display:none;}
     [data-tabpanel][data-active="true"]{display:block;}
     [data-subpanel]{display:none;}
@@ -705,10 +891,15 @@
       gap: 10px;
     }
     .hero-name{
-      font-size: 22px;
+      font-size: 34px;
       font-weight: 950;
       margin: 0;
       letter-spacing: 0.01em;
+      line-height: 1.05;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     .hero-tagline{
       margin: -6px 0 0;
@@ -1311,6 +1502,15 @@
       outline: none;
     }
 
+    .gear{
+      font-size: 22px;
+      line-height: 1;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transform: translateY(1px);
+    }
+
     /* Settings + Lock FABs */
     .fab-wrap{
       position: fixed;
@@ -1865,6 +2065,7 @@
       <button class="tab" role="tab" aria-selected="false" aria-controls="tab-actions"   id="tabbtn-actions"   data-tab="actions">Actions</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="tab-spells"    id="tabbtn-spells"    data-tab="spells">Spell Book</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="tab-inventory" id="tabbtn-inventory" data-tab="inventory">Inventory</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="tab-creatures" id="tabbtn-creatures" data-tab="creatures">Creatures</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="tab-notes"     id="tabbtn-notes"     data-tab="notes">Notes</button>
       <span class="tab-spacer" aria-hidden="true"></span>
       <button class="tab rest-tab" id="restTabBtn" type="button" aria-haspopup="dialog" aria-label="Open rest options">🌙 Rest</button>
@@ -2066,17 +2267,18 @@
         </div>
       </div>
 
-      <div class="panel-body">
-        <div class="subtabs" role="tablist" aria-label="Combat sub-tabs">
+
+      <div class="subtabs" role="tablist" aria-label="Combat sub-tabs">
           <button class="subtab" role="tab" aria-selected="true"  data-subtab="actions">Actions</button>
           <button class="subtab" role="tab" aria-selected="false" data-subtab="bonus">Bonus Actions</button>
           <button class="subtab" role="tab" aria-selected="false" data-subtab="reactions">Reactions</button>
           <button class="subtab" role="tab" aria-selected="false" data-subtab="free">Free Actions</button>
         </div>
 
+      <div class="panel-body">
         <div style="height:10px"></div>
 
-        <div data-subpanel id="sub-actions" data-active="true">
+        <div data-subpanel="actions" id="sub-actions" data-active="true">
           <div class="panel" style="box-shadow:none;">
             <div class="panel-header"><h3 class="panel-title">Actions</h3></div>
             <div class="panel-body" style="padding:0;">
@@ -2088,7 +2290,7 @@
           </div>
         </div>
 
-        <div data-subpanel id="sub-bonus" data-active="false">
+        <div data-subpanel="bonus" id="sub-bonus" data-active="false">
           <div class="panel" style="box-shadow:none;">
             <div class="panel-header"><h3 class="panel-title">Bonus Actions</h3></div>
             <div class="panel-body">
@@ -2097,7 +2299,7 @@
           </div>
         </div>
 
-        <div data-subpanel id="sub-reactions" data-active="false">
+        <div data-subpanel="reactions" id="sub-reactions" data-active="false">
           <div class="panel" style="box-shadow:none;">
             <div class="panel-header"><h3 class="panel-title">Reactions</h3></div>
             <div class="panel-body">
@@ -2106,7 +2308,7 @@
           </div>
         </div>
 
-        <div data-subpanel id="sub-free" data-active="false">
+        <div data-subpanel="free" id="sub-free" data-active="false">
           <div class="panel" style="box-shadow:none;">
             <div class="panel-header"><h3 class="panel-title">Free Actions</h3></div>
             <div class="panel-body">
@@ -2124,7 +2326,7 @@
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <span class="tag">Prepared: <span class="num" id="sp_prep">14</span></span>
           <span class="tag">Ability: Wisdom</span>
-          <button class="tag" id="spellImportBtn" type="button" aria-haspopup="dialog">Import Spells</button>
+          <button class="mini" id="addSpellbookBtn" type="button" title="Add spellbook (edit mode only)" style="display:none;">＋ Spellbook</button>
         </div>
       </div>
       <div class="panel-body" id="sp_list"></div>
@@ -2178,6 +2380,45 @@
       </div>
     </section>
 
+
+
+    <!-- CREATURES -->
+    <section class="panel" id="tab-creatures" data-tabpanel data-active="false" role="tabpanel" aria-labelledby="tabbtn-creatures">
+      <div class="panel-header">
+        <h2 class="panel-title">Creatures</h2>
+        <button class="mini" id="addCreatureBtn" type="button" title="Add creature (edit mode only)" style="display:none;">＋</button>
+      </div>
+
+      <div class="subtabs" role="tablist" aria-label="Creatures sub-tabs">
+        <button class="subtab" role="tab" aria-selected="true"  data-subtab="companions">Companions</button>
+        <button class="subtab" role="tab" aria-selected="false" data-subtab="summons">Summons</button>
+        <button class="subtab" role="tab" aria-selected="false" data-subtab="wildshapes">Wild Shapes</button>
+      </div>
+
+      <div class="panel-body">
+        <div data-subpanel="companions" data-active="true">
+          <div class="card">
+            <h4>Companions</h4>
+            <div class="muted">Add companion creatures, mounts, familiars, etc.</div>
+            <div id="creatures_companions" style="margin-top:10px;"></div>
+          </div>
+        </div>
+        <div data-subpanel="summons" data-active="false">
+          <div class="card">
+            <h4>Summons</h4>
+            <div class="muted">Track creatures created by spells or abilities.</div>
+            <div id="creatures_summons" style="margin-top:10px;"></div>
+          </div>
+        </div>
+        <div data-subpanel="wildshapes" data-active="false">
+          <div class="card">
+            <h4>Wild Shapes</h4>
+            <div class="muted">Store wild shape stat blocks and notes.</div>
+            <div id="creatures_wildshapes" style="margin-top:10px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
     <!-- NOTES -->
     <section class="panel" id="tab-notes" data-tabpanel data-active="false" role="tabpanel" aria-labelledby="tabbtn-notes">
       <div class="panel-header">
@@ -2187,7 +2428,6 @@
       <div class="panel-body" id="n_notes"></div>
     </section>
   </main>
-
   <!-- Spell import dialog -->
   <dialog id="spellImportDialog" aria-label="Spell importer">
     <div class="dlg-head">
@@ -2195,38 +2435,135 @@
       <button class="icon-btn" id="spellImportClose" type="button" aria-label="Close">✕</button>
     </div>
     <div class="dlg-body">
-      <div class="spell-import-controls">
-        <div class="spell-import-toolbar">
-          <input class="select" id="spellImportSearch" placeholder="Search spells by name" />
-          <select class="select" id="spellImportSort">
-            <option value="name">Sort: Name</option>
-            <option value="level">Sort: Level</option>
-            <option value="time">Sort: Time</option>
-            <option value="school">Sort: School</option>
-            <option value="concentration">Sort: Concentration</option>
-            <option value="range">Sort: Range</option>
-          </select>
-        </div>
-        <div class="spell-import-filters">
-          <div class="spell-filter-group">
-            <div class="small">Spell Level</div>
-            <div class="spell-filter-list" id="spellImportLevelFilters"></div>
+      <div class="spell-import-layout">
+        <div class="spell-import-controls">
+          <div class="spell-import-toolbar">
+            <input class="select" id="spellImportSearch" placeholder="Search spells by name" />
+            <select class="select" id="spellImportSort">
+              <option value="name">Sort: Name</option>
+              <option value="level">Sort: Level</option>
+              <option value="time">Sort: Time</option>
+              <option value="school">Sort: School</option>
+              <option value="concentration">Sort: Concentration</option>
+              <option value="range">Sort: Range</option>
+            </select>
+            <button class="btn primary" id="spellImportApplyFilters" type="button" disabled>Apply Filters</button>
           </div>
-          <div class="spell-filter-group">
-            <div class="small">Class Filters</div>
-            <div class="spell-filter-list" id="spellImportClassFilters"></div>
+          <div class="small muted" id="spellImportTargetLabel" style="margin-top:-4px;">Importing into: —</div>
+
+          <div class="spell-import-filters">
+            <div class="spell-filter-group">
+              <div class="spell-filter-head">
+                <div class="small">Spell Level</div>
+                <div class="spell-filter-actions">
+                  <button class="tag" type="button" data-level-action="select-all">Select all</button>
+                  <button class="tag" type="button" data-level-action="unselect-all">Unselect all</button>
+                </div>
+              </div>
+              <div class="spell-filter-list" id="spellImportLevelFilters"></div>
+            </div>
+            <div class="spell-filter-group">
+              <div class="spell-filter-head">
+                <div class="small">Class Filters</div>
+                <div class="spell-filter-actions">
+                  <button class="tag" type="button" data-class-action="select-all">Select all</button>
+                  <button class="tag" type="button" data-class-action="unselect-all">Unselect all</button>
+                </div>
+              </div>
+              <div class="spell-filter-list" id="spellImportClassFilters"></div>
+            </div>
+          </div>
+
+          <div class="spell-import-list" id="spellImportList">
+            <div class="muted">Loading spells…</div>
+          </div>
+
+          <div style="display:flex; gap:8px; justify-content:space-between; flex-wrap:wrap; align-items:center;">
+            <div class="small muted"><span id="spellImportSelectedCount">0</span> selected</div>
+            <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+              <button class="btn" id="spellImportCancel" type="button">Cancel</button>
+              <button class="btn primary" id="spellImportConfirm" type="button" disabled>Import Selected</button>
+            </div>
           </div>
         </div>
-        <div class="spell-import-list" id="spellImportList">
-          <div class="muted">Loading spells…</div>
-        </div>
-        <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
-          <button class="btn" id="spellImportCancel" type="button">Cancel</button>
-          <button class="btn primary" id="spellImportConfirm" type="button" disabled>Import Selected</button>
-        </div>
+
+        <aside class="spell-import-selected" aria-label="Selected spells">
+          <div class="spell-selected-summary">
+            <div class="small" style="font-weight:900;">Selected</div>
+            <div class="small muted" id="spellImportSelectedTotals">0 spells selected</div>
+            <div class="spell-selected-breakdown" id="spellImportSelectedBreakdown"></div>
+          </div>
+          <div class="spell-selected-list" id="spellImportSelectedList">
+            <div class="muted">No spells selected.</div>
+          </div>
+        </aside>
       </div>
     </div>
   </dialog>
+
+  <dialog id="spellInfoDialog" aria-label="Spell details">
+    <div class="dlg-head">
+      <h3 class="dlg-title" id="spellInfoTitle">Spell</h3>
+      <button class="icon-btn" id="spellInfoClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div id="spellInfoBody"></div>
+    </div>
+  </dialog>
+
+  <dialog id="spellbookEditDialog" aria-label="Edit spellbook">
+    <div class="dlg-head">
+      <h3 class="dlg-title">Spellbook</h3>
+      <button class="icon-btn" id="spellbookEditClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div class="card">
+        <h4>Name</h4>
+        <input class="select" id="spellbookEditName" placeholder="Spellbook name" />
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="card">
+        <h4>Colours</h4>
+        <div class="small">Frame highlight, midtone, and text.</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-top:10px;">
+          <div class="field" style="justify-content:flex-start;">
+            <label style="min-width:110px;">Highlight</label>
+            <input id="spellbookEditHi" type="color" class="select" style="padding:4px; height:40px;" />
+          </div>
+          <div class="field" style="justify-content:flex-start;">
+            <label style="min-width:110px;">Midtone</label>
+            <input id="spellbookEditMid" type="color" class="select" style="padding:4px; height:40px;" />
+          </div>
+          <div class="field" style="justify-content:flex-start;">
+            <label style="min-width:110px;">Text</label>
+            <input id="spellbookEditText" type="color" class="select" style="padding:4px; height:40px;" />
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="small" style="font-weight:900;">Presets</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;" id="spellbookPresetRow">
+          <button class="tag" type="button" data-sb-preset="Warlock">Warlock</button>
+          <button class="tag" type="button" data-sb-preset="Wizard">Wizard</button>
+          <button class="tag" type="button" data-sb-preset="Sorcerer">Sorcerer</button>
+          <button class="tag" type="button" data-sb-preset="Fire">Fire</button>
+          <button class="tag" type="button" data-sb-preset="Water">Water</button>
+          <button class="tag" type="button" data-sb-preset="Earth">Earth</button>
+          <button class="tag" type="button" data-sb-preset="Air">Air</button>
+          <button class="tag" type="button" data-sb-preset="Wildmagic">Wildmagic</button>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="row">
+        <button class="btn" id="spellbookEditCancel" type="button">Cancel</button>
+        <button class="btn primary" id="spellbookEditSave" type="button">Save</button>
+      </div>
+    </div>
+  </dialog>
+
 
   <!-- Coin purse dialog (nicer) -->
   <dialog id="coinDialog" aria-label="Coin purse">
@@ -2485,7 +2822,18 @@
         </label>
       </div>
 
+      
+
       <div style="height:12px"></div>
+
+      <div class="card">
+        <h4>Spell Cache</h4>
+        <div class="small">The sheet can cache spell details for offline use (Info button + spell summaries).</div>
+        <div class="row" style="align-items:center; justify-content:space-between; margin-top:10px;">
+          <div class="small muted" id="spellCacheStatus">Cache: not loaded</div>
+          <button class="btn" id="clearSpellCacheBtn" type="button">Clear spell cache</button>
+        </div>
+      </div>
 
       <div class="card">
         <h4>Progress Mode</h4>
@@ -2646,10 +2994,7 @@
     </button>
 
     <button class="fab" id="settingsFab" type="button" aria-label="Open settings" title="Settings">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z" stroke="currentColor" stroke-width="2"/>
-        <path d="M19.4 15a8.6 8.6 0 0 0 .1-1l2-1.2-2-3.4-2.2.6c-.5-.4-1-.7-1.6-.9L13.9 6h-3.8L9.3 8.9c-.6.2-1.1.5-1.6.9l-2.2-.6-2 3.4 2 1.2a8.6 8.6 0 0 0 0 2l-2 1.2 2 3.4 2.2-.6c.5.4 1 .7 1.6.9L10.1 22h3.8l.8-2.9c.6-.2 1.1-.5 1.6-.9l2.2.6 2-3.4-2-1.2c.1-.3.1-.7.1-1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <span aria-hidden="true" class="gear">⚙</span>
     </button>
   </div>
 
@@ -2956,16 +3301,6 @@
       history: []
     };
     let cheatRollQueued = false;
-    const spellImportState = {
-      data: null,
-      byId: new Map(),
-      search: "",
-      sort: "name",
-      selected: new Set(),
-      levelFilters: new Set(),
-      classFilters: new Set(),
-      classOptions: []
-    };
 
     /**********************************************************************
      * Helpers
@@ -3458,8 +3793,9 @@
       el.style.display = prevDisplay;
     }
     function fitTopbarText(){
-      fitTextToLines($("#tb_name"), 34, 18, 2);
+      fitTextToLines($("#tb_name"), 44, 18, 2);
       fitTextToLines($("#tb_sub"), 14, 10, 2);
+      fitTextToLines($("#mainName"), 34, 18, 2);
     }
 
     function renderTopbar(){
@@ -3676,51 +4012,404 @@
       $("#c_free").innerHTML = state.combat.free.map(x => `<li class="muted">${escapeHTML(x)}</li>`).join("");
     }
 
-    function renderSpells(){
-      $("#sp_prep").textContent = state.spells.prepared;
-      const byLvl = new Map();
-      for (const sp of state.spells.list){
-        if (!byLvl.has(sp.lvl)) byLvl.set(sp.lvl, []);
-        byLvl.get(sp.lvl).push(sp);
+    /**********************************************************************
+     * Spells: spellbooks + spell cache
+     **********************************************************************/
+    const SPELL_LIST_URL = "https://raw.githubusercontent.com/Kemsypt/Character-Sheet/main/Data/Spell%20List.json";
+    const SPELL_GH_CONTENTS_URL = "https://api.github.com/repos/Kemsypt/Character-Sheet/contents/Data/Spells?ref=main";
+    const SPELL_CACHE_DB = "dnd_spell_cache_v1";
+    const SPELL_CACHE_META_KEY = "dnd_spell_cache_meta_v1";
+    const SPELL_LIST_CACHE_KEY = "dnd_spell_list_cache_v1";
+
+    function slugify(s){
+      return String(s||"").toLowerCase().trim()
+        .replace(/["'`]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    const SpellCache = {
+      _db: null,
+      async open(){
+        if (this._db) return this._db;
+        const db = await new Promise((resolve, reject)=>{
+          const req = indexedDB.open(SPELL_CACHE_DB, 1);
+          req.onupgradeneeded = ()=>{
+            const d = req.result;
+            const store = d.createObjectStore('spells', { keyPath: 'key' });
+            store.createIndex('nameLower', 'nameLower', { unique: false });
+          };
+          req.onsuccess = ()=> resolve(req.result);
+          req.onerror = ()=> reject(req.error);
+        });
+        this._db = db;
+        return db;
+      },
+      async put(key, data){
+        const db = await this.open();
+        await new Promise((resolve)=>{
+          const tx = db.transaction('spells', 'readwrite');
+          tx.oncomplete = ()=> resolve(true);
+          tx.onerror = ()=> resolve(true);
+          tx.objectStore('spells').put({
+            key,
+            nameLower: String(data?.name||"").toLowerCase(),
+            data
+          });
+        });
+      },
+      async getByKey(key){
+        if (!key) return null;
+        const db = await this.open();
+        return await new Promise((resolve)=>{
+          const tx = db.transaction('spells', 'readonly');
+          const req = tx.objectStore('spells').get(key);
+          req.onsuccess = ()=> resolve(req.result ? req.result.data : null);
+          req.onerror = ()=> resolve(null);
+        });
+      },
+      async getByName(name){
+        const n = String(name||"").toLowerCase().trim();
+        if (!n) return null;
+        const db = await this.open();
+        return await new Promise((resolve)=>{
+          const tx = db.transaction('spells', 'readonly');
+          const idx = tx.objectStore('spells').index('nameLower');
+          const req = idx.get(n);
+          req.onsuccess = ()=> resolve(req.result ? req.result.data : null);
+          req.onerror = ()=> resolve(null);
+        });
+      },
+      async clear(){
+        try{
+          const db = await this.open();
+          await new Promise((resolve)=>{
+            const tx = db.transaction('spells', 'readwrite');
+            tx.oncomplete = ()=> resolve(true);
+            tx.onerror = ()=> resolve(true);
+            tx.objectStore('spells').clear();
+          });
+        }catch{}
+        try{ localStorage.removeItem(SPELL_CACHE_META_KEY); }catch{}
+        try{ localStorage.removeItem(SPELL_LIST_CACHE_KEY); }catch{}
+        updateSpellCacheStatus();
       }
-      $("#sp_list").innerHTML = [...byLvl.entries()].map(([lvl, list]) => `
-        <div class="card" style="margin-bottom:12px;">
-          <h4>${escapeHTML(lvl)}</h4>
-          <table>
-            <thead><tr><th>Spell</th><th>Notes</th></tr></thead>
-            <tbody>
-              ${list.map(s => `
-                <tr>
-                  <td><strong>${escapeHTML(s.name)}</strong></td>
-                  <td class="muted">${escapeHTML(s.note)}</td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-      `).join("");
+    };
+
+    function getSpellCacheMeta(){
+      try{ return JSON.parse(localStorage.getItem(SPELL_CACHE_META_KEY) || 'null'); }catch{ return null; }
+    }
+    function setSpellCacheMeta(meta){
+      try{ localStorage.setItem(SPELL_CACHE_META_KEY, JSON.stringify(meta)); }catch{}
+      updateSpellCacheStatus();
+    }
+    function updateSpellCacheStatus(message){
+      const el = document.getElementById('spellCacheStatus');
+      if (!el) return;
+      if (message){
+        el.textContent = message;
+        return;
+      }
+      const meta = getSpellCacheMeta();
+      if (!meta || !meta.count){
+        el.textContent = 'Cache: not loaded';
+        return;
+      }
+      const when = meta.updatedAt ? new Date(meta.updatedAt).toLocaleString() : 'unknown';
+      el.textContent = `Cache: ${meta.count} spells (last updated ${when})`;
+    }
+
+    async function warmSpellCache(){
+      const meta = getSpellCacheMeta();
+      if (meta && meta.count && meta.count > 0){
+        updateSpellCacheStatus();
+        return;
+      }
+      updateSpellCacheStatus('Cache: downloading…');
+      try{
+        // Cache spell list used by importer (for offline use)
+        try{
+          const rList = await fetch(SPELL_LIST_URL, { cache: 'no-store' });
+          if (rList.ok){
+            const list = await rList.json();
+            localStorage.setItem(SPELL_LIST_CACHE_KEY, JSON.stringify({ at: Date.now(), list }));
+          }
+        }catch{}
+
+        const resp = await fetch(SPELL_GH_CONTENTS_URL, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('Failed to list spells');
+        const items = await resp.json();
+        const files = (items||[]).filter(it => it && it.type === 'file' && /\.json$/i.test(it.name||'') && it.download_url);
+        const total = files.length;
+        let done = 0;
+
+        const queue = files.slice();
+        const concurrency = 6;
+        const workers = Array.from({ length: concurrency }, async ()=>{
+          while(queue.length){
+            const it = queue.shift();
+            try{
+              const r = await fetch(it.download_url, { cache: 'no-store' });
+              if (r.ok){
+                const data = await r.json();
+                const key = data.id || data.key || slugify(data.name) || slugify((it.name||'').replace(/\.json$/i,''));
+                if (key) await SpellCache.put(key, data);
+              }
+            }catch{}
+            done++;
+            if (done % 10 === 0 || done === total){
+              updateSpellCacheStatus(`Cache: downloading… ${done}/${total}`);
+            }
+          }
+        });
+        await Promise.all(workers);
+        setSpellCacheMeta({ count: total, updatedAt: Date.now() });
+      }catch(err){
+        updateSpellCacheStatus('Cache: unavailable (offline?)');
+      }
+    }
+
+    async function getSpellDetails(importSpell){
+      if (!importSpell) return null;
+      // try id key, then name
+      const byId = await SpellCache.getByKey(importSpell.id);
+      if (byId) return byId;
+      const byName = await SpellCache.getByName(importSpell.name);
+      if (byName) return byName;
+      return null;
+    }
+
+    function ensureSpellbooks(){
+      if (Array.isArray(state.spellbooks) && state.spellbooks.length) return;
+      const migrated = (state.spells?.list || []).map((sp, idx)=>{
+        const levelNum = parseLevelLabel(sp.lvl);
+        return {
+          key: `m${idx}-${slugify(sp.name)}`,
+          name: sp.name,
+          level: levelNum,
+          castingTime: '',
+          range: '',
+          components: '',
+          duration: '',
+          summary: sp.note || ''
+        };
+      });
+      state.spellbooks = [
+        {
+          id: 'book-main',
+          name: 'Spellbook',
+          colors: { hi: '#d8c08a', mid: '#0f1422', text: '#f2f4f8' },
+          spells: migrated
+        }
+      ];
+    }
+
+    function parseLevelLabel(label){
+      const s = String(label||'').toLowerCase();
+      if (s.includes('cantrip')) return 0;
+      const m = s.match(/(\d+)/);
+      if (m) return parseInt(m[1],10) || 0;
+      return 0;
+    }
+
+    const SPELLBOOK_PRESETS = {
+      Warlock: { hi: '#8b5cf6', mid: '#1b1035', text: '#f8fafc' },
+      Wizard: { hi: '#60a5fa', mid: '#0b1e3a', text: '#f8fafc' },
+      Sorcerer: { hi: '#f97316', mid: '#2a1206', text: '#fff7ed' },
+      Fire: { hi: '#fb7185', mid: '#2a0b12', text: '#fff1f2' },
+      Water: { hi: '#38bdf8', mid: '#041b25', text: '#e0f2fe' },
+      Earth: { hi: '#a3e635', mid: '#141f07', text: '#f7fee7' },
+      Air: { hi: '#e5e7eb', mid: '#111827', text: '#f9fafb' },
+      Wildmagic: { hi: '#f472b6', mid: '#2a0b1e', text: '#fdf2f8' }
+    };
+
+    function addSpellbook(){
+      if (!state.settings.editUnlocked) return;
+      ensureSpellbooks();
+      const id = `book-${Date.now()}`;
+      state.spellbooks.push({
+        id,
+        name: `Spellbook ${state.spellbooks.length+1}`,
+        colors: { ...SPELLBOOK_PRESETS.Wizard },
+        spells: []
+      });
+      saveSettings();
+      renderSpells();
+    }
+
+    function openSpellbookEdit(bookId){
+      if (!state.settings.editUnlocked) return;
+      ensureSpellbooks();
+      const book = state.spellbooks.find(b=> b.id === bookId);
+      if (!book) return;
+      const dlg = $('#spellbookEditDialog');
+      dlg.dataset.bookId = bookId;
+      $('#spellbookEditName').value = book.name || '';
+      $('#spellbookEditHi').value = book.colors?.hi || '#d8c08a';
+      $('#spellbookEditMid').value = book.colors?.mid || '#0f1422';
+      $('#spellbookEditText').value = book.colors?.text || '#f2f4f8';
+      dlg.showModal();
+    }
+
+    function saveSpellbookEdit(){
+      const dlg = $('#spellbookEditDialog');
+      const bookId = dlg.dataset.bookId;
+      if (!bookId) return;
+      ensureSpellbooks();
+      const book = state.spellbooks.find(b=> b.id === bookId);
+      if (!book) return;
+      book.name = $('#spellbookEditName').value.trim() || book.name;
+      book.colors = {
+        hi: $('#spellbookEditHi').value,
+        mid: $('#spellbookEditMid').value,
+        text: $('#spellbookEditText').value
+      };
+      dlg.close();
+      saveSettings();
+      renderSpells();
+    }
+
+    function removeSpellFromBook(bookId, spellKey){
+      ensureSpellbooks();
+      const book = state.spellbooks.find(b=> b.id === bookId);
+      if (!book) return;
+      book.spells = (book.spells || []).filter(s=> s.key !== spellKey);
+      saveSettings();
+      renderSpells();
+    }
+
+    function handleSpellbookClick(e){
+      const importBtn = e.target.closest('[data-book-import]');
+      if (importBtn){
+        openSpellImporter(importBtn.dataset.bookImport);
+        return;
+      }
+      const editBtn = e.target.closest('[data-book-edit]');
+      if (editBtn){
+        openSpellbookEdit(editBtn.dataset.bookEdit);
+        return;
+      }
+      const rmBtn = e.target.closest('[data-spell-remove]');
+      if (rmBtn){
+        removeSpellFromBook(rmBtn.dataset.bookId, rmBtn.dataset.spellRemove);
+        return;
+      }
+    }
+
+    function renderSpells(){
+      ensureSpellbooks();
+      $('#sp_prep').textContent = state.spells.prepared;
+      const canEdit = !!state.settings.editUnlocked;
+      $('#sp_list').innerHTML = (state.spellbooks || []).map(book=>{
+        const colors = book.colors || { hi:'#d8c08a', mid:'#0f1422', text:'#f2f4f8' };
+        const rows = (book.spells || []).slice().sort((a,b)=> (a.level-b.level) || a.name.localeCompare(b.name)).map(sp=>{
+          const removeCol = canEdit ? `<td class="right"><button class="icon-btn spell-remove" type="button" data-spell-remove="${escapeHTML(sp.key)}" data-book-id="${escapeHTML(book.id)}" aria-label="Remove spell">✕</button></td>` : '';
+          return `
+            <tr>
+              <td><strong>${escapeHTML(sp.name)}</strong></td>
+              <td class="muted">${escapeHTML(formatSpellLevel(sp.level))}</td>
+              <td class="muted">${escapeHTML(sp.castingTime||'')}</td>
+              <td class="muted">${escapeHTML(sp.range||'')}</td>
+              <td class="muted">${escapeHTML(sp.components||'')}</td>
+              <td class="muted">${escapeHTML(sp.duration||'')}</td>
+              <td class="muted">${escapeHTML(sp.summary||'')}</td>
+              ${removeCol}
+            </tr>
+          `;
+        }).join('');
+
+        const headBtn = canEdit
+          ? `<button class="spellbook-name-btn" type="button" data-book-edit="${escapeHTML(book.id)}">${escapeHTML(book.name||'Spellbook')}</button>`
+          : `<div class="spellbook-name">${escapeHTML(book.name||'Spellbook')}</div>`;
+
+        const removeHdr = canEdit ? `<th class="right" style="width:40px;"></th>` : '';
+
+        return `
+          <div class="spellbook-card" data-book="${escapeHTML(book.id)}" style="--sb-hi:${escapeHTML(colors.hi)}; --sb-mid:${escapeHTML(colors.mid)}; --sb-text:${escapeHTML(colors.text)};">
+            <div class="spellbook-head">
+              ${headBtn}
+              <div class="spellbook-head-actions">
+                <button class="tag" type="button" data-book-import="${escapeHTML(book.id)}">Import Spells</button>
+              </div>
+            </div>
+            <div class="spellbook-body">
+              <table class="spellbook-table">
+                <thead><tr>
+                  <th>Name</th><th>Level</th><th>Casting</th><th>Range</th><th>Components</th><th>Duration</th><th>Summary</th>
+                  ${removeHdr}
+                </tr></thead>
+                <tbody>
+                  ${rows || `<tr><td class="muted" colspan="${canEdit?8:7}">No spells yet.</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Spell importer state
+    const spellImportState = {
+      data: null,
+      byId: null,
+      selected: new Set(),
+      levelOptions: Array.from({ length: 10 }, (_, idx)=> idx),
+      classOptions: [],
+      // applied filters
+      search: "",
+      sort: "name",
+      levelFilters: new Set(),
+      classFilters: new Set(),
+      dirty: false,
+      targetBookId: null
+    };
+
+    function markSpellImportDirty(){
+      spellImportState.dirty = true;
+      const btn = $('#spellImportApplyFilters');
+      if (btn) btn.disabled = false;
     }
 
     function buildSpellImportFilters(){
-      const levelWrap = $("#spellImportLevelFilters");
-      const classWrap = $("#spellImportClassFilters");
+      const levelWrap = $('#spellImportLevelFilters');
+      const classWrap = $('#spellImportClassFilters');
       if (!levelWrap || !classWrap) return;
-      const levelOptions = Array.from({ length: 10 }, (_, idx)=> idx);
-      spellImportState.levelFilters = new Set(levelOptions);
-      levelWrap.innerHTML = levelOptions.map(level => `
-        <label class="spell-filter-item">
-          <input type="checkbox" data-level="${level}" checked />
-          <span>${formatSpellLevel(level)}</span>
-        </label>
-      `).join("");
-      spellImportState.classOptions = [...new Set((spellImportState.data || []).flatMap(sp => sp.classes || []))].sort();
-      spellImportState.classFilters = new Set(spellImportState.classOptions);
-      classWrap.innerHTML = spellImportState.classOptions.map(cls => `
-        <label class="spell-filter-item">
-          <input type="checkbox" data-class="${escapeHTML(cls)}" checked />
-          <span>${escapeHTML(cls)}</span>
-        </label>
-      `).join("");
+
+      levelWrap.innerHTML = spellImportState.levelOptions.map(level=>{
+        return `<button class="spell-chip" type="button" aria-pressed="true" data-level="${level}">${escapeHTML(formatSpellLevel(level))}</button>`;
+      }).join('');
+
+      const ban = new Set(['wizard chronurgy','wizard graviturgy','wizard (chronurgy)','wizard (graviturgy)']);
+      const allClasses = [...new Set((spellImportState.data||[]).flatMap(sp=> sp.classes||[]))]
+        .filter(c=> !ban.has(String(c||'').toLowerCase().trim()))
+        .sort((a,b)=> a.localeCompare(b));
+
+      spellImportState.classOptions = allClasses;
+      classWrap.innerHTML = allClasses.map(cls=>{
+        return `<button class="spell-chip" type="button" aria-pressed="true" data-class="${escapeHTML(cls)}">${escapeHTML(cls)}</button>`;
+      }).join('');
+
+      // initial applied filters = all
+      spellImportState.levelFilters = new Set(spellImportState.levelOptions);
+      spellImportState.classFilters = new Set(allClasses);
+    }
+
+    function readChips(containerSel, attr){
+      return new Set([...document.querySelectorAll(`${containerSel} .spell-chip[${attr}]`)]
+        .filter(b=> b.getAttribute('aria-pressed') === 'true')
+        .map(b=> b.getAttribute(attr)));
+    }
+
+    function applySpellImportUiToState(){
+      spellImportState.search = ($('#spellImportSearch').value || '').trim();
+      spellImportState.sort = $('#spellImportSort').value || 'name';
+      const levels = readChips('#spellImportLevelFilters', 'data-level');
+      const classes = readChips('#spellImportClassFilters', 'data-class');
+      spellImportState.levelFilters = new Set([...levels].map(x=> parseInt(x,10)));
+      spellImportState.classFilters = new Set([...classes].map(x=> x));
+      spellImportState.dirty = false;
+      const btn = $('#spellImportApplyFilters');
+      if (btn) btn.disabled = true;
     }
 
     function applySpellImportFilters(){
@@ -3728,135 +4417,224 @@
       const search = spellImportState.search.toLowerCase();
       const levels = spellImportState.levelFilters;
       const classes = spellImportState.classFilters;
-      let list = spellImportState.data.filter(spell => {
-        const nameMatch = !search || spell.name.toLowerCase().includes(search);
+      let list = spellImportState.data.filter(spell=>{
+        const nameMatch = !search || String(spell.name||'').toLowerCase().includes(search);
         const levelMatch = levels.size === 0 || levels.has(spell.level);
         const classMatch = classes.size === 0 || (spell.classes || []).some(cls => classes.has(cls));
         return nameMatch && levelMatch && classMatch;
       });
-      list = list.slice().sort((a, b)=>{
-        switch (spellImportState.sort){
-          case "level":
-            return a.level - b.level || a.name.localeCompare(b.name);
-          case "time":
-            return a.casting_time.localeCompare(b.casting_time) || a.name.localeCompare(b.name);
-          case "school":
-            return a.school.localeCompare(b.school) || a.name.localeCompare(b.name);
-          case "range":
-            return a.range.localeCompare(b.range) || a.name.localeCompare(b.name);
-          case "concentration":
-            return (a.concentration === b.concentration)
-              ? a.name.localeCompare(b.name)
-              : (a.concentration ? 1 : -1);
-          default:
-            return a.name.localeCompare(b.name);
+      list = list.slice().sort((a,b)=>{
+        switch(spellImportState.sort){
+          case 'level': return a.level - b.level || a.name.localeCompare(b.name);
+          case 'time': return String(a.casting_time||'').localeCompare(String(b.casting_time||'')) || a.name.localeCompare(b.name);
+          case 'school': return String(a.school||'').localeCompare(String(b.school||'')) || a.name.localeCompare(b.name);
+          case 'range': return String(a.range||'').localeCompare(String(b.range||'')) || a.name.localeCompare(b.name);
+          case 'concentration':
+            return (a.concentration === b.concentration) ? a.name.localeCompare(b.name) : (a.concentration ? 1 : -1);
+          default: return a.name.localeCompare(b.name);
         }
       });
       return list;
     }
 
-    function syncSpellImportFilters(){
-      const levelInputs = document.querySelectorAll("#spellImportLevelFilters input[data-level]");
-      const classInputs = document.querySelectorAll("#spellImportClassFilters input[data-class]");
-      spellImportState.levelFilters = new Set(
-        [...levelInputs].filter(input => input.checked).map(input => parseInt(input.dataset.level, 10))
-      );
-      spellImportState.classFilters = new Set(
-        [...classInputs].filter(input => input.checked).map(input => input.dataset.class)
-      );
+    function updateSpellImportConfirm(){
+      const btn = $('#spellImportConfirm');
+      if (btn) btn.disabled = spellImportState.selected.size === 0;
+      const countEl = $('#spellImportSelectedCount');
+      if (countEl) countEl.textContent = String(spellImportState.selected.size);
+      renderSpellImportSelectedPanel();
+    }
+
+    function renderSpellImportSelectedPanel(){
+      const listEl = $('#spellImportSelectedList');
+      const totalsEl = $('#spellImportSelectedTotals');
+      const breakdownEl = $('#spellImportSelectedBreakdown');
+      if (!listEl || !totalsEl || !breakdownEl) return;
+
+      if (!spellImportState.byId || spellImportState.selected.size === 0){
+        totalsEl.textContent = '0 spells selected';
+        breakdownEl.innerHTML = '';
+        listEl.innerHTML = '<div class="muted">No spells selected.</div>';
+        return;
+      }
+
+      const selectedSpells = [...spellImportState.selected]
+        .map(id=> spellImportState.byId.get(id))
+        .filter(Boolean)
+        .sort((a,b)=> a.level - b.level || a.name.localeCompare(b.name));
+
+      totalsEl.textContent = `${selectedSpells.length} spells selected`;
+
+      const byLevel = new Map();
+      for (const sp of selectedSpells){
+        byLevel.set(sp.level, (byLevel.get(sp.level) || 0) + 1);
+      }
+      breakdownEl.innerHTML = [...byLevel.entries()].sort((a,b)=> a[0]-b[0]).map(([lvl, n])=>{
+        return `<span class="tag">${escapeHTML(formatSpellLevel(lvl))}: <span class="num">${n}</span></span>`;
+      }).join('');
+
+      listEl.innerHTML = selectedSpells.map(sp=>{
+        return `
+          <div class="spell-selected-item">
+            <div>
+              <div style="font-weight:900;">${escapeHTML(sp.name)}</div>
+              <div class="small muted">${escapeHTML(formatSpellLevel(sp.level))}</div>
+            </div>
+            <button class="icon-btn" type="button" data-selected-remove="${escapeHTML(sp.id)}" aria-label="Remove">✕</button>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderSpellImportList(){
-      const listEl = $("#spellImportList");
+      const listEl = $('#spellImportList');
       if (!listEl) return;
       if (!spellImportState.data){
-        listEl.innerHTML = `<div class="muted">Loading spells…</div>`;
+        listEl.innerHTML = '<div class="muted">Loading spells…</div>';
         return;
       }
       const list = applySpellImportFilters();
       if (!list.length){
-        listEl.innerHTML = `<div class="muted">No spells match your filters.</div>`;
+        listEl.innerHTML = '<div class="muted">No spells match your filters.</div>';
         return;
       }
-      listEl.innerHTML = list.map(spell => {
-        const meta = [
-          formatSpellLevel(spell.level),
-          spell.school,
-          spell.casting_time,
-          spell.range
-        ];
-        if (spell.concentration) meta.push("Concentration");
-        if (spell.classes && spell.classes.length){
-          meta.push(spell.classes.join(", "));
-        }
-        const checked = spellImportState.selected.has(spell.id) ? "checked" : "";
+      listEl.innerHTML = list.map(spell=>{
+        const meta = [formatSpellLevel(spell.level), spell.school, spell.casting_time, spell.range];
+        if (spell.concentration) meta.push('Concentration');
+        if (spell.classes && spell.classes.length) meta.push(spell.classes.join(', '));
+        const checked = spellImportState.selected.has(spell.id) ? 'checked' : '';
         return `
-          <label class="spell-import-row">
-            <input type="checkbox" data-spell-id="${escapeHTML(spell.id)}" ${checked} />
+          <div class="spell-import-row" data-row>
+            <input class="spell-import-check" type="checkbox" data-spell-id="${escapeHTML(spell.id)}" ${checked} />
             <div>
               <div class="spell-import-name">${escapeHTML(spell.name)}</div>
-              <div class="spell-import-meta">${meta.map(m => `<span>${escapeHTML(m)}</span>`).join("")}</div>
+              <div class="spell-import-meta">${meta.map(m=> `<span>${escapeHTML(m)}</span>`).join('')}</div>
             </div>
-          </label>
+            <button class="btn spell-import-info" type="button" data-spell-info="${escapeHTML(spell.id)}">Info</button>
+          </div>
         `;
-      }).join("");
+      }).join('');
     }
 
     async function loadSpellImportData(){
       if (spellImportState.data) return;
-      const listEl = $("#spellImportList");
-      if (listEl){
-        listEl.innerHTML = `<div class="muted">Loading spells…</div>`;
-      }
+      const listEl = $('#spellImportList');
+      if (listEl) listEl.innerHTML = '<div class="muted">Loading spells…</div>';
       try{
-        const resp = await fetch("https://raw.githubusercontent.com/Kemsypt/Character-Sheet/main/Data/Spell%20List.json");
-        if (!resp.ok) throw new Error("Failed to load spells.");
-        const data = await resp.json();
-        spellImportState.data = data;
-        spellImportState.byId = new Map(data.map(spell => [spell.id, spell]));
-        buildSpellImportFilters();
-        renderSpellImportList();
-      } catch (err){
-        if (listEl){
-          listEl.innerHTML = `<div class="muted">Unable to load spell list.</div>`;
+        const cachedRaw = localStorage.getItem(SPELL_LIST_CACHE_KEY);
+        if (cachedRaw){
+          try{
+            const cached = JSON.parse(cachedRaw);
+            if (cached && Array.isArray(cached.list)){
+              spellImportState.data = cached.list;
+            }
+          }catch{}
         }
+        if (!spellImportState.data){
+          const resp = await fetch(SPELL_LIST_URL, { cache: 'no-store' });
+          if (!resp.ok) throw new Error('Failed to load spells');
+          const data = await resp.json();
+          spellImportState.data = data;
+          localStorage.setItem(SPELL_LIST_CACHE_KEY, JSON.stringify({ at: Date.now(), list: data }));
+        }
+        spellImportState.byId = new Map(spellImportState.data.map(sp=> [sp.id, sp]));
+        buildSpellImportFilters();
+        applySpellImportUiToState();
+        renderSpellImportList();
+        updateSpellImportConfirm();
+      }catch(err){
+        if (listEl) listEl.innerHTML = '<div class="muted">Unable to load spell list.</div>';
       }
     }
 
-    function openSpellImporter(){
-      $("#spellImportDialog").showModal();
+    function openSpellImporter(bookId){
+      spellImportState.targetBookId = bookId || (state.spellbooks?.[0]?.id || null);
+      const label = $('#spellImportTargetLabel');
+      if (label){
+        const book = (state.spellbooks||[]).find(b=> b.id === spellImportState.targetBookId);
+        label.textContent = `Importing into: ${book ? book.name : '—'}`;
+      }
+      $('#spellImportDialog').showModal();
       loadSpellImportData();
       updateSpellImportConfirm();
     }
 
-    function updateSpellImportConfirm(){
-      const btn = $("#spellImportConfirm");
-      if (btn) btn.disabled = spellImportState.selected.size === 0;
+    async function openSpellInfo(spellId){
+      if (!spellImportState.byId) return;
+      const sp = spellImportState.byId.get(spellId);
+      if (!sp) return;
+      $('#spellInfoTitle').textContent = sp.name;
+      $('#spellInfoBody').innerHTML = '<div class="muted">Loading…</div>';
+      $('#spellInfoDialog').showModal();
+
+      const details = await getSpellDetails(sp);
+      if (!details){
+        $('#spellInfoBody').innerHTML = '<div class="muted">Unable to load spell details. (Cache not ready or offline.)</div>';
+        return;
+      }
+
+      const desc = Array.isArray(details.desc) ? details.desc.join('\n\n') : (details.desc || details.description || '');
+      const higher = Array.isArray(details.higher_level) ? details.higher_level.join('\n\n') : (details.higher_level || '');
+      const brief = details.brief || '';
+
+      const lines = [
+        { k:'Level', v: formatSpellLevel(details.level ?? sp.level) },
+        { k:'School', v: details.school || sp.school },
+        { k:'Casting Time', v: details.casting_time || sp.casting_time },
+        { k:'Range', v: details.range || sp.range },
+        { k:'Components', v: details.components || sp.components },
+        { k:'Duration', v: details.duration || sp.duration },
+        { k:'Ritual', v: details.ritual ? 'Yes' : 'No' },
+        { k:'Concentration', v: details.concentration ? 'Yes' : 'No' },
+      ];
+
+      const html = `
+        <div class="card">
+          <h4>Details</h4>
+          <div class="kv">
+            ${lines.filter(x=>x.v).map(x=> `<div class="k">${escapeHTML(x.k)}</div><div class="v">${escapeHTML(String(x.v))}</div>`).join('')}
+          </div>
+          ${brief ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">Brief</div><div class="muted" style="white-space:pre-wrap; margin-top:6px;">${escapeHTML(brief)}</div>` : ''}
+          ${desc ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">Description</div><div class="muted" style="white-space:pre-wrap; margin-top:6px;">${escapeHTML(desc)}</div>` : ''}
+          ${higher ? `<div style="height:10px"></div><div class="small" style="font-weight:900;">At Higher Levels</div><div class="muted" style="white-space:pre-wrap; margin-top:6px;">${escapeHTML(higher)}</div>` : ''}
+        </div>
+      `;
+
+      $('#spellInfoBody').innerHTML = html;
     }
 
-    function applySpellImportSelection(){
-      if (!spellImportState.selected.size || !spellImportState.data) return;
-      const existing = new Set(state.spells.list.map(sp => sp.name.toLowerCase()));
+    async function applySpellImportSelection(){
+      if (!spellImportState.selected.size || !spellImportState.byId) return;
+      ensureSpellbooks();
+      const bookId = spellImportState.targetBookId || state.spellbooks[0].id;
+      const book = state.spellbooks.find(b=> b.id === bookId);
+      if (!book) return;
+
+      const existing = new Set((book.spells||[]).map(s=> String(s.name||'').toLowerCase()));
       for (const id of spellImportState.selected){
-        const spell = spellImportState.byId.get(id);
-        if (!spell) continue;
-        if (existing.has(spell.name.toLowerCase())) continue;
-        const note = [
-          spell.school,
-          spell.casting_time,
-          spell.range,
-          spell.concentration ? "Concentration" : null
-        ].filter(Boolean).join(" • ");
-        state.spells.list.push({
-          lvl: formatSpellLevel(spell.level),
-          name: spell.name,
-          note
+        const sp = spellImportState.byId.get(id);
+        if (!sp) continue;
+        if (existing.has(String(sp.name||'').toLowerCase())) continue;
+
+        const details = await getSpellDetails(sp);
+        const summary = details?.brief || '';
+
+        book.spells.push({
+          key: `${Date.now()}-${slugify(sp.name)}`,
+          name: sp.name,
+          level: sp.level,
+          castingTime: details?.casting_time || sp.casting_time || '',
+          range: details?.range || sp.range || '',
+          components: details?.components || sp.components || '',
+          duration: details?.duration || sp.duration || '',
+          summary
         });
-        existing.add(spell.name.toLowerCase());
+        existing.add(String(sp.name||'').toLowerCase());
       }
       spellImportState.selected.clear();
+      saveSettings();
       renderSpells();
-      $("#spellImportDialog").close();
+      $('#spellImportDialog').close();
       updateSpellImportConfirm();
     }
 
@@ -4200,13 +4978,14 @@
       });
     }
 
-    function setCombatSubtab(which){
-      document.querySelectorAll(".subtab").forEach(b=>{
+    function setSubtab(which, scopeEl){
+      const scope = scopeEl || document;
+      scope.querySelectorAll('.subtab').forEach(b=>{
         const active = (b.dataset.subtab === which);
-        b.setAttribute("aria-selected", active ? "true" : "false");
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
       });
-      document.querySelectorAll("[data-subpanel]").forEach(p=>{
-        p.dataset.active = (p.id === `sub-${which}`) ? "true" : "false";
+      scope.querySelectorAll('[data-subpanel]').forEach(p=>{
+        p.dataset.active = (p.dataset.subpanel === which) ? 'true' : 'false';
       });
     }
 
@@ -4228,6 +5007,10 @@
             state.xpLevel = s.xpLevel ?? state.xpLevel;
             state.customCurrencies = Array.isArray(s.customCurrencies) ? s.customCurrencies : state.customCurrencies;
             state.coins = s.coins ?? state.coins;
+
+            // spells / spellbooks persisted
+            if (Array.isArray(s.spellbooks)) state.spellbooks = s.spellbooks;
+            if (s.spells && typeof s.spells === 'object') state.spells = { ...state.spells, ...s.spells };
 
             // portrait persisted
             if (s.portrait){
@@ -4257,7 +5040,9 @@
         xp: state.xp,
         xpLevel: state.xpLevel,
         coins: state.coins,
-        customCurrencies: state.customCurrencies
+        customCurrencies: state.customCurrencies,
+        spells: state.spells,
+        spellbooks: state.spellbooks
       }));
     }
 
@@ -4301,6 +5086,7 @@
       $("#addSkillBtn").style.display = unlocked ? "grid" : "none";
       $("#addAbilityBtn").style.display = unlocked ? "grid" : "none";
       $("#addAttuneBtn").style.display = unlocked ? "grid" : "none";
+      if (document.getElementById('addSpellbookBtn')) $("#addSpellbookBtn").style.display = unlocked ? 'inline-flex' : 'none';
 
       renderAbilities();
       renderCoinPurse();
@@ -4555,36 +5341,100 @@
         if (e.key === "Enter") applyCoinAmount();
       });
       $("#attuneClose").addEventListener("click", ()=> $("#attuneDialog").close());
-      $("#spellImportBtn").addEventListener("click", openSpellImporter);
-      $("#spellImportClose").addEventListener("click", ()=> $("#spellImportDialog").close());
-      $("#spellImportCancel").addEventListener("click", ()=> $("#spellImportDialog").close());
-      $("#spellImportConfirm").addEventListener("click", applySpellImportSelection);
-      $("#spellImportSearch").addEventListener("input", (e)=>{
-        spellImportState.search = e.target.value;
+      // spell importer + spellbooks
+      if (document.getElementById('sp_list')){
+        $("#sp_list").addEventListener('click', handleSpellbookClick);
+      }
+      if (document.getElementById('addSpellbookBtn')){
+        $("#addSpellbookBtn").addEventListener('click', addSpellbook);
+      }
+
+      $("#spellImportClose").addEventListener('click', ()=> $("#spellImportDialog").close());
+      $("#spellImportCancel").addEventListener('click', ()=> $("#spellImportDialog").close());
+      $("#spellImportConfirm").addEventListener('click', applySpellImportSelection);
+      $("#spellImportApplyFilters").addEventListener('click', ()=>{
+        applySpellImportUiToState();
         renderSpellImportList();
       });
-      $("#spellImportSort").addEventListener("change", (e)=>{
-        spellImportState.sort = e.target.value;
-        renderSpellImportList();
-      });
-      $("#spellImportLevelFilters").addEventListener("change", ()=>{
-        syncSpellImportFilters();
-        renderSpellImportList();
-      });
-      $("#spellImportClassFilters").addEventListener("change", ()=>{
-        syncSpellImportFilters();
-        renderSpellImportList();
-      });
-      $("#spellImportList").addEventListener("change", (e)=>{
-        const input = e.target.closest("input[data-spell-id]");
-        if (!input) return;
-        if (input.checked){
-          spellImportState.selected.add(input.dataset.spellId);
-        } else {
-          spellImportState.selected.delete(input.dataset.spellId);
+
+      $("#spellImportSearch").addEventListener('input', markSpellImportDirty);
+      $("#spellImportSearch").addEventListener('keydown', (e)=>{ if (e.key==='Enter'){ e.preventDefault(); $("#spellImportApplyFilters").click(); } });
+      $("#spellImportSort").addEventListener('change', markSpellImportDirty);
+
+      $("#spellImportLevelFilters").addEventListener('click', (e)=>{
+        const action = e.target.closest('[data-level-action]');
+        if (action){
+          const on = action.dataset.levelAction === 'select-all';
+          document.querySelectorAll('#spellImportLevelFilters .spell-chip[data-level]').forEach(b=> b.setAttribute('aria-pressed', on ? 'true' : 'false'));
+          markSpellImportDirty();
+          return;
         }
+        const chip = e.target.closest('.spell-chip[data-level]');
+        if (!chip) return;
+        chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+        markSpellImportDirty();
+      });
+
+      $("#spellImportClassFilters").addEventListener('click', (e)=>{
+        const action = e.target.closest('[data-class-action]');
+        if (action){
+          const on = action.dataset.classAction === 'select-all';
+          document.querySelectorAll('#spellImportClassFilters .spell-chip[data-class]').forEach(b=> b.setAttribute('aria-pressed', on ? 'true' : 'false'));
+          markSpellImportDirty();
+          return;
+        }
+        const chip = e.target.closest('.spell-chip[data-class]');
+        if (!chip) return;
+        chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+        markSpellImportDirty();
+      });
+
+      $("#spellImportList").addEventListener('change', (e)=>{
+        const input = e.target.closest('input[data-spell-id]');
+        if (!input) return;
+        if (input.checked) spellImportState.selected.add(input.dataset.spellId);
+        else spellImportState.selected.delete(input.dataset.spellId);
         updateSpellImportConfirm();
       });
+
+      $("#spellImportList").addEventListener('click', (e)=>{
+        const info = e.target.closest('[data-spell-info]');
+        if (info){
+          openSpellInfo(info.dataset.spellInfo);
+          return;
+        }
+      });
+
+      $("#spellImportSelectedList").addEventListener('click', (e)=>{
+        const rm = e.target.closest('[data-selected-remove]');
+        if (!rm) return;
+        spellImportState.selected.delete(rm.dataset.selectedRemove);
+        const cb = document.querySelector(`#spellImportList input[data-spell-id="${CSS.escape(rm.dataset.selectedRemove)}"]`);
+        if (cb) cb.checked = false;
+        updateSpellImportConfirm();
+      });
+
+      // spell info dialog
+      $("#spellInfoClose").addEventListener('click', ()=> $("#spellInfoDialog").close());
+
+      // spellbook edit dialog
+      $("#spellbookEditClose").addEventListener('click', ()=> $("#spellbookEditDialog").close());
+      $("#spellbookEditCancel").addEventListener('click', ()=> $("#spellbookEditDialog").close());
+      $("#spellbookEditSave").addEventListener('click', saveSpellbookEdit);
+      $("#spellbookPresetRow").addEventListener('click', (e)=>{
+        const b = e.target.closest('[data-sb-preset]');
+        if (!b) return;
+        const preset = SPELLBOOK_PRESETS[b.dataset.sbPreset];
+        if (!preset) return;
+        $("#spellbookEditHi").value = preset.hi;
+        $("#spellbookEditMid").value = preset.mid;
+        $("#spellbookEditText").value = preset.text;
+      });
+
+      // spell cache controls
+      if (document.getElementById('clearSpellCacheBtn')){
+        $("#clearSpellCacheBtn").addEventListener('click', ()=> SpellCache.clear());
+      }
 
       // dice roller
       renderDiceHistory();
@@ -4647,10 +5497,9 @@
           setActiveTab(btn.dataset.tab);
         });
       });
-
-      // combat subtabs
-      document.querySelectorAll(".subtab").forEach(btn=>{
-        btn.addEventListener("click", ()=> setCombatSubtab(btn.dataset.subtab));
+      // subtabs (combat + creatures)
+      document.querySelectorAll('.subtab').forEach(btn=>{
+        btn.addEventListener('click', ()=> setSubtab(btn.dataset.subtab, btn.closest('section[data-tabpanel]')));
       });
 
       // progress toggle (milestone/XP)
@@ -4842,6 +5691,10 @@
       // initial
       loadSettings();
 
+      // warm spell cache (offline spell details + summaries)
+      updateSpellCacheStatus();
+      warmSpellCache();
+
       renderTopbar();
       renderHP();
       renderMain();
@@ -4854,7 +5707,8 @@
       window.addEventListener("resize", fitTopbarText);
 
       // default combat subtab
-      setCombatSubtab("actions");
+      setSubtab('actions', $('#tab-actions'));
+      setSubtab('companions', $('#tab-creatures'));
       // default xp mode view
       applyXPMode();
     }
