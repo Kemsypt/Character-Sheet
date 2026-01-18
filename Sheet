@@ -159,6 +159,9 @@
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
     }
+    .id-name-line{
+      display: block;
+    }
     .id-sub{
       margin-top: 8px;
       color: var(--muted);
@@ -604,6 +607,74 @@
       border-radius: 999px;
       white-space:nowrap;
       font-weight: 850;
+    }
+    .spell-import-controls{
+      display: grid;
+      gap: 12px;
+    }
+    .spell-import-toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+    }
+    .spell-import-toolbar input,
+    .spell-import-toolbar select{
+      flex: 1 1 180px;
+    }
+    .spell-import-filters{
+      display:grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .spell-filter-group{
+      display:grid;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+    }
+    .spell-filter-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px;
+    }
+    .spell-filter-item{
+      display:flex;
+      align-items:center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .spell-import-list{
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px;
+      max-height: 360px;
+      overflow: auto;
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(255,255,255,0.03);
+    }
+    .spell-import-row{
+      display:grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+    }
+    .spell-import-name{
+      font-weight: 800;
+    }
+    .spell-import-meta{
+      color: var(--muted);
+      font-size: 12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px;
     }
 
     [data-tabpanel]{display:none;}
@@ -2053,6 +2124,7 @@
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <span class="tag">Prepared: <span class="num" id="sp_prep">14</span></span>
           <span class="tag">Ability: Wisdom</span>
+          <button class="tag" id="spellImportBtn" type="button" aria-haspopup="dialog">Import Spells</button>
         </div>
       </div>
       <div class="panel-body" id="sp_list"></div>
@@ -2115,6 +2187,46 @@
       <div class="panel-body" id="n_notes"></div>
     </section>
   </main>
+
+  <!-- Spell import dialog -->
+  <dialog id="spellImportDialog" aria-label="Spell importer">
+    <div class="dlg-head">
+      <h3 class="dlg-title">Spell Importer</h3>
+      <button class="icon-btn" id="spellImportClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="dlg-body">
+      <div class="spell-import-controls">
+        <div class="spell-import-toolbar">
+          <input class="select" id="spellImportSearch" placeholder="Search spells by name" />
+          <select class="select" id="spellImportSort">
+            <option value="name">Sort: Name</option>
+            <option value="level">Sort: Level</option>
+            <option value="time">Sort: Time</option>
+            <option value="school">Sort: School</option>
+            <option value="concentration">Sort: Concentration</option>
+            <option value="range">Sort: Range</option>
+          </select>
+        </div>
+        <div class="spell-import-filters">
+          <div class="spell-filter-group">
+            <div class="small">Spell Level</div>
+            <div class="spell-filter-list" id="spellImportLevelFilters"></div>
+          </div>
+          <div class="spell-filter-group">
+            <div class="small">Class Filters</div>
+            <div class="spell-filter-list" id="spellImportClassFilters"></div>
+          </div>
+        </div>
+        <div class="spell-import-list" id="spellImportList">
+          <div class="muted">Loading spells…</div>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+          <button class="btn" id="spellImportCancel" type="button">Cancel</button>
+          <button class="btn primary" id="spellImportConfirm" type="button" disabled>Import Selected</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
 
   <!-- Coin purse dialog (nicer) -->
   <dialog id="coinDialog" aria-label="Coin purse">
@@ -2843,6 +2955,17 @@
     const diceState = {
       history: []
     };
+    let cheatRollQueued = false;
+    const spellImportState = {
+      data: null,
+      byId: new Map(),
+      search: "",
+      sort: "name",
+      selected: new Set(),
+      levelFilters: new Set(),
+      classFilters: new Set(),
+      classOptions: []
+    };
 
     /**********************************************************************
      * Helpers
@@ -2864,6 +2987,24 @@
       const cleaned = t.replace(/[^\d+\-]/g, "");
       const n = parseInt(cleaned, 10);
       return Number.isFinite(n) ? n : null;
+    }
+    function formatSpellLevel(level){
+      if (level === 0) return "Cantrip";
+      const suffix = level === 1 ? "st" : level === 2 ? "nd" : level === 3 ? "rd" : "th";
+      return `${level}${suffix}`;
+    }
+    function buildTopbarNameHTML(name){
+      const words = String(name || "").trim().split(/\s+/).filter(Boolean);
+      if (words.length <= 1){
+        return `<span class="id-name-line">${escapeHTML(name || "")}</span>`;
+      }
+      const splitIndex = words.length === 2 ? 1 : Math.ceil(words.length / 2);
+      const firstLine = words.slice(0, splitIndex).join(" ");
+      const secondLine = words.slice(splitIndex).join(" ");
+      return `
+        <span class="id-name-line">${escapeHTML(firstLine)}</span>
+        <span class="id-name-line">${escapeHTML(secondLine)}</span>
+      `.trim();
     }
 
     // currency values in gp
@@ -3083,8 +3224,11 @@
       setTimeout(()=>{ animation.dataset.active = "false"; }, 900);
     }
     function updateDiceFlashOffsets(){
-      diceFlashItems.forEach((item, index)=>{
-        item.style.setProperty("--offset", `${-index * 46}px`);
+      let offset = 0;
+      diceFlashItems.forEach((item)=>{
+        item.style.setProperty("--offset", `${-offset}px`);
+        const height = item.offsetHeight || 0;
+        offset += height + 15;
       });
     }
     function flashDiceResult(total, allMax, allMin){
@@ -3116,6 +3260,14 @@
     }
     function rollTopTwo(sides){
       return sides - Math.floor(Math.random() * 2);
+    }
+    function queueCheatRoll(){
+      cheatRollQueued = true;
+    }
+    function consumeCheatRoll(){
+      const queued = cheatRollQueued;
+      cheatRollQueued = false;
+      return queued;
     }
     function rollDiceSets(sets, mode="normal", cheat=false, labelPrefix=""){
       if (!sets.length){
@@ -3203,10 +3355,12 @@
     }
     function rollDice(mode="normal", options = {}){
       const sets = options.sets ?? getDiceSets();
-      rollDiceSets(sets, mode, options.cheat, options.label);
+      const cheat = options.cheat ?? consumeCheatRoll();
+      rollDiceSets(sets, mode, cheat, options.label);
     }
-    function rollPreset(label, mod, cheat=false){
-      rollDiceSets([{ sides: 20, count: 1, mod, label: "d20" }], "normal", cheat, label);
+    function rollPreset(label, mod, cheat){
+      const cheatRoll = cheat ?? consumeCheatRoll();
+      rollDiceSets([{ sides: 20, count: 1, mod, label: "d20" }], "normal", cheatRoll, label);
     }
     function getSkillBonus(name){
       const skill = state.skills.find(s => s.name === name);
@@ -3220,15 +3374,15 @@
       if (level === 3) bonus += state.prof * 2;
       return bonus;
     }
-    function rollSkillCheck(name, cheat=false){
+    function rollSkillCheck(name, cheat){
       rollPreset(`${name} Check`, getSkillBonus(name), cheat);
     }
-    function rollAbilityCheck(key, cheat=false){
+    function rollAbilityCheck(key, cheat){
       const ability = getAbilityByKey(key);
       if (!ability) return;
       rollPreset(`${ability.label} Check`, modFromScore(ability.score), cheat);
     }
-    function rollSaveCheck(key, cheat=false){
+    function rollSaveCheck(key, cheat){
       const ability = getAbilityByKey(key);
       if (!ability) return;
       const mod = modFromScore(ability.score) + (ability.saveProf ? state.prof : 0);
@@ -3309,7 +3463,9 @@
     }
 
     function renderTopbar(){
-      $("#tb_name").textContent = state.name;
+      const tbName = $("#tb_name");
+      tbName.innerHTML = buildTopbarNameHTML(state.name);
+      tbName.setAttribute("aria-label", state.name);
       $("#tb_sub").textContent = `${state.race} • ${state.classSummary}`;
       $("#tb_ac").textContent = state.ac;
       $("#tb_init").textContent = formatSigned(state.init);
@@ -3543,6 +3699,165 @@
           </table>
         </div>
       `).join("");
+    }
+
+    function buildSpellImportFilters(){
+      const levelWrap = $("#spellImportLevelFilters");
+      const classWrap = $("#spellImportClassFilters");
+      if (!levelWrap || !classWrap) return;
+      const levelOptions = Array.from({ length: 10 }, (_, idx)=> idx);
+      spellImportState.levelFilters = new Set(levelOptions);
+      levelWrap.innerHTML = levelOptions.map(level => `
+        <label class="spell-filter-item">
+          <input type="checkbox" data-level="${level}" checked />
+          <span>${formatSpellLevel(level)}</span>
+        </label>
+      `).join("");
+      spellImportState.classOptions = [...new Set((spellImportState.data || []).flatMap(sp => sp.classes || []))].sort();
+      spellImportState.classFilters = new Set(spellImportState.classOptions);
+      classWrap.innerHTML = spellImportState.classOptions.map(cls => `
+        <label class="spell-filter-item">
+          <input type="checkbox" data-class="${escapeHTML(cls)}" checked />
+          <span>${escapeHTML(cls)}</span>
+        </label>
+      `).join("");
+    }
+
+    function applySpellImportFilters(){
+      if (!spellImportState.data) return [];
+      const search = spellImportState.search.toLowerCase();
+      const levels = spellImportState.levelFilters;
+      const classes = spellImportState.classFilters;
+      let list = spellImportState.data.filter(spell => {
+        const nameMatch = !search || spell.name.toLowerCase().includes(search);
+        const levelMatch = levels.size === 0 || levels.has(spell.level);
+        const classMatch = classes.size === 0 || (spell.classes || []).some(cls => classes.has(cls));
+        return nameMatch && levelMatch && classMatch;
+      });
+      list = list.slice().sort((a, b)=>{
+        switch (spellImportState.sort){
+          case "level":
+            return a.level - b.level || a.name.localeCompare(b.name);
+          case "time":
+            return a.casting_time.localeCompare(b.casting_time) || a.name.localeCompare(b.name);
+          case "school":
+            return a.school.localeCompare(b.school) || a.name.localeCompare(b.name);
+          case "range":
+            return a.range.localeCompare(b.range) || a.name.localeCompare(b.name);
+          case "concentration":
+            return (a.concentration === b.concentration)
+              ? a.name.localeCompare(b.name)
+              : (a.concentration ? 1 : -1);
+          default:
+            return a.name.localeCompare(b.name);
+        }
+      });
+      return list;
+    }
+
+    function syncSpellImportFilters(){
+      const levelInputs = document.querySelectorAll("#spellImportLevelFilters input[data-level]");
+      const classInputs = document.querySelectorAll("#spellImportClassFilters input[data-class]");
+      spellImportState.levelFilters = new Set(
+        [...levelInputs].filter(input => input.checked).map(input => parseInt(input.dataset.level, 10))
+      );
+      spellImportState.classFilters = new Set(
+        [...classInputs].filter(input => input.checked).map(input => input.dataset.class)
+      );
+    }
+
+    function renderSpellImportList(){
+      const listEl = $("#spellImportList");
+      if (!listEl) return;
+      if (!spellImportState.data){
+        listEl.innerHTML = `<div class="muted">Loading spells…</div>`;
+        return;
+      }
+      const list = applySpellImportFilters();
+      if (!list.length){
+        listEl.innerHTML = `<div class="muted">No spells match your filters.</div>`;
+        return;
+      }
+      listEl.innerHTML = list.map(spell => {
+        const meta = [
+          formatSpellLevel(spell.level),
+          spell.school,
+          spell.casting_time,
+          spell.range
+        ];
+        if (spell.concentration) meta.push("Concentration");
+        if (spell.classes && spell.classes.length){
+          meta.push(spell.classes.join(", "));
+        }
+        const checked = spellImportState.selected.has(spell.id) ? "checked" : "";
+        return `
+          <label class="spell-import-row">
+            <input type="checkbox" data-spell-id="${escapeHTML(spell.id)}" ${checked} />
+            <div>
+              <div class="spell-import-name">${escapeHTML(spell.name)}</div>
+              <div class="spell-import-meta">${meta.map(m => `<span>${escapeHTML(m)}</span>`).join("")}</div>
+            </div>
+          </label>
+        `;
+      }).join("");
+    }
+
+    async function loadSpellImportData(){
+      if (spellImportState.data) return;
+      const listEl = $("#spellImportList");
+      if (listEl){
+        listEl.innerHTML = `<div class="muted">Loading spells…</div>`;
+      }
+      try{
+        const resp = await fetch("https://raw.githubusercontent.com/Kemsypt/Character-Sheet/main/Data/Spell%20List.json");
+        if (!resp.ok) throw new Error("Failed to load spells.");
+        const data = await resp.json();
+        spellImportState.data = data;
+        spellImportState.byId = new Map(data.map(spell => [spell.id, spell]));
+        buildSpellImportFilters();
+        renderSpellImportList();
+      } catch (err){
+        if (listEl){
+          listEl.innerHTML = `<div class="muted">Unable to load spell list.</div>`;
+        }
+      }
+    }
+
+    function openSpellImporter(){
+      $("#spellImportDialog").showModal();
+      loadSpellImportData();
+      updateSpellImportConfirm();
+    }
+
+    function updateSpellImportConfirm(){
+      const btn = $("#spellImportConfirm");
+      if (btn) btn.disabled = spellImportState.selected.size === 0;
+    }
+
+    function applySpellImportSelection(){
+      if (!spellImportState.selected.size || !spellImportState.data) return;
+      const existing = new Set(state.spells.list.map(sp => sp.name.toLowerCase()));
+      for (const id of spellImportState.selected){
+        const spell = spellImportState.byId.get(id);
+        if (!spell) continue;
+        if (existing.has(spell.name.toLowerCase())) continue;
+        const note = [
+          spell.school,
+          spell.casting_time,
+          spell.range,
+          spell.concentration ? "Concentration" : null
+        ].filter(Boolean).join(" • ");
+        state.spells.list.push({
+          lvl: formatSpellLevel(spell.level),
+          name: spell.name,
+          note
+        });
+        existing.add(spell.name.toLowerCase());
+      }
+      spellImportState.selected.clear();
+      renderSpells();
+      $("#spellImportDialog").close();
+      updateSpellImportConfirm();
     }
 
     function renderInventory(){
@@ -4240,15 +4555,45 @@
         if (e.key === "Enter") applyCoinAmount();
       });
       $("#attuneClose").addEventListener("click", ()=> $("#attuneDialog").close());
+      $("#spellImportBtn").addEventListener("click", openSpellImporter);
+      $("#spellImportClose").addEventListener("click", ()=> $("#spellImportDialog").close());
+      $("#spellImportCancel").addEventListener("click", ()=> $("#spellImportDialog").close());
+      $("#spellImportConfirm").addEventListener("click", applySpellImportSelection);
+      $("#spellImportSearch").addEventListener("input", (e)=>{
+        spellImportState.search = e.target.value;
+        renderSpellImportList();
+      });
+      $("#spellImportSort").addEventListener("change", (e)=>{
+        spellImportState.sort = e.target.value;
+        renderSpellImportList();
+      });
+      $("#spellImportLevelFilters").addEventListener("change", ()=>{
+        syncSpellImportFilters();
+        renderSpellImportList();
+      });
+      $("#spellImportClassFilters").addEventListener("change", ()=>{
+        syncSpellImportFilters();
+        renderSpellImportList();
+      });
+      $("#spellImportList").addEventListener("change", (e)=>{
+        const input = e.target.closest("input[data-spell-id]");
+        if (!input) return;
+        if (input.checked){
+          spellImportState.selected.add(input.dataset.spellId);
+        } else {
+          spellImportState.selected.delete(input.dataset.spellId);
+        }
+        updateSpellImportConfirm();
+      });
 
       // dice roller
       renderDiceHistory();
       updateDiceCustomLabel();
       $("#diceFab").addEventListener("click", ()=> toggleDicePanel());
       $("#diceClose").addEventListener("click", ()=> toggleDicePanel(false));
-      $("#diceRollBtn").addEventListener("click", (e)=> rollDice("normal", { cheat: e.ctrlKey }));
-      $("#diceAdvBtn").addEventListener("click", (e)=> rollDice("adv", { cheat: e.ctrlKey }));
-      $("#diceDisBtn").addEventListener("click", (e)=> rollDice("dis", { cheat: e.ctrlKey }));
+      $("#diceRollBtn").addEventListener("click", ()=> rollDice("normal"));
+      $("#diceAdvBtn").addEventListener("click", ()=> rollDice("adv"));
+      $("#diceDisBtn").addEventListener("click", ()=> rollDice("dis"));
       $("#diceCustomSides").addEventListener("input", updateDiceCustomLabel);
       $("#diceDragHandle").addEventListener("pointerdown", startDiceDrag);
       $("#dicePanel").addEventListener("pointermove", moveDiceDrag);
@@ -4399,7 +4744,7 @@
         }
         const roll = e.target.closest("[data-skill-roll]");
         if (roll && !state.settings.editUnlocked){
-          rollSkillCheck(roll.dataset.skillRoll, e.ctrlKey);
+          rollSkillCheck(roll.dataset.skillRoll);
         }
       });
       $("#abilGrid").addEventListener("click", (e)=>{
@@ -4414,12 +4759,12 @@
           return;
         }
         if (save && !state.settings.editUnlocked){
-          rollSaveCheck(save.dataset.saveRoll, e.ctrlKey);
+          rollSaveCheck(save.dataset.saveRoll);
           return;
         }
         const card = e.target.closest("[data-ability-roll]");
         if (card && !state.settings.editUnlocked){
-          rollAbilityCheck(card.dataset.abilityRoll, e.ctrlKey);
+          rollAbilityCheck(card.dataset.abilityRoll);
         }
       });
 
@@ -4476,6 +4821,11 @@
         if (!state.settings.editUnlocked) return;
         if (t && t.classList && t.classList.contains("editable")){
           syncEditableToState();
+        }
+      });
+      document.addEventListener("keydown", (e)=>{
+        if (e.code === "Backquote" && !e.repeat){
+          queueCheatRoll();
         }
       });
       document.addEventListener("keydown", (e)=>{
