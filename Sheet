@@ -84,24 +84,21 @@
       opacity: 0;
       transition: opacity 220ms ease;
       background:
-        linear-gradient(90deg, rgba(216,192,138,0.18), transparent 6%),
-        linear-gradient(270deg, rgba(216,192,138,0.18), transparent 6%),
-        linear-gradient(0deg, rgba(216,192,138,0.18), transparent 14%);
-      animation: inspPulse 4.8s ease-in-out infinite;
+        linear-gradient(90deg, rgba(216,192,138,0.12), transparent 6%),
+        linear-gradient(270deg, rgba(216,192,138,0.12), transparent 6%);
+      animation: inspPulse 30s ease-in-out infinite;
     }
     body[data-insp-glow="on"]::before{ opacity: 1; }
     @keyframes inspPulse{
       0%,100%{
         background:
-          linear-gradient(90deg, rgba(216,192,138,0.16), transparent 6%),
-          linear-gradient(270deg, rgba(216,192,138,0.16), transparent 6%),
-          linear-gradient(0deg, rgba(216,192,138,0.16), transparent 14%);
+          linear-gradient(90deg, rgba(216,192,138,0.08), transparent 6%),
+          linear-gradient(270deg, rgba(216,192,138,0.08), transparent 6%);
       }
       50%{
         background:
-          linear-gradient(90deg, rgba(255,225,162,0.26), transparent 6%),
-          linear-gradient(270deg, rgba(255,225,162,0.26), transparent 6%),
-          linear-gradient(0deg, rgba(255,219,143,0.24), transparent 14%);
+          linear-gradient(90deg, rgba(255,225,162,0.18), transparent 6%),
+          linear-gradient(270deg, rgba(255,225,162,0.18), transparent 6%);
       }
     }
 
@@ -420,6 +417,35 @@
       gap: 8px;
       white-space: nowrap;
     }
+    .hp-stepper{
+      display:flex;
+      align-items:center;
+      gap: 4px;
+    }
+    .hp-stepper-buttons{
+      display:flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hp-stepper-btn{
+      width: 18px;
+      height: 16px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      font-size: 10px;
+      line-height: 1;
+      cursor: pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 0;
+    }
+    .hp-stepper-btn:hover{
+      border-color: rgba(255,255,255,0.22);
+      background: rgba(0,0,0,0.28);
+    }
     .amt{
       width: 56px;
       text-align:center;
@@ -431,6 +457,14 @@
       outline: none;
       font-weight: 900;
       font-family: var(--mono);
+    }
+    .hp-amt{
+      -moz-appearance: textfield;
+    }
+    .hp-amt::-webkit-outer-spin-button,
+    .hp-amt::-webkit-inner-spin-button{
+      -webkit-appearance: none;
+      margin: 0;
     }
     .hp-btn{
       height: 36px;
@@ -696,14 +730,15 @@
       border-radius: 20px;
       overflow:hidden;
       box-shadow: var(--shadow);
+      aspect-ratio: 2 / 3;
+      position: relative;
       /* NOT sticky; aligns with hero top */
     }
 
     /* exact 2:3 ratio frame (600x900) */
     .portrait{
-      aspect-ratio: 2 / 3;
       width: 100%;
-      height: auto;
+      height: 100%;
       display:block;
       object-fit: cover;
       object-position: var(--px, 50%) var(--py, 30%);
@@ -973,16 +1008,26 @@
       background: rgba(0,0,0,0.16);
       border-radius: 14px;
       padding: 10px 12px;
-      display:flex;
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) 70px 52px;
       align-items:center;
-      justify-content: space-between;
       gap: 12px;
+    }
+    .skill-row.has-remove{
+      grid-template-columns: minmax(0, 1fr) 70px 52px auto;
     }
     .skill-row .dot-btn{
       border: none;
       background: transparent;
       padding: 0;
       cursor: pointer;
+    }
+    .rollable{
+      cursor: pointer;
+    }
+    .rollable:hover{
+      border-color: rgba(255,255,255,0.22);
+      background: rgba(0,0,0,0.22);
     }
     body[data-edit="on"] .skill-row .dot-btn:focus-visible{
       outline: 2px solid rgba(216,192,138,0.6);
@@ -1030,9 +1075,10 @@
       text-transform: uppercase;
       color: var(--accent);
       font-weight: 950;
-      margin-left: 6px;
+      text-align: center;
     }
-    .skill-right{ font-family: var(--mono); font-weight: 950; }
+    .skill-right{ font-family: var(--mono); font-weight: 950; text-align: right; }
+    .skill-row .skill-remove{ justify-self: end; }
 
     /* =======================
       BUTTONS / DIALOGS
@@ -1048,7 +1094,7 @@
       z-index: 120;
     }
     #coinAdjustDialog{
-      width: 200px;
+      width: 300px;
     }
     dialog::backdrop{background: rgba(0,0,0,0.62); backdrop-filter: blur(6px);}
     .dlg-head{
@@ -1374,15 +1420,17 @@
     .dice-roll-flash{
       position: fixed;
       inset: 0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
       pointer-events: none;
       z-index: 210;
-      opacity: 0;
     }
-    .dice-roll-flash[data-active="true"]{
+    .dice-roll-alert{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) translateY(var(--offset, 0px));
+      opacity: 0;
       animation: diceFlash 2.6s ease-out;
+      pointer-events: none;
     }
     .dice-roll-flash-inner{
       font-size: clamp(32px, 5vw, 64px);
@@ -1411,9 +1459,12 @@
       opacity: 1;
     }
     .dice-roll-animation .dice-cube{
-      font-size: 36px;
+      width: 42px;
+      height: 42px;
       margin: 0 6px;
       animation: diceTumble 0.9s ease-in-out infinite;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,0.4));
+      display: block;
     }
     .dice-roll-animation .dice-cube:nth-child(2){ animation-delay: 0.1s; }
     .dice-roll-animation .dice-cube:nth-child(3){ animation-delay: 0.2s; }
@@ -1720,7 +1771,13 @@
             </div>
 
             <div class="hp-controls" aria-label="Health controls">
-              <input class="amt" id="hpAmt" type="number" value="12" min="0" inputmode="numeric" />
+              <div class="hp-stepper" aria-label="Health amount">
+                <input class="amt hp-amt" id="hpAmt" type="number" value="12" min="0" inputmode="numeric" />
+                <div class="hp-stepper-buttons">
+                  <button class="hp-stepper-btn" id="hpAmtUp" type="button" title="Increase amount">▲</button>
+                  <button class="hp-stepper-btn" id="hpAmtDown" type="button" title="Decrease amount">▼</button>
+                </div>
+              </div>
               <button class="hp-btn damage" id="btnDamage" type="button" title="Damage (uses temp first)">−</button>
               <button class="hp-btn heal" id="btnHeal" type="button" title="Heal (up to max)">+</button>
               <button class="hp-btn temp" id="btnTemp" type="button" title="Set Temp HP (takes the higher)">⛨</button>
@@ -2564,12 +2621,11 @@
   </div>
 
   <div class="dice-roll-animation" id="diceRollAnimation" aria-hidden="true">
-    <span class="dice-cube">🎲</span>
-    <span class="dice-cube">🎲</span>
-    <span class="dice-cube">🎲</span>
+    <img class="dice-cube" alt="D20" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Twenty_sided_dice.svg/330px-Twenty_sided_dice.svg.png" />
+    <img class="dice-cube" alt="D20" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Twenty_sided_dice.svg/330px-Twenty_sided_dice.svg.png" />
+    <img class="dice-cube" alt="D20" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Twenty_sided_dice.svg/330px-Twenty_sided_dice.svg.png" />
   </div>
-  <div class="dice-roll-flash" id="diceRollFlash" aria-hidden="true">
-    <div class="dice-roll-flash-inner" id="diceRollFlashText">—</div>
+  <div class="dice-roll-flash" id="diceRollFlash" aria-hidden="true"></div>
   </div>
 
   <script>
@@ -2973,6 +3029,7 @@
      * Dice Roller
      **********************************************************************/
     let diceDrag = null;
+    const diceFlashItems = [];
     function toggleDicePanel(open){
       const panel = $("#dicePanel");
       const next = open ?? panel.dataset.open !== "true";
@@ -3025,19 +3082,42 @@
       animation.dataset.active = "true";
       setTimeout(()=>{ animation.dataset.active = "false"; }, 900);
     }
+    function updateDiceFlashOffsets(){
+      diceFlashItems.forEach((item, index)=>{
+        item.style.setProperty("--offset", `${-index * 46}px`);
+      });
+    }
     function flashDiceResult(total, allMax, allMin){
       const flash = $("#diceRollFlash");
-      const text = $("#diceRollFlashText");
-      text.textContent = total;
-      text.classList.toggle("is-max", allMax);
-      text.classList.toggle("is-min", allMin);
-      flash.dataset.active = "false";
-      void flash.offsetWidth;
-      flash.dataset.active = "true";
-      setTimeout(()=>{ flash.dataset.active = "false"; }, 2600);
+      const alert = document.createElement("div");
+      const inner = document.createElement("div");
+      alert.className = "dice-roll-alert";
+      inner.className = "dice-roll-flash-inner";
+      inner.textContent = total;
+      inner.classList.toggle("is-max", allMax);
+      inner.classList.toggle("is-min", allMin);
+      alert.appendChild(inner);
+      flash.appendChild(alert);
+      diceFlashItems.unshift(alert);
+      updateDiceFlashOffsets();
+      const cleanup = ()=>{
+        const idx = diceFlashItems.indexOf(alert);
+        if (idx !== -1){
+          diceFlashItems.splice(idx, 1);
+          updateDiceFlashOffsets();
+        }
+        alert.remove();
+      };
+      alert.addEventListener("animationend", cleanup, { once: true });
+      setTimeout(cleanup, 2600);
     }
-    function rollDice(mode="normal"){
-      const sets = getDiceSets();
+    function rollRandom(sides){
+      return 1 + Math.floor(Math.random() * sides);
+    }
+    function rollTopTwo(sides){
+      return sides - Math.floor(Math.random() * 2);
+    }
+    function rollDiceSets(sets, mode="normal", cheat=false, labelPrefix=""){
       if (!sets.length){
         $("#diceSummary").textContent = "Select at least one dice set to roll.";
         $("#diceSummary").classList.remove("is-max", "is-min");
@@ -3055,8 +3135,27 @@
         let setTotal = 0;
         for (let i = 0; i < set.count; i++){
           if (mode === "adv" || mode === "dis"){
-            const rollA = 1 + Math.floor(Math.random() * set.sides);
-            const rollB = 1 + Math.floor(Math.random() * set.sides);
+            let rollA;
+            let rollB;
+            if (cheat){
+              if (mode === "adv"){
+                const highRoll = rollTopTwo(set.sides);
+                const other = rollRandom(set.sides);
+                if (Math.random() < 0.5){
+                  rollA = highRoll;
+                  rollB = other;
+                } else {
+                  rollA = other;
+                  rollB = highRoll;
+                }
+              } else {
+                rollA = rollTopTwo(set.sides);
+                rollB = rollTopTwo(set.sides);
+              }
+            } else {
+              rollA = rollRandom(set.sides);
+              rollB = rollRandom(set.sides);
+            }
             const chosen = mode === "adv" ? Math.max(rollA, rollB) : Math.min(rollA, rollB);
             setTotal += chosen;
             allMax = allMax && chosen === set.sides;
@@ -3065,7 +3164,7 @@
             const second = formatRollSpan(rollB, set.sides, rollB === chosen, true);
             rollsHtml.push(`<span class="dice-roll-group">[${first}, ${second}]</span>`);
           } else {
-            const roll = 1 + Math.floor(Math.random() * set.sides);
+            const roll = cheat ? rollTopTwo(set.sides) : rollRandom(set.sides);
             setTotal += roll;
             allMax = allMax && roll === set.sides;
             allMin = allMin && roll === 1;
@@ -3085,7 +3184,8 @@
           </div>
         `);
       }
-      const summaryText = `${modeLabel}: ${setLabels.join(" + ")} = ${grandTotal}`;
+      const prefix = labelPrefix ? `${labelPrefix} (${modeLabel})` : modeLabel;
+      const summaryText = `${prefix}: ${setLabels.join(" + ")} = ${grandTotal}`;
       const summaryEl = $("#diceSummary");
       summaryEl.textContent = summaryText;
       summaryEl.classList.toggle("is-max", allMax);
@@ -3100,6 +3200,39 @@
       renderDiceHistory();
       toggleDiceAnimation();
       flashDiceResult(grandTotal, allMax, allMin);
+    }
+    function rollDice(mode="normal", options = {}){
+      const sets = options.sets ?? getDiceSets();
+      rollDiceSets(sets, mode, options.cheat, options.label);
+    }
+    function rollPreset(label, mod, cheat=false){
+      rollDiceSets([{ sides: 20, count: 1, mod, label: "d20" }], "normal", cheat, label);
+    }
+    function getSkillBonus(name){
+      const skill = state.skills.find(s => s.name === name);
+      if (!skill) return 0;
+      const abil = getAbilityByKey(skill.abil) || getAbilityByKey("int");
+      const base = modFromScore(abil.score);
+      const level = state.skillProfs[skill.name] ?? 0;
+      let bonus = base;
+      if (level === 1) bonus += Math.floor(state.prof / 2);
+      if (level === 2) bonus += state.prof;
+      if (level === 3) bonus += state.prof * 2;
+      return bonus;
+    }
+    function rollSkillCheck(name, cheat=false){
+      rollPreset(`${name} Check`, getSkillBonus(name), cheat);
+    }
+    function rollAbilityCheck(key, cheat=false){
+      const ability = getAbilityByKey(key);
+      if (!ability) return;
+      rollPreset(`${ability.label} Check`, modFromScore(ability.score), cheat);
+    }
+    function rollSaveCheck(key, cheat=false){
+      const ability = getAbilityByKey(key);
+      if (!ability) return;
+      const mod = modFromScore(ability.score) + (ability.saveProf ? state.prof : 0);
+      rollPreset(`${ability.label} Save`, mod, cheat);
     }
     function startDiceDrag(e){
       if (e.button !== 0) return;
@@ -3149,6 +3282,12 @@
 
     function fitTextToLines(el, baseSize, minSize, lines){
       if (!el) return;
+      const prevClamp = el.style.webkitLineClamp;
+      const prevDisplay = el.style.display;
+      const prevBoxOrient = el.style.webkitBoxOrient;
+      el.style.webkitLineClamp = "unset";
+      el.style.webkitBoxOrient = "initial";
+      el.style.display = "block";
       el.style.fontSize = `${baseSize}px`;
       const computed = getComputedStyle(el);
       const lineHeight = parseFloat(computed.lineHeight);
@@ -3160,6 +3299,9 @@
         el.style.fontSize = `${size}px`;
         maxHeight = baseLineHeight * size * lines;
       }
+      el.style.webkitLineClamp = prevClamp;
+      el.style.webkitBoxOrient = prevBoxOrient;
+      el.style.display = prevDisplay;
     }
     function fitTopbarText(){
       fitTextToLines($("#tb_name"), 34, 18, 2);
@@ -3272,7 +3414,7 @@
         const save = mod + (a.saveProf ? state.prof : 0);
 
         grid.insertAdjacentHTML("beforeend", `
-          <div class="abil-card">
+          <div class="abil-card rollable" data-ability-roll="${escapeHTML(a.key)}">
             ${a.custom && isEditable ? `<button class="ability-remove" type="button" data-ability="${escapeHTML(a.key)}">Remove</button>` : ""}
             <div class="abil-head">${escapeHTML(a.label)}</div>
             <div class="abil-box">
@@ -3283,7 +3425,7 @@
               <div class="abil-subv">${formatSigned(mod)}</div>
             </div>
             <div style="display:flex; justify-content:center;">
-              <span class="save-pill ${a.saveProf ? "pro":""} ${isEditable ? "is-editable":""}" data-ability="${escapeHTML(a.key)}" role="button" aria-pressed="${a.saveProf ? "true" : "false"}">
+              <span class="save-pill ${a.saveProf ? "pro":""} ${isEditable ? "is-editable":""}" data-ability="${escapeHTML(a.key)}" data-save-roll="${escapeHTML(a.key)}" role="button" aria-pressed="${a.saveProf ? "true" : "false"}">
                 SAVING THROW ${formatSigned(save)}
               </span>
             </div>
@@ -3318,7 +3460,7 @@
       if (level === 3) bonus += state.prof * 2;
 
       return `
-        <div class="skill-row">
+        <div class="skill-row rollable ${skill.custom && isEditable ? "has-remove" : ""}" data-skill-roll="${escapeHTML(skill.name)}">
           <div class="skill-left">
             <button class="dot-btn" type="button" data-skill="${escapeHTML(skill.name)}" aria-label="Toggle proficiency for ${escapeHTML(skill.name)}">
               <span class="dot ${level===1?"fill": level>=2?"gold":""}" style="${level===3 ? "box-shadow:0 0 0 2px rgba(216,192,138,0.22) inset;" : ""}"></span>
@@ -3671,6 +3813,11 @@
     function setTempHP(amount){
       amount = Math.max(0, amount|0);
       state.hp.temp = Math.max(state.hp.temp, amount); // temp doesn't stack
+    }
+    function adjustHpAmount(delta){
+      const input = $("#hpAmt");
+      const value = parseInt(input.value, 10) || 0;
+      input.value = Math.max(0, value + delta);
     }
 
     // Rest
@@ -4099,9 +4246,9 @@
       updateDiceCustomLabel();
       $("#diceFab").addEventListener("click", ()=> toggleDicePanel());
       $("#diceClose").addEventListener("click", ()=> toggleDicePanel(false));
-      $("#diceRollBtn").addEventListener("click", ()=> rollDice("normal"));
-      $("#diceAdvBtn").addEventListener("click", ()=> rollDice("adv"));
-      $("#diceDisBtn").addEventListener("click", ()=> rollDice("dis"));
+      $("#diceRollBtn").addEventListener("click", (e)=> rollDice("normal", { cheat: e.ctrlKey }));
+      $("#diceAdvBtn").addEventListener("click", (e)=> rollDice("adv", { cheat: e.ctrlKey }));
+      $("#diceDisBtn").addEventListener("click", (e)=> rollDice("dis", { cheat: e.ctrlKey }));
       $("#diceCustomSides").addEventListener("input", updateDiceCustomLabel);
       $("#diceDragHandle").addEventListener("pointerdown", startDiceDrag);
       $("#dicePanel").addEventListener("pointermove", moveDiceDrag);
@@ -4115,6 +4262,8 @@
       });
 
       // HP controls
+      $("#hpAmtUp").addEventListener("click", ()=> adjustHpAmount(1));
+      $("#hpAmtDown").addEventListener("click", ()=> adjustHpAmount(-1));
       $("#btnDamage").addEventListener("click", ()=>{
         const amt = parseInt($("#hpAmt").value, 10) || 0;
         damageHP(amt);
@@ -4244,8 +4393,13 @@
           return;
         }
         const dot = e.target.closest("[data-skill]");
-        if (dot){
+        if (dot && state.settings.editUnlocked){
           cycleSkillProficiency(dot.dataset.skill);
+          return;
+        }
+        const roll = e.target.closest("[data-skill-roll]");
+        if (roll && !state.settings.editUnlocked){
+          rollSkillCheck(roll.dataset.skillRoll, e.ctrlKey);
         }
       });
       $("#abilGrid").addEventListener("click", (e)=>{
@@ -4255,8 +4409,17 @@
           return;
         }
         const save = e.target.closest(".save-pill[data-ability]");
-        if (save){
+        if (save && state.settings.editUnlocked){
           toggleSaveProficiency(save.dataset.ability);
+          return;
+        }
+        if (save && !state.settings.editUnlocked){
+          rollSaveCheck(save.dataset.saveRoll, e.ctrlKey);
+          return;
+        }
+        const card = e.target.closest("[data-ability-roll]");
+        if (card && !state.settings.editUnlocked){
+          rollAbilityCheck(card.dataset.abilityRoll, e.ctrlKey);
         }
       });
 
