@@ -659,7 +659,7 @@
 
     .spell-import-layout{
       display:grid;
-      grid-template-columns: minmax(0, 1fr) 320px;
+      grid-template-columns: minmax(0, 1fr) 360px;
       gap: 12px;
       align-items:start;
     }
@@ -700,7 +700,7 @@
 
     .spell-import-check{
       accent-color: var(--accent);
-      transform: scale(1.25);
+      transform: scale(1.45);
       transform-origin: top left;
       margin-top: 2px;
       cursor:pointer;
@@ -825,6 +825,27 @@
     .spellbook-card[data-has-style="true"] .spellbook-name-btn{
       border-color: color-mix(in srgb, var(--sb-hi) 55%, rgba(255,255,255,0.10));
       color: var(--sb-text);
+    }
+    .spellbook-metrics{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .spellbook-metric{
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.2);
+      font-weight: 950;
+      font-size: 12px;
+      display:flex;
+      align-items:center;
+      gap: 6px;
+    }
+    .spellbook-metric strong{
+      font-size: 14px;
+      letter-spacing: 0.02em;
     }
 
     .spell-remove-btn{
@@ -1950,6 +1971,7 @@
       flex-direction: column;
       gap: 8px;
       min-height: 120px;
+      position: relative;
     }
     .inventory-section[draggable="true"]{
       cursor: grab;
@@ -1957,6 +1979,17 @@
     .inventory-section.drag-over{
       border-color: rgba(216,192,138,0.4);
       box-shadow: 0 0 0 2px rgba(216,192,138,0.2) inset;
+    }
+    .inventory-section.drag-over::before{
+      content:"";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: -6px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(216,192,138,0.9), transparent);
+      box-shadow: 0 0 14px rgba(216,192,138,0.9);
     }
     .inventory-section-header{
       display:flex;
@@ -1991,6 +2024,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.08);
       padding: 8px 6px;
       font-size: 12px;
+      vertical-align: middle;
     }
     .inventory-input{
       width: 100%;
@@ -2000,6 +2034,10 @@
       background: rgba(0,0,0,0.2);
       color: var(--text);
       font-weight: 700;
+    }
+    .inventory-input[readonly]{
+      opacity: 0.75;
+      cursor: default;
     }
     .qty-stepper{
       display:flex;
@@ -2165,6 +2203,7 @@
       display:flex;
       flex-direction: column;
       gap: 8px;
+      position: relative;
     }
     .note-card[data-status="done"]{
       border-color: rgba(124,245,156,0.6);
@@ -2187,6 +2226,17 @@
     }
     .note-card[draggable="true"]{
       cursor: grab;
+    }
+    .note-card.drop-target::before{
+      content:"";
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: -6px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(216,192,138,0.9), transparent);
+      box-shadow: 0 0 14px rgba(216,192,138,0.9);
     }
     .note-header{
       display:flex;
@@ -2272,6 +2322,14 @@
       background: rgba(0,0,0,0.24);
       color: var(--text);
     }
+    .note-editor-rich img{
+      max-width: 100%;
+      height: auto;
+      resize: both;
+      overflow: auto;
+      display: inline-block;
+      border-radius: 10px;
+    }
     .note-editor-rich:focus{
       outline: 2px solid rgba(216,192,138,0.4);
       outline-offset: 2px;
@@ -2280,12 +2338,29 @@
       font-size: 12px;
       color: var(--muted);
     }
-    .note-star-picker{
+    .note-star-palette{
       position: fixed;
-      opacity: 0;
-      pointer-events: none;
-      width: 0;
-      height: 0;
+      display: none;
+      grid-template-columns: repeat(6, 24px);
+      gap: 8px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(8,10,16,0.96);
+      box-shadow: var(--shadow);
+      z-index: 120;
+    }
+    .note-star-palette[data-active="true"]{
+      display: grid;
+    }
+    .note-star-swatch{
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: var(--swatch);
+      cursor: pointer;
+      padding: 0;
     }
 
     .debug-panel{
@@ -2772,7 +2847,20 @@
           <input class="select notes-search" id="notesSearchInput" placeholder="Search notes..." />
           <button class="btn" id="notesSearchClear" type="button">Clear</button>
         </div>
-        <input type="color" id="noteStarColorPicker" class="note-star-picker" aria-hidden="true" />
+        <div class="note-star-palette" id="noteStarPalette" data-active="false" aria-hidden="true">
+          <button class="note-star-swatch" type="button" data-star-color="#f5d06f" style="--swatch:#f5d06f;" aria-label="Gold"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#f97316" style="--swatch:#f97316;" aria-label="Orange"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#ef4444" style="--swatch:#ef4444;" aria-label="Red"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#facc15" style="--swatch:#facc15;" aria-label="Yellow"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#22c55e" style="--swatch:#22c55e;" aria-label="Green"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#14b8a6" style="--swatch:#14b8a6;" aria-label="Teal"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#38bdf8" style="--swatch:#38bdf8;" aria-label="Sky"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#3b82f6" style="--swatch:#3b82f6;" aria-label="Blue"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#8b5cf6" style="--swatch:#8b5cf6;" aria-label="Purple"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#ec4899" style="--swatch:#ec4899;" aria-label="Pink"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#a3e635" style="--swatch:#a3e635;" aria-label="Lime"></button>
+          <button class="note-star-swatch" type="button" data-star-color="#94a3b8" style="--swatch:#94a3b8;" aria-label="Slate"></button>
+        </div>
         <div id="notesSections"></div>
       </div>
     </section>
@@ -4133,6 +4221,7 @@
     let diceDrag = null;
     const diceFlashItems = [];
     let lastDiceFlashAt = 0;
+    let diceFlashTimer = null;
     function toggleDicePanel(open){
       const panel = $("#dicePanel");
       const next = open ?? panel.dataset.open !== "true";
@@ -4183,7 +4272,7 @@
       animation.dataset.active = "false";
       void animation.offsetWidth;
       animation.dataset.active = "true";
-      setTimeout(()=>{ animation.dataset.active = "false"; }, 900);
+      setTimeout(()=>{ animation.dataset.active = "false"; }, 5000);
     }
     function clearDiceFlash(){
       diceFlashItems.forEach(item=> item.remove());
@@ -4193,6 +4282,10 @@
       const flash = $("#diceRollFlash");
       clearDiceFlash();
       lastDiceFlashAt = Date.now();
+      if (diceFlashTimer){
+        clearTimeout(diceFlashTimer);
+        diceFlashTimer = null;
+      }
       const alert = document.createElement("div");
       const inner = document.createElement("div");
       alert.className = "dice-roll-alert";
@@ -4203,6 +4296,7 @@
       alert.appendChild(inner);
       flash.appendChild(alert);
       diceFlashItems.push(alert);
+      diceFlashTimer = setTimeout(()=> dismissDiceFlash(), 5000);
     }
     function dismissDiceFlash(){
       if (!diceFlashItems.length) return;
@@ -4824,6 +4918,8 @@
         concentration: Array.isArray(spell.duration) ? spell.duration.some(d=> d && d.concentration) : false,
         ritual: !!spell.ritual,
         classes: extractSpellClasses(spell, sources),
+        source: spell.source || "",
+        page: spell.page ?? "",
         desc: entries,
         higher_level: higher,
         brief: entries[0] || ""
@@ -5184,7 +5280,6 @@
               <td class="muted">${escapeHTML(sp.range||'')}</td>
               <td class="muted">${escapeHTML(sp.components||'')}</td>
               <td class="muted">${escapeHTML(sp.duration||'')}</td>
-              <td class="muted">${saveDc}</td>
               <td class="muted">${summaryHtml}</td>
             </tr>
           `;
@@ -5203,16 +5298,17 @@
                 ${canEdit ? `<button class="tag spellbook-delete" type="button" data-book-delete="${escapeHTML(book.id)}">Delete Spellbook</button>` : ""}
               </div>
             </div>
-            <div class="spellbook-meta small muted" style="margin-bottom:8px;">
-              Spell Mod: ${formatSigned(getSpellbookModValue(book))} • Save DC: ${saveDc}
+            <div class="spellbook-metrics">
+              <div class="spellbook-metric">Spell Mod <strong>${formatSigned(getSpellbookModValue(book))}</strong></div>
+              <div class="spellbook-metric">Save DC <strong>${saveDc}</strong></div>
             </div>
             <div class="spellbook-body">
               <table class="spellbook-table">
                 <thead><tr>
-                  <th>Name</th><th>Level</th><th>Casting</th><th>Range</th><th>Components</th><th>Duration</th><th>Save DC</th><th>Summary</th>
+                  <th>Name</th><th>Level</th><th>Casting</th><th>Range</th><th>Components</th><th>Duration</th><th>Notes</th>
                 </tr></thead>
                 <tbody>
-                  ${rows || `<tr><td class="muted" colspan="8">No spells yet.</td></tr>`}
+                  ${rows || `<tr><td class="muted" colspan="7">No spells yet.</td></tr>`}
                 </tbody>
               </table>
             </div>
@@ -5463,6 +5559,9 @@
       const desc = Array.isArray(details.desc) ? details.desc.join('\n\n') : (details.desc || details.description || '');
       const higher = Array.isArray(details.higher_level) ? details.higher_level.join('\n\n') : (details.higher_level || '');
       const brief = details.brief || '';
+      const classList = Array.isArray(details.classes)
+        ? details.classes.map(c=> typeof c === "string" ? c : c?.name).filter(Boolean).join(", ")
+        : (Array.isArray(sp.classes) ? sp.classes.join(", ") : "");
 
       const lines = [
         { k:'Level', v: formatSpellLevel(details.level ?? sp.level) },
@@ -5473,6 +5572,9 @@
         { k:'Duration', v: details.duration || sp.duration },
         { k:'Ritual', v: details.ritual ? 'Yes' : 'No' },
         { k:'Concentration', v: details.concentration ? 'Yes' : 'No' },
+        { k:'Classes', v: classList },
+        { k:'Source', v: details.source || sp.source },
+        { k:'Page', v: details.page || sp.page }
       ];
 
       const html = `
@@ -5565,10 +5667,12 @@
       grid.innerHTML = (state.inventory.sections || []).map(section=>{
         const span = clamp(parseInt(section.span, 10) || 3, 1, 3);
         const baseAttrs = `data-section-id="${escapeHTML(section.id)}" data-section-type="${escapeHTML(section.type)}" style="grid-column: span ${span};" ${canEdit ? `draggable="true"` : ""}`;
-        const titleBtn = `<button class="inventory-section-title" type="button" data-inventory-action="edit-section">${escapeHTML(section.title || "Section")}</button>`;
+        const titleBtn = canEdit
+          ? `<button class="inventory-section-title" type="button" data-inventory-action="edit-section">${escapeHTML(section.title || "Section")}</button>`
+          : `<div class="inventory-section-title" style="cursor:default;">${escapeHTML(section.title || "Section")}</div>`;
         const actionButtons = section.type === "attunement"
           ? `<button class="mini" id="addAttuneBtn" type="button" data-inventory-action="add-attune" title="Add attunement slot (edit mode only)" style="display:${canEdit ? "grid" : "none"};">＋</button>`
-          : `<button class="note-icon-btn" type="button" data-inventory-action="add-row" title="Add row">＋</button>`;
+          : `${canEdit ? `<button class="note-icon-btn" type="button" data-inventory-action="add-row" title="Add row">＋</button>` : ""}`;
 
         if (section.type === "attunement"){
           const attuneRows = (state.inventory.attunements || []).map((a, idx) => `
@@ -5593,7 +5697,7 @@
           const equippedRows = (state.inventory.equipped || []).map((item, idx)=>`
             <div class="equipped-row">
               <div class="small muted">Slot ${idx + 1}</div>
-              <input class="inventory-input" data-equipped-index="${idx}" data-inventory-field="equipped" value="${escapeHTML(item || "")}" placeholder="Equipped item" />
+              <input class="inventory-input" data-equipped-index="${idx}" data-inventory-field="equipped" value="${escapeHTML(item || "")}" placeholder="Equipped item" ${canEdit ? "" : "readonly"} />
             </div>
           `).join("");
           return `
@@ -5609,7 +5713,7 @@
         if (section.type === "detailed"){
           const rows = (section.items || []).map((item, idx)=>`
             <tr data-item-index="${idx}">
-              <td><input class="inventory-input" data-inventory-field="name" value="${escapeHTML(item.name || "")}" placeholder="Item" /></td>
+              <td><input class="inventory-input" data-inventory-field="name" value="${escapeHTML(item.name || "")}" placeholder="Item" ${canEdit ? "" : "readonly"} /></td>
               <td>
                 <div class="qty-stepper">
                   <input class="inventory-input" data-inventory-field="qty" type="number" value="${item.qty ?? 0}" min="0" />
@@ -5619,7 +5723,7 @@
                   </div>
                 </div>
               </td>
-              <td><input class="inventory-input" data-inventory-field="notes" value="${escapeHTML(item.notes || "")}" placeholder="Notes" /></td>
+              <td><input class="inventory-input" data-inventory-field="notes" value="${escapeHTML(item.notes || "")}" placeholder="Notes" ${canEdit ? "" : "readonly"} /></td>
               ${canEdit ? `<td><button class="note-icon-btn" type="button" data-inventory-action="remove-row">✕</button></td>` : ""}
             </tr>
           `).join("");
@@ -5642,7 +5746,7 @@
         }
         const basicItems = (section.items || []).map((item, idx)=>`
           <div class="inventory-basic-item" data-item-index="${idx}">
-            <input class="inventory-input" data-inventory-field="basic" value="${escapeHTML(item || "")}" placeholder="Item" />
+            <input class="inventory-input" data-inventory-field="basic" value="${escapeHTML(item || "")}" placeholder="Item" ${canEdit ? "" : "readonly"} />
             ${canEdit ? `<button class="note-icon-btn" type="button" data-inventory-action="remove-row">✕</button>` : ""}
           </div>
         `).join("");
@@ -5725,6 +5829,7 @@
     }
 
     function openAddBagDialog(){
+      if (!state.settings.editUnlocked) return;
       normalizeInventorySections();
       $("#addBagTitle").value = "";
       $("#addBagType").value = "detailed";
@@ -5748,6 +5853,7 @@
     }
 
     function openInventorySectionDialog(section){
+      if (!state.settings.editUnlocked) return;
       if (!section) return;
       const dlg = $("#inventorySectionDialog");
       dlg.dataset.sectionId = section.id;
@@ -6464,6 +6570,8 @@
       const attuneBtn = $("#addAttuneBtn");
       if (attuneBtn) attuneBtn.style.display = unlocked ? "grid" : "none";
       if (document.getElementById('addSpellbookBtn')) $("#addSpellbookBtn").style.display = unlocked ? 'inline-flex' : 'none';
+      const addBagBtn = $("#addBagBtn");
+      if (addBagBtn) addBagBtn.style.display = unlocked ? "inline-flex" : "none";
       ["addNoteSectionBtn"].forEach(id=>{
         const btn = document.getElementById(id);
         if (!btn) return;
@@ -7118,17 +7226,39 @@
         }
       });
       let pendingStarTarget = null;
-      const starPicker = $("#noteStarColorPicker");
-      if (starPicker){
-        starPicker.addEventListener("input", (e)=>{
-          if (!pendingStarTarget) return;
+      const starPalette = $("#noteStarPalette");
+      const hideStarPalette = ()=>{
+        if (!starPalette) return;
+        starPalette.dataset.active = "false";
+        starPalette.setAttribute("aria-hidden", "true");
+      };
+      const showStarPalette = (anchor)=>{
+        if (!starPalette || !anchor) return;
+        starPalette.dataset.active = "true";
+        starPalette.setAttribute("aria-hidden", "false");
+        const rect = anchor.getBoundingClientRect();
+        const paletteWidth = starPalette.offsetWidth || 180;
+        starPalette.style.left = `${Math.min(rect.left, window.innerWidth - paletteWidth - 10)}px`;
+        starPalette.style.top = `${rect.bottom + 8}px`;
+      };
+      if (starPalette){
+        starPalette.addEventListener("click", (e)=>{
+          const swatch = e.target.closest("[data-star-color]");
+          if (!swatch || !pendingStarTarget) return;
           const found = findNoteById(pendingStarTarget.tabId, pendingStarTarget.sectionId, pendingStarTarget.noteId);
           if (!found) return;
           found.note.starred = true;
-          found.note.starColor = e.target.value;
+          found.note.starColor = swatch.dataset.starColor;
           pendingStarTarget = null;
+          hideStarPalette();
           saveSettings();
           renderNotes();
+        });
+        document.addEventListener("click", (e)=>{
+          if (!starPalette.dataset.active || starPalette.dataset.active === "false") return;
+          if (e.target.closest("#noteStarPalette") || e.target.closest('[data-note-action="star"]')) return;
+          pendingStarTarget = null;
+          hideStarPalette();
         });
       }
 
@@ -7158,15 +7288,14 @@
         if (!found) return;
         const action = noteAction.dataset.noteAction;
         if (action === "star"){
-          if (e.shiftKey){
+          if (found.note.starred){
             found.note.starred = false;
             found.note.starColor = "";
-          }else if (starPicker){
-            pendingStarTarget = { tabId, sectionId, noteId };
-            starPicker.value = found.note.starColor || "#d8c08a";
-            starPicker.click();
+            pendingStarTarget = null;
+            hideStarPalette();
           }else{
-            found.note.starred = !found.note.starred;
+            pendingStarTarget = { tabId, sectionId, noteId };
+            showStarPalette(e.target.closest('[data-note-action="star"]'));
           }
         }else if (action === "done"){
           toggleNoteStatus(found.note, "done");
@@ -7189,6 +7318,7 @@
       });
 
       let draggedNote = null;
+      let noteDropTarget = null;
       $("#notesSections").addEventListener("dragstart", (e)=>{
         if (!state.settings.editUnlocked) return;
         const card = e.target.closest(".note-card");
@@ -7202,8 +7332,26 @@
       });
       $("#notesSections").addEventListener("dragover", (e)=>{
         if (!state.settings.editUnlocked) return;
-        if (e.target.closest(".notes-section")){
+        const section = e.target.closest(".notes-section");
+        if (section){
           e.preventDefault();
+        }
+        const card = e.target.closest(".note-card");
+        if (card && card.dataset.noteId){
+          if (noteDropTarget && noteDropTarget !== card){
+            noteDropTarget.classList.remove("drop-target");
+          }
+          noteDropTarget = card;
+          noteDropTarget.classList.add("drop-target");
+        }else if (noteDropTarget){
+          noteDropTarget.classList.remove("drop-target");
+          noteDropTarget = null;
+        }
+      });
+      $("#notesSections").addEventListener("dragend", ()=>{
+        if (noteDropTarget){
+          noteDropTarget.classList.remove("drop-target");
+          noteDropTarget = null;
         }
       });
       $("#notesSections").addEventListener("drop", (e)=>{
@@ -7228,6 +7376,10 @@
           }
         }else{
           targetSection.notes.push(source.note);
+        }
+        if (noteDropTarget){
+          noteDropTarget.classList.remove("drop-target");
+          noteDropTarget = null;
         }
         draggedNote = null;
         saveSettings();
@@ -7299,12 +7451,20 @@
         document.execCommand("createLink", false, url);
         $("#noteEditorBody").focus();
       });
+      const makeNoteImagesResizable = ()=>{
+        $("#noteEditorBody").querySelectorAll("img").forEach(img=>{
+          img.style.maxWidth = "100%";
+          img.style.height = "auto";
+          img.style.resize = "both";
+          img.style.overflow = "auto";
+          img.style.display = "inline-block";
+        });
+      };
       $("#noteInsertImage").addEventListener("click", ()=>{
         const url = prompt("Enter image URL");
         if (!url) return;
         document.execCommand("insertImage", false, url);
-        const imgs = $("#noteEditorBody").querySelectorAll("img");
-        imgs.forEach(img=> img.style.maxWidth = "100%");
+        makeNoteImagesResizable();
         $("#noteEditorBody").focus();
       });
       $("#noteEditorBody").addEventListener("paste", (e)=>{
@@ -7317,6 +7477,7 @@
             const reader = new FileReader();
             reader.onload = () => {
               document.execCommand("insertImage", false, reader.result);
+              makeNoteImagesResizable();
             };
             reader.readAsDataURL(file);
             break;
@@ -7370,10 +7531,12 @@
           return;
         }
         if (action === "add-attune"){
+          if (!state.settings.editUnlocked) return;
           addAttunementSlot();
           return;
         }
         if (action === "add-row"){
+          if (!state.settings.editUnlocked) return;
           if (section.type === "detailed"){
             section.items.push({ name:"", qty: 1, notes: "" });
           }else if (section.type === "basic"){
